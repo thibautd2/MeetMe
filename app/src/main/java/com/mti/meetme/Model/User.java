@@ -1,4 +1,4 @@
-package com.mti.meetme.Model;
+package com.mti.meetme.model;
 
 /**
  * Created by thiba_000 on 26/02/2016.

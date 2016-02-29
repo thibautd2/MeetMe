@@ -34,7 +34,7 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceList;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceAuthenticationProvider;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
-import com.mti.meetme.Model.User;
+import com.mti.meetme.model.User;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.squareup.picasso.Picasso;
 
@@ -62,11 +62,13 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         img_user = (ImageView)findViewById(R.id.imageView);
         Picasso.with(getApplication()).load(R.drawable.chut).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
+
         try {
             init_connection(); //Connexion au Mobile Service
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
+
         callbackManager = CallbackManager.Factory.create(); // permet les callback
         LoginManager.getInstance().registerCallback(callbackManager, /// CONNEXION USING FACEBOOK SDK
                 new FacebookCallback<LoginResult>() {
@@ -85,8 +87,8 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Problème réseau", Toast.LENGTH_LONG).show();
                     }
                 });
+
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
         loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_friends")); //permissions
     }
 
@@ -115,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
             progress.dismiss();
             if(us!=null) {
                 currentUser = us;
-                Toast.makeText(getApplication(), "Connecté", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Connecté", Toast.LENGTH_LONG).show();
                 Picasso.with(getApplicationContext()).load(currentUser.getImg_perso()).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
             }
             else
