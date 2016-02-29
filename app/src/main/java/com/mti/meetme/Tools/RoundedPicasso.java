@@ -1,4 +1,4 @@
-package com.mti.meetme.Tools;
+package com.mti.meetme.tools;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
@@ -6,10 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import com.squareup.picasso.Transformation;
-import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 
 /**
  * Created by thiba_000 on 29/02/2016.
