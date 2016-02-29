@@ -50,22 +50,26 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private MobileServiceClient mClient;
     private MobileServiceTable<User> mUsers;
 
     CallbackManager callbackManager;
-    String fb_token, fb_fname, fb_lname, fb_img, fb_email, fb_birthday;
+    String fb_token, fb_fname, fb_lname, fb_img, fb_email;
+    int fb_age;
 
     ProgressDialog progress;
     User currentUser;
     ImageView img_user;
 
+    LoginButton loginButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        bindViews();
 
         FacebookSdk.sdkInitialize(getApplicationContext()); //Initialisation du facebook SDK
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -89,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         authenticate(loginResult.getAccessToken().getToken());
-                        Progress("Connexion");
+                        Progress(getString(R.string.progress_status_connect));
                         getFacebookData(loginResult);
                     }
                     @Override
@@ -101,18 +105,19 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
 
-        LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_friends")); //permissions
 
         if (AccessToken.getCurrentAccessToken() != null && !AccessToken.getCurrentAccessToken().isExpired()) {
-            AccessToken.setCurrentAccessToken(null);
-            /*progress = new ProgressDialog(this);
-            progress.setMessage("Connexion");
-            progress.setCancelable(false);
-            progress.show();
-            authenticate(AccessToken.getCurrentAccessToken().getToken());*/
+            Progress(getString(R.string.progress_status_connect));
+            authenticate(AccessToken.getCurrentAccessToken().getToken());
         }
 
+    }
+
+    private void bindViews()
+    {
+        loginButton = (LoginButton) findViewById(R.id.login_button);
     }
 
     @Override
@@ -121,6 +126,12 @@ public class LoginActivity extends AppCompatActivity {
         callbackManager.onActivityResult(requestCode,
                 resultCode, data);
         Log.e("activityresult", "activity result");
+    }
+
+    @Override
+    public void onClick(View v)
+    {
+
     }
 
     public class CreateUser extends AsyncTask<User, Void, User>
@@ -184,7 +195,6 @@ public class LoginActivity extends AppCompatActivity {
             else
             {
                 FacebookUser.setFacebookUser(current);
-                Toast.makeText(getApplication(), "Find Connect", Toast.LENGTH_LONG).show();
                 Picasso.with(getApplicationContext()).load(currentUser.getPic1()).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -204,7 +214,7 @@ public class LoginActivity extends AppCompatActivity {
             }
             @Override
             public void onSuccess(MobileServiceUser user) {
-                User new_user = new User(fb_fname, fb_birthday, "", user.getUserId(), fb_img);
+                User new_user = new User(fb_fname, fb_age, "", user.getUserId(), fb_email, fb_img);
                 new FindUser().execute(new_user);
             }
         });
@@ -235,7 +245,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
 
                         fb_email = object.optString("email");
-                        fb_birthday = object.optString("birthday");
+                        fb_age = 21;
                     }
                 });
 
@@ -251,11 +261,11 @@ public class LoginActivity extends AppCompatActivity {
                 this);
         mUsers = mClient.getTable(User.class);
     }
-    public void Progress(String texte)
+    public void Progress(String text)
     {
         progress = new ProgressDialog(this);
-        progress.setMessage(texte);
-        progress.setCancelable(true);
+        progress.setMessage(text);
+        progress.setCancelable(false);
         progress.show();
     }
 
