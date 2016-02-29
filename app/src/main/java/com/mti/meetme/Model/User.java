@@ -9,7 +9,9 @@ public class User {
         Username = username;
         Password = password;
     }
-
+    public User(String username) {
+        Username = username;
+    }
 
 
     public String getUsername() {

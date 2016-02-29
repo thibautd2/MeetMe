@@ -9,21 +9,19 @@ import android.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -33,14 +31,12 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonObject;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceList;
-import com.microsoft.windowsazure.mobileservices.UserAuthenticationCallback;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceAuthenticationProvider;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
-import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 import com.mti.meetme.Model.User;
-import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceAuthenticationProvider;
-import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
+import com.mti.meetme.Tools.RoundedPicasso;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,7 +49,9 @@ public class LoginActivity extends AppCompatActivity {
     CallbackManager callbackManager;
     String fb_token, fb_fname, fb_lname, fb_img, fb_email, fb_birth_year;
     LoginResult result;
-
+    ProgressDialog progress;
+    public static User currentUser;
+    ImageView img_user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,26 +60,26 @@ public class LoginActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.actionbar_custom_layout);
         setContentView(R.layout.activity_login);
+        img_user = (ImageView)findViewById(R.id.imageView);
+        Picasso.with(getApplication()).load(R.drawable.chut).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
         try {
             init_connection(); //Connexion au Mobile Service
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-
-
         callbackManager = CallbackManager.Factory.create(); // permet les callback
         LoginManager.getInstance().registerCallback(callbackManager, /// CONNEXION USING FACEBOOK SDK
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         result = loginResult;
+                        authenticate();
+                        Progress("Connexion");
                         get_facebook_data();
                     }
-
                     @Override
                     public void onCancel() {
                     }
-
                     @Override
                     public void onError(FacebookException exception) {
                         Toast.makeText(getApplicationContext(), "Problème réseau", Toast.LENGTH_LONG).show();
@@ -100,22 +98,71 @@ public class LoginActivity extends AppCompatActivity {
         Log.e("activityresult", "activity result");
     }
 
-    public class CreateUser extends AsyncTask<User, Void, Void> //Ajout d' utilisateur dans la table User
+    public class CreateUser extends AsyncTask<User, Void, User>
     {
+
         @Override
-        protected Void doInBackground(User... params) {
-            if(params!=null && params.length>0)
+        protected User doInBackground(User... params) {
+            if(params!=null && params.length>0) {
                 mUsers.insert(params[0]);
-            return null;
+            }
+            return params[0];
         }
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(User us) {
+            super.onPostExecute(us);
+            if(progress!=null)
+            progress.dismiss();
+            if(us!=null) {
+                currentUser = us;
+                Toast.makeText(getApplication(), "Connecté", Toast.LENGTH_LONG).show();
+                Picasso.with(getApplicationContext()).load(currentUser.getImg_perso()).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
+            }
+            else
+                Toast.makeText(getApplication(), "Echec de la connexion", Toast.LENGTH_LONG).show();
+        }
+    }
+    public class FindUser extends AsyncTask<User, Void, User> //Retrouve l'utilisateur
+    {
+        User create;
+        @Override
+        protected User doInBackground(User... params) {
+            User current = null;
+            if(params!=null && params.length>0) {
+                create = params[0];
+                ListenableFuture<MobileServiceList<User>> test  = mUsers.where().field("Password").eq(params[0].getPassword()).execute();
+                try {
+                    if(test.get().size()>0)
+                        current = test.get().get(0);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(current!= null)
+                currentUser = current;
+            return currentUser;
+        }
+        @Override
+        protected void onPostExecute(User current) {
+            super.onPostExecute(current);
+            if (progress!=null)
+                progress.dismiss();
+            if(current == null)
+            {
+                Progress("Creation de compte");
+                new CreateUser().execute(create);
+            }
+            else
+            {
+                Toast.makeText(getApplication(), "Connecté", Toast.LENGTH_LONG).show();
+                Picasso.with(getApplicationContext()).load(currentUser.getImg_perso()).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
+            }
         }
     }
 
     private void authenticate() {
-        String accessToken = result.getAccessToken().getToken();
         JsonObject body = new JsonObject();
         body.addProperty("access_token", result.getAccessToken().getToken());
         ListenableFuture<MobileServiceUser> mLogin = mClient.login(MobileServiceAuthenticationProvider.Facebook, body);
@@ -126,14 +173,17 @@ public class LoginActivity extends AppCompatActivity {
             }
             @Override
             public void onSuccess(MobileServiceUser user) {
-                user.getAuthenticationToken();
-                Toast.makeText(getApplication(), "Connecté", Toast.LENGTH_LONG).show();
+                User new_user = new User(fb_fname, user.getUserId());
+                new_user.setImg_perso(fb_img);
+                new_user.setDescription("Ajouter une description");
+                new FindUser().execute(new_user);
             }
         });
     }
 
     public void get_facebook_data()
-    {   fb_token = result.getAccessToken().getToken();
+    {
+        fb_token = result.getAccessToken().getToken();
         GraphRequest request = GraphRequest.newMeRequest(
                 result.getAccessToken(),
                 new GraphRequest.GraphJSONObjectCallback() {
@@ -154,7 +204,6 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         fb_email = object.optString("email");
                         fb_birth_year = object.optString("birthday");
-                        authenticate(); /// AUTHENTICATE TO AZURE
                     }
                 });
         Bundle parameters = new Bundle();
@@ -163,10 +212,18 @@ public class LoginActivity extends AppCompatActivity {
         request.executeAsync();
     }
 
-        public void init_connection() throws MalformedURLException {
+    public void init_connection() throws MalformedURLException {
         mClient = new MobileServiceClient(
                 "https://meetmee.azurewebsites.net",
                 this);
         mUsers = mClient.getTable(User.class);
     }
+    public void Progress(String texte)
+    {
+        progress = new ProgressDialog(this);
+        progress.setMessage(texte);
+        progress.setCancelable(false);
+        progress.show();
+    }
+
 }
