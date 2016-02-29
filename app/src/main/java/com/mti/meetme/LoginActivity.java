@@ -68,7 +68,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         FacebookSdk.sdkInitialize(getApplicationContext()); //Initialisation du facebook SDK
-
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.actionbar_custom_layout);
         TextView title = (TextView) findViewById(R.id.ActionBarLoginTitle);
@@ -141,9 +140,7 @@ public class LoginActivity extends AppCompatActivity {
             progress.dismiss();
             if(us!=null) {
                 currentUser = us;
-
                 FacebookUser.setFacebookUser(currentUser);
-
                 Toast.makeText(getApplicationContext(), "Create Connect", Toast.LENGTH_LONG).show();
                 Picasso.with(getApplicationContext()).load(currentUser.getPic1()).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
 
@@ -187,11 +184,9 @@ public class LoginActivity extends AppCompatActivity {
             else
             {
                 FacebookUser.setFacebookUser(current);
-
                 Toast.makeText(getApplication(), "Find Connect", Toast.LENGTH_LONG).show();
                 Picasso.with(getApplicationContext()).load(currentUser.getPic1()).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
-
-                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getApplication().startActivity(intent);
             }
@@ -210,7 +205,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(MobileServiceUser user) {
                 User new_user = new User(fb_fname, fb_birthday, "", user.getUserId(), fb_img);
-
                 new FindUser().execute(new_user);
             }
         });

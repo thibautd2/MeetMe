@@ -30,4 +30,7 @@ dependencies {
     compile 'com.microsoft.azure:azure-mobile-android:3.0'
     compile 'com.microsoft.azure:azure-notifications-handler:1.0.1@jar'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.google.android.gms:play-services-maps:+'
+    compile 'com.google.android.gms:play-services-appinvite:+'
+    compile 'commons-codec:commons-codec:1.10'
 }
