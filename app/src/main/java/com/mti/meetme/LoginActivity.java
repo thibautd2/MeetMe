@@ -35,7 +35,7 @@ import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceAut
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 import com.mti.meetme.model.User;
-import com.mti.meetme.Tools.RoundedPicasso;
+import com.mti.meetme.tools.RoundedPicasso;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
