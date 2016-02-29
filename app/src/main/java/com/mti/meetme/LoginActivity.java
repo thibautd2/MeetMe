@@ -3,19 +3,26 @@ package com.mti.meetme;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageInstaller;
 import android.os.AsyncTask;
 
 import android.app.ActionBar;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.net.MalformedURLException;
+import java.sql.Date;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -34,6 +41,7 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceList;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceAuthenticationProvider;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
+import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.model.User;
 import com.mti.meetme.tools.RoundedPicasso;
 import com.squareup.picasso.Picasso;
@@ -46,19 +54,26 @@ public class LoginActivity extends AppCompatActivity {
 
     private MobileServiceClient mClient;
     private MobileServiceTable<User> mUsers;
+
     CallbackManager callbackManager;
-    String fb_token, fb_fname, fb_lname, fb_img, fb_email, fb_birth_year;
-    LoginResult result;
+    String fb_token, fb_fname, fb_lname, fb_img, fb_email, fb_birthday;
+
     ProgressDialog progress;
-    public static User currentUser;
+    User currentUser;
     ImageView img_user;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
         FacebookSdk.sdkInitialize(getApplicationContext()); //Initialisation du facebook SDK
+
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.actionbar_custom_layout);
+        TextView title = (TextView) findViewById(R.id.ActionBarLoginTitle);
+        title.setText(getResources().getText(R.string.app_name));
+
         setContentView(R.layout.activity_login);
         img_user = (ImageView)findViewById(R.id.imageView);
         Picasso.with(getApplication()).load(R.drawable.chut).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
@@ -74,10 +89,9 @@ public class LoginActivity extends AppCompatActivity {
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        result = loginResult;
-                        authenticate();
+                        authenticate(loginResult.getAccessToken().getToken());
                         Progress("Connexion");
-                        get_facebook_data();
+                        getFacebookData(loginResult);
                     }
                     @Override
                     public void onCancel() {
@@ -90,6 +104,16 @@ public class LoginActivity extends AppCompatActivity {
 
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_friends")); //permissions
+
+        if (AccessToken.getCurrentAccessToken() != null && !AccessToken.getCurrentAccessToken().isExpired()) {
+            AccessToken.setCurrentAccessToken(null);
+            /*progress = new ProgressDialog(this);
+            progress.setMessage("Connexion");
+            progress.setCancelable(false);
+            progress.show();
+            authenticate(AccessToken.getCurrentAccessToken().getToken());*/
+        }
+
     }
 
     @Override
@@ -117,8 +141,12 @@ public class LoginActivity extends AppCompatActivity {
             progress.dismiss();
             if(us!=null) {
                 currentUser = us;
-                Toast.makeText(getApplicationContext(), "Connecté", Toast.LENGTH_LONG).show();
-                Picasso.with(getApplicationContext()).load(currentUser.getImg_perso()).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
+
+                FacebookUser.setFacebookUser(currentUser);
+
+                Toast.makeText(getApplicationContext(), "Create Connect", Toast.LENGTH_LONG).show();
+                Picasso.with(getApplicationContext()).load(currentUser.getPic1()).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
+
             }
             else
                 Toast.makeText(getApplication(), "Echec de la connexion", Toast.LENGTH_LONG).show();
@@ -132,7 +160,7 @@ public class LoginActivity extends AppCompatActivity {
             User current = null;
             if(params!=null && params.length>0) {
                 create = params[0];
-                ListenableFuture<MobileServiceList<User>> test  = mUsers.where().field("Password").eq(params[0].getPassword()).execute();
+                ListenableFuture<MobileServiceList<User>> test  = mUsers.where().field("AzureID").eq(params[0].getAzureID()).execute();
                 try {
                     if(test.get().size()>0)
                         current = test.get().get(0);
@@ -158,15 +186,21 @@ public class LoginActivity extends AppCompatActivity {
             }
             else
             {
-                Toast.makeText(getApplication(), "Connecté", Toast.LENGTH_LONG).show();
-                Picasso.with(getApplicationContext()).load(currentUser.getImg_perso()).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
+                FacebookUser.setFacebookUser(current);
+
+                Toast.makeText(getApplication(), "Find Connect", Toast.LENGTH_LONG).show();
+                Picasso.with(getApplicationContext()).load(currentUser.getPic1()).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
+
+                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getApplication().startActivity(intent);
             }
         }
     }
 
-    private void authenticate() {
+    private void authenticate(String token) {
         JsonObject body = new JsonObject();
-        body.addProperty("access_token", result.getAccessToken().getToken());
+        body.addProperty("access_token", token);
         ListenableFuture<MobileServiceUser> mLogin = mClient.login(MobileServiceAuthenticationProvider.Facebook, body);
         Futures.addCallback(mLogin, new FutureCallback<MobileServiceUser>() {
             @Override
@@ -175,15 +209,14 @@ public class LoginActivity extends AppCompatActivity {
             }
             @Override
             public void onSuccess(MobileServiceUser user) {
-                User new_user = new User(fb_fname, user.getUserId());
-                new_user.setImg_perso(fb_img);
-                new_user.setDescription("Ajouter une description");
+                User new_user = new User(fb_fname, fb_birthday, "", user.getUserId(), fb_img);
+
                 new FindUser().execute(new_user);
             }
         });
     }
 
-    public void get_facebook_data()
+    public void getFacebookData(LoginResult result)
     {
         fb_token = result.getAccessToken().getToken();
         GraphRequest request = GraphRequest.newMeRequest(
@@ -194,8 +227,10 @@ public class LoginActivity extends AppCompatActivity {
                             JSONObject object,
                             GraphResponse response)
                     {
+                        Log.i("JSON Result", object.toString());
                         String[] splited = object.optString("name").split(" ");
                         fb_fname = splited[0];
+
                         if (splited.length > 1)
                             fb_lname = splited[1];
                         try {
@@ -204,10 +239,12 @@ public class LoginActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
                         fb_email = object.optString("email");
-                        fb_birth_year = object.optString("birthday");
+                        fb_birthday = object.optString("birthday");
                     }
                 });
+
         Bundle parameters = new Bundle();
         parameters.putString("fields", "id,picture.height(300),name,email,gender,birthday");
         request.setParameters(parameters);
@@ -224,7 +261,7 @@ public class LoginActivity extends AppCompatActivity {
     {
         progress = new ProgressDialog(this);
         progress.setMessage(texte);
-        progress.setCancelable(false);
+        progress.setCancelable(true);
         progress.show();
     }
 

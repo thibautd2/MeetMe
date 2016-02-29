@@ -1,17 +1,17 @@
 package com.mti.meetme.controller;
 
+import com.mti.meetme.model.User;
+
 /**
  * Created by W_Corentin on 29/02/2016.
  */
 public class FacebookUser {
 
-    private static FacebookUser ourInstance = new FacebookUser();
+    private static User _facebookUser;
 
-    public static FacebookUser getInstance() {
-        return ourInstance;
+    public static User getInstance() {
+        return _facebookUser;
     }
 
-    private FacebookUser()
-    {
-    }
+    public static void setFacebookUser(User facebookUser) { _facebookUser = facebookUser; }
 }
