@@ -10,11 +10,14 @@ public class User {
     @com.google.gson.annotations.SerializedName("Id")
     private String id;
 
+    @com.google.gson.annotations.SerializedName("Email")
+    private String Email;
+
     @com.google.gson.annotations.SerializedName("Name")
     private String Name;
 
-    @com.google.gson.annotations.SerializedName("Birthday")
-    private String Birthday;
+    @com.google.gson.annotations.SerializedName("Age")
+    private int Age;
 
     @com.google.gson.annotations.SerializedName("Description")
     private String Description;
@@ -37,9 +40,9 @@ public class User {
     @com.google.gson.annotations.SerializedName("Pic5")
     private String Pic5;
 
-    public User(String name, String birthday, String description, String azureID, String pic1) {
+    public User(String name, int age, String description, String azureID, String email, String pic1) {
         Name = name;
-        Birthday = birthday;
+        Age = age;
         Description = description;
         AzureID = azureID;
         Pic1 = pic1;
@@ -53,6 +56,14 @@ public class User {
         this.id = id;
     }
 
+    public String getEmail() {
+        return Email;
+    }
+
+    public void setEmail(String email) {
+        Email = email;
+    }
+
     public String getName() {
         return Name;
     }
@@ -61,12 +72,12 @@ public class User {
         Name = name;
     }
 
-    public String getBirthday() {
-        return Birthday;
+    public int getAge() {
+        return Age;
     }
 
-    public void setBirthday(String birthday) {
-        Birthday = birthday;
+    public void setBirthday(int age) {
+        Age = age;
     }
 
     public String getDescription() {

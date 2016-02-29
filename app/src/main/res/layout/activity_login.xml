@@ -5,13 +5,6 @@
     android:layout_height="fill_parent"
     tools:context="com.mti.meetme.LoginActivity">
 
-    <!--<Button
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:background="@drawable/facebook_login"
-        android:layout_alignStart="@+id/login_button"
-        android:layout_marginLeft="-5dp"
-        android:layout_alignParentBottom="true" />-->
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"
