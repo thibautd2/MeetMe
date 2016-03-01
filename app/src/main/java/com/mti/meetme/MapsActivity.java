@@ -61,20 +61,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public double[] getlocation() {
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        List<String> providers = lm.getProviders(true);
-        Location l = null;
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        List<String> providers = locationManager.getProviders(true);
+        Location location = null;
         for (int i = 0; i < providers.size(); i++) {
-            l = lm.getLastKnownLocation(providers.get(i));
-            if (l != null)
+            location = locationManager.getLastKnownLocation(providers.get(i));
+            if (location != null)
                 break;
         }
         double[] gps = new double[2];
-        if (l != null) {
-            gps[0] = l.getLatitude();
-            gps[1] = l.getLongitude();
+        if (location != null) {
+            gps[0] = location.getLatitude();
+            gps[1] = location.getLongitude();
         }
-        providers.removeAll(lm.getAllProviders());
+        providers.removeAll(locationManager.getAllProviders());
         return gps;
     }
 
