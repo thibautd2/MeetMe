@@ -53,12 +53,13 @@ public class User implements Serializable {
     @com.google.gson.annotations.SerializedName("Pic5")
     private String Pic5;
 
-    public User(String name, int age, String description, String azureID, String email, String pic1) {
+    public User(String name, int age, String description, String azureID, String email, String pic1, Boolean gender) {
         Name = name;
         Age = age;
         Description = description;
         AzureID = azureID;
         Pic1 = pic1;
+        Gender = gender;
     }
 
     public String getId() {

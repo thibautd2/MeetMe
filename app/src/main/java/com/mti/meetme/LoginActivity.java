@@ -215,7 +215,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
             @Override
             public void onSuccess(MobileServiceUser user) {
-                User new_user = new User(fb_fname, fb_age, "", user.getUserId(), fb_email, fb_img);
+                User new_user = new User(fb_fname, fb_age, "", user.getUserId(), fb_email, fb_img, true);
                 new FindUser().execute(new_user);
             }
         });
