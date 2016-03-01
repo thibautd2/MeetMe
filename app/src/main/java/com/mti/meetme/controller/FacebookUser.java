@@ -8,7 +8,6 @@ import com.mti.meetme.model.User;
 public class FacebookUser {
 
     private static User _facebookUser;
-
     public static User getInstance() {
         return _facebookUser;
     }

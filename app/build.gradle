@@ -33,4 +33,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:+'
     compile 'com.google.android.gms:play-services-appinvite:+'
     compile 'commons-codec:commons-codec:1.10'
+    compile 'org.apache.httpcomponents:httpclient-android:+'
 }

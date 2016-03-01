@@ -42,6 +42,7 @@ import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceAut
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 import com.mti.meetme.controller.FacebookUser;
+import com.mti.meetme.controller.Network;
 import com.mti.meetme.model.User;
 import com.mti.meetme.tools.RoundedPicasso;
 import com.squareup.picasso.Picasso;
@@ -51,9 +52,6 @@ import org.json.JSONObject;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
-
-    private MobileServiceClient mClient;
-    private MobileServiceTable<User> mUsers;
 
     CallbackManager callbackManager;
     String fb_token, fb_fname, fb_lname, fb_img, fb_email;
@@ -140,7 +138,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         @Override
         protected User doInBackground(User... params) {
             if(params!=null && params.length>0) {
-                mUsers.insert(params[0]);
+                Network.getUsers().insert(params[0]);
             }
             return params[0];
         }
@@ -168,7 +166,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             User current = null;
             if(params!=null && params.length>0) {
                 create = params[0];
-                ListenableFuture<MobileServiceList<User>> test  = mUsers.where().field("AzureID").eq(params[0].getAzureID()).execute();
+                ListenableFuture<MobileServiceList<User>> test  = Network.getUsers().where().field("AzureID").eq(params[0].getAzureID()).execute();
                 try {
                     if(test.get().size()>0)
                         current = test.get().get(0);
@@ -206,7 +204,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void authenticate(String token) {
         JsonObject body = new JsonObject();
         body.addProperty("access_token", token);
-        ListenableFuture<MobileServiceUser> mLogin = mClient.login(MobileServiceAuthenticationProvider.Facebook, body);
+        ListenableFuture<MobileServiceUser> mLogin = Network.getClient().login(MobileServiceAuthenticationProvider.Facebook, body);
         Futures.addCallback(mLogin, new FutureCallback<MobileServiceUser>() {
             @Override
             public void onFailure(Throwable exc) {
@@ -256,10 +254,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void init_connection() throws MalformedURLException {
-        mClient = new MobileServiceClient(
+        Network.setClient(new MobileServiceClient(
                 "https://meetmee.azurewebsites.net",
-                this);
-        mUsers = mClient.getTable(User.class);
+                this));
+        Network.setUsers(Network.getClient().getTable(User.class));
     }
     public void Progress(String text)
     {

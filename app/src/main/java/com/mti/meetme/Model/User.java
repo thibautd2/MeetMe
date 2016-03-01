@@ -1,5 +1,7 @@
 package com.mti.meetme.model;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.sql.Date;
 
 /**
@@ -9,6 +11,12 @@ public class User {
 
     @com.google.gson.annotations.SerializedName("Id")
     private String id;
+
+    @com.google.gson.annotations.SerializedName("Latitude")
+    private Double Latitude;
+
+    @com.google.gson.annotations.SerializedName("Longitude")
+    private Double Longitude;
 
     @com.google.gson.annotations.SerializedName("Email")
     private String Email;
@@ -134,5 +142,22 @@ public class User {
 
     public void setPic5(String pic5) {
         Pic5 = pic5;
+    }
+
+
+    public Double getLatitude() {
+        return Latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        Latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return Longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        Longitude = longitude;
     }
 }
