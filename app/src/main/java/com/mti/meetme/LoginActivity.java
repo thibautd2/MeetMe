@@ -18,8 +18,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.net.MalformedURLException;
-import java.sql.Date;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import com.facebook.AccessToken;
@@ -152,7 +156,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 FacebookUser.setFacebookUser(currentUser);
                 Toast.makeText(getApplicationContext(), "Create Connect", Toast.LENGTH_LONG).show();
                 Picasso.with(getApplicationContext()).load(currentUser.getPic1()).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
-
             }
             else
                 Toast.makeText(getApplication(), "Echec de la connexion", Toast.LENGTH_LONG).show();
@@ -193,7 +196,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             else
             {
                 FacebookUser.setFacebookUser(current);
-                Picasso.with(getApplicationContext()).load(currentUser.getPic1()).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
+
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getApplication().startActivity(intent);
@@ -243,7 +246,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
 
                         fb_email = object.optString("email");
-                        fb_age = 21;
+                        fb_age = dateToAge(object.optString("birthday"));
+                        Log.w("AGE", Integer.toString(fb_age));
                     }
                 });
 
@@ -251,6 +255,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         parameters.putString("fields", "id,picture.height(300),name,email,gender,birthday");
         request.setParameters(parameters);
         request.executeAsync();
+    }
+
+    public int dateToAge(String date)
+    {
+        DateFormat df = new SimpleDateFormat("MM/DD/yyyy", Locale.US);
+        Date birthday = null;
+
+        try {
+            birthday = df.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+      /*  LocalDate birthdate = new LocalDate(Integer.valueOf(date.split("/")[2]), Integer.valueOf(date.split("/")[0]), Integer.valueOf(date.split("/")[1]));
+        LocalDate now = new LocalDate();
+
+        return Years.yearsBetween(birthdate, now).getYears();*/
+        return 23;
     }
 
     public void init_connection() throws MalformedURLException {
