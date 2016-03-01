@@ -2,6 +2,8 @@ package com.mti.meetme;
 
 import android.app.ActionBar;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.hardware.camera2.params.Face;
 import android.location.Location;
 import android.location.LocationListener;
@@ -9,20 +11,30 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Pair;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.microsoft.windowsazure.mobileservices.MobileServiceList;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.controller.Network;
 import com.mti.meetme.model.User;
+import com.mti.meetme.tools.RoundedPicasso;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -30,7 +42,7 @@ import java.util.concurrent.ExecutionException;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,LocationListener {
 
     private GoogleMap mMap;
-
+    public MobileServiceList<User> all;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,11 +130,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public class GetAllUsersPosition extends AsyncTask<Void, Void, Void> // A MODIFIER UTILISER UN RAYON
     {
 
-        MobileServiceList<User> all;
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                all = Network.getUsers().select("Longitude", "Latitude", "AzureID", "Name").execute().get();
+                all = Network.getUsers().select("Longitude", "Latitude", "AzureID", "Name", "Pic1").execute().get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -133,13 +144,84 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            int i =0;
             if(all!=null) {
                 for (User u : all) {
                     if(u.getLongitude()!=null && u.getLatitude()!=null)
-                         mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                           u.getLatitude(),u.getLongitude())).title(u.getName()));
+                            mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                              u.getLatitude(),u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(i)));
+                i++;
                 }
             }
+            init_infos_window();
         }
+
+    }
+
+    public void init_infos_window()
+    {
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                String r = marker.getId().substring(1);
+                User user = all.get(Integer.parseInt(r));
+                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                Bundle b = new Bundle();
+                b.putSerializable("User", user);
+                intent.putExtras(b);
+                startActivity(intent);
+            }
+        });
+
+        GoogleMap.InfoWindowAdapter adapt = new GoogleMap.InfoWindowAdapter() {
+            Boolean not_first_time_showing_info_window = false;
+
+            @Override
+            public View getInfoWindow(Marker arg0) {
+                int id = Integer.parseInt(arg0.getSnippet());
+                User u =  all.get(id);
+                View v = getLayoutInflater().inflate(R.layout.info_window, null);
+                ImageView img = (ImageView) v.findViewById(R.id.user_image);
+                TextView name = (TextView) v.findViewById(R.id.user_name);
+                TextView age = (TextView) v.findViewById(R.id.user_age);
+                name.setText(u.getName());
+                if (not_first_time_showing_info_window)
+                {
+                    Picasso.with(MapsActivity.this)
+                            .load(u.getPic1())
+                            .transform(new RoundedPicasso())
+                            .into(img);
+                }
+                else
+                {
+                    not_first_time_showing_info_window = true;
+                        Picasso.with(MapsActivity.this)
+                                .load(u.getPic1())
+                                .transform(new RoundedPicasso())
+                                .into(img, new InfoWindowRefresher(arg0));
+                }
+                return v;
+            }
+            @Override
+            public View getInfoContents(Marker marker) {
+                return null;
+            }
+        };
+        mMap.setInfoWindowAdapter(adapt);
+    }
+    private class InfoWindowRefresher implements Callback {
+        private Marker markerToRefresh;
+
+        private InfoWindowRefresher(Marker markerToRefresh) {
+            this.markerToRefresh = markerToRefresh;
+        }
+
+        @Override
+        public void onSuccess() {
+            markerToRefresh.showInfoWindow();
+        }
+
+        @Override
+        public void onError() {}
     }
 }

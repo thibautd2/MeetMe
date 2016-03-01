@@ -2,15 +2,20 @@ package com.mti.meetme.model;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.Serializable;
 import java.sql.Date;
 
 /**
  * Created by thiba_000 on 26/02/2016.
  */
-public class User {
+public class User implements Serializable {
 
     @com.google.gson.annotations.SerializedName("Id")
     private String id;
+
+    @com.google.gson.annotations.SerializedName("Gender")
+    private Boolean Gender;
+
 
     @com.google.gson.annotations.SerializedName("Latitude")
     private Double Latitude;
