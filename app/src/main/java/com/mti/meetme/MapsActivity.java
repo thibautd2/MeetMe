@@ -46,7 +46,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_maps);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -133,7 +132,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                all = Network.getUsers().select("Longitude", "Latitude", "AzureID", "Name", "Pic1").execute().get();
+                all = Network.getUsers().select("Longitude", "Latitude", "AzureID", "Name", "Pic1", "Gender").execute().get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -148,9 +147,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if(all!=null) {
                 for (User u : all) {
                     if(u.getLongitude()!=null && u.getLatitude()!=null)
+                        if(u.getGender()!=null && u.getGender()==true)
                             mMap.addMarker(new MarkerOptions().position(new LatLng(
                                               u.getLatitude(),u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(i)));
-                i++;
+                        else
+                            mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                    u.getLatitude(),u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(i)));
+                    i++;
                 }
             }
             init_infos_window();

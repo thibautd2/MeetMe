@@ -13,6 +13,14 @@ public class User implements Serializable {
     @com.google.gson.annotations.SerializedName("Id")
     private String id;
 
+    public Boolean getGender() {
+        return Gender;
+    }
+
+    public void setGender(Boolean gender) {
+        Gender = gender;
+    }
+
     @com.google.gson.annotations.SerializedName("Gender")
     private Boolean Gender;
 

@@ -78,6 +78,30 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         getSupportActionBar().setCustomView(R.layout.actionbar_custom_layout);
         TextView title = (TextView) findViewById(R.id.ActionBarLoginTitle);
         title.setText(getResources().getText(R.string.app_name));
+        Button map = (Button) findViewById(R.id.map);
+        Button profil = (Button) findViewById(R.id.profil);
+        map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(FacebookUser.getInstance()!=null) {
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                startActivity(intent);}
+                else
+                    Toast.makeText(getApplicationContext(), "Tu dois etre connecté", Toast.LENGTH_LONG).show();
+
+            }
+        });
+        profil.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(FacebookUser.getInstance()!=null) {
+                    Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                    startActivity(intent);
+                }
+                else
+                    Toast.makeText(getApplicationContext(), "Tu dois etre connecté", Toast.LENGTH_LONG).show();
+            }
+        });
 
         setContentView(R.layout.activity_login);
         img_user = (ImageView)findViewById(R.id.imageView);
@@ -94,9 +118,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        authenticate(loginResult.getAccessToken().getToken());
-                        Progress(getString(R.string.progress_status_connect));
                         getFacebookData(loginResult);
+                        Progress(getString(R.string.progress_status_connect));
+
                     }
                     @Override
                     public void onCancel() {
@@ -109,12 +133,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_friends")); //permissions
-
+/*
         if (AccessToken.getCurrentAccessToken() != null && !AccessToken.getCurrentAccessToken().isExpired()) {
             Progress(getString(R.string.progress_status_connect));
             authenticate(AccessToken.getCurrentAccessToken().getToken());
         }
-
+*/
     }
 
     private void bindViews()
@@ -133,7 +157,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v)
     {
-
     }
 
     public class CreateUser extends AsyncTask<User, Void, User>
@@ -196,7 +219,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             else
             {
                 FacebookUser.setFacebookUser(current);
-
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getApplication().startActivity(intent);
@@ -221,7 +243,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
-    public void getFacebookData(LoginResult result)
+    public void getFacebookData(final LoginResult result)
     {
         fb_token = result.getAccessToken().getToken();
         GraphRequest request = GraphRequest.newMeRequest(
@@ -248,6 +270,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         fb_email = object.optString("email");
                         fb_age = dateToAge(object.optString("birthday"));
                         Log.w("AGE", Integer.toString(fb_age));
+                        authenticate(result.getAccessToken().getToken());
                     }
                 });
 
