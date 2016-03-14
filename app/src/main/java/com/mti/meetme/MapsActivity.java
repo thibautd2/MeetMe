@@ -1,17 +1,13 @@
 package com.mti.meetme;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.hardware.camera2.params.Face;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.ImageView;
@@ -25,16 +21,13 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.microsoft.windowsazure.mobileservices.MobileServiceList;
 import com.mti.meetme.controller.FacebookUser;
-import com.mti.meetme.controller.Network;
-import com.mti.meetme.model.User;
-import com.mti.meetme.tools.RoundedPicasso;
+import com.mti.meetme.Model.User;
+import com.mti.meetme.Tools.RoundedPicasso;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -50,7 +43,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        new GetAllUsersPosition().execute();
+        //new GetAllUsersPosition().execute();
     }
 
     @Override
@@ -117,7 +110,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             List<Pair<String, String>> modifs= new ArrayList<Pair<String, String> >();;
             modifs.add(new Pair<String, String>("Latitude", String.valueOf(FacebookUser.getInstance().getLatitude())));
             modifs.add(new Pair<String, String>("Longitude", String.valueOf(FacebookUser.getInstance().getLatitude())));
-            Network.getUsers().update(FacebookUser.getInstance(), modifs);
             return null;
         }
 
@@ -126,13 +118,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             super.onPostExecute(aVoid);
             }
     }
-    public class GetAllUsersPosition extends AsyncTask<Void, Void, Void> // A MODIFIER UTILISER UN RAYON
+    /*public class GetAllUsersPosition extends AsyncTask<Void, Void, Void> // A MODIFIER UTILISER UN RAYON
     {
 
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                all = Network.getUsers().select("Longitude", "Latitude", "AzureID", "Name", "Pic1", "Gender").execute().get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -159,7 +150,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             init_infos_window();
         }
 
-    }
+    }*/
 
     public void init_infos_window()
     {

@@ -1,4 +1,4 @@
-package com.mti.meetme.tools;
+package com.mti.meetme.Tools;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;

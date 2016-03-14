@@ -1,6 +1,6 @@
 package com.mti.meetme.controller;
 
-import com.mti.meetme.model.User;
+import com.mti.meetme.Model.User;
 
 /**
  * Created by W_Corentin on 29/02/2016.

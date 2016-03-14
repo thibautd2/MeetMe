@@ -14,7 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mti.meetme.controller.FacebookUser;
-import com.mti.meetme.model.User;
+import com.mti.meetme.Model.User;
 
 import com.squareup.picasso.Picasso;
 

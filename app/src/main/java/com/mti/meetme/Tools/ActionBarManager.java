@@ -1,4 +1,4 @@
-package com.mti.meetme.tools;
+package com.mti.meetme.Tools;
 
 import android.app.ActionBar;
 import android.app.Activity;

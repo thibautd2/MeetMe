@@ -1,4 +1,4 @@
-package com.mti.meetme.model;
+package com.mti.meetme.Model;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -13,17 +13,8 @@ public class User implements Serializable {
     @com.google.gson.annotations.SerializedName("Id")
     private String id;
 
-    public Boolean getGender() {
-        return Gender;
-    }
-
-    public void setGender(Boolean gender) {
-        Gender = gender;
-    }
-
     @com.google.gson.annotations.SerializedName("Gender")
-    private Boolean Gender;
-
+    private String Gender;
 
     @com.google.gson.annotations.SerializedName("Latitude")
     private Double Latitude;
@@ -34,17 +25,20 @@ public class User implements Serializable {
     @com.google.gson.annotations.SerializedName("Email")
     private String Email;
 
+    @com.google.gson.annotations.SerializedName("Birthday")
+    private String Birthday;
+
     @com.google.gson.annotations.SerializedName("Name")
     private String Name;
 
-    @com.google.gson.annotations.SerializedName("Age")
-    private int Age;
+    @com.google.gson.annotations.SerializedName("AgeRange")
+    private String AgeRange;
 
     @com.google.gson.annotations.SerializedName("Description")
     private String Description;
 
-    @com.google.gson.annotations.SerializedName("AzureID")
-    private String AzureID;
+    @com.google.gson.annotations.SerializedName("FacebookToken")
+    private String FacebookToken;
 
     @com.google.gson.annotations.SerializedName("Pic1")
     private String Pic1;
@@ -61,13 +55,17 @@ public class User implements Serializable {
     @com.google.gson.annotations.SerializedName("Pic5")
     private String Pic5;
 
-    public User(String name, int age, String description, String azureID, String email, String pic1, Boolean gender) {
+    public User() {}
+
+    public User(String ageRange, String facebookToken, String name, String birthday, String description, String email, String pic1, String gender) {
         Name = name;
-        Age = age;
+        Birthday = birthday;
         Description = description;
-        AzureID = azureID;
+        FacebookToken = facebookToken;
         Pic1 = pic1;
         Gender = gender;
+        Email = email;
+        AgeRange = ageRange;
     }
 
     public String getId() {
@@ -78,12 +76,44 @@ public class User implements Serializable {
         this.id = id;
     }
 
+    public String getGender() {
+        return Gender;
+    }
+
+    public void setGender(String gender) {
+        Gender = gender;
+    }
+
+    public Double getLatitude() {
+        return Latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        Latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return Longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        Longitude = longitude;
+    }
+
     public String getEmail() {
         return Email;
     }
 
     public void setEmail(String email) {
         Email = email;
+    }
+
+    public String getBirthday() {
+        return Birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        Birthday = birthday;
     }
 
     public String getName() {
@@ -94,12 +124,12 @@ public class User implements Serializable {
         Name = name;
     }
 
-    public int getAge() {
-        return Age;
+    public String getAgeRange() {
+        return AgeRange;
     }
 
-    public void setBirthday(int age) {
-        Age = age;
+    public void setAgeRange(String ageRange) {
+        AgeRange = ageRange;
     }
 
     public String getDescription() {
@@ -110,12 +140,12 @@ public class User implements Serializable {
         Description = description;
     }
 
-    public String getAzureID() {
-        return AzureID;
+    public String getFacebookToken() {
+        return FacebookToken;
     }
 
-    public void setAzureID(String azureID) {
-        AzureID = azureID;
+    public void setFacebookToken(String facebookToken) {
+        FacebookToken = facebookToken;
     }
 
     public String getPic1() {
@@ -156,22 +186,5 @@ public class User implements Serializable {
 
     public void setPic5(String pic5) {
         Pic5 = pic5;
-    }
-
-
-    public Double getLatitude() {
-        return Latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        Latitude = latitude;
-    }
-
-    public Double getLongitude() {
-        return Longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        Longitude = longitude;
     }
 }
