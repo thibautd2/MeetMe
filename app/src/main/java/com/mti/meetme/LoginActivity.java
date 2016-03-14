@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -34,6 +35,7 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -58,6 +60,8 @@ public class LoginActivity extends AppCompatActivity {
 
     LoginButton loginButton;
 
+    Firebase ref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -67,6 +71,7 @@ public class LoginActivity extends AppCompatActivity {
 
         FacebookSdk.sdkInitialize(this); //Initialisation du facebook SDK
         Firebase.setAndroidContext(this); //Init Firebase
+        ref = new Firebase("https://intense-fire-5226.firebaseio.com/");
 
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.actionbar_custom_layout);
@@ -78,16 +83,17 @@ public class LoginActivity extends AppCompatActivity {
         img_user = (ImageView)findViewById(R.id.imageView);
         Picasso.with(getApplication()).load(R.drawable.chut).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
 
+        onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());
+
         callbackManager = CallbackManager.Factory.create(); // permet les callback
         LoginManager.getInstance().registerCallback(callbackManager, /// CONNEXION USING FACEBOOK SDK
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
 
-                        if (getUserFromFirebase(loginResult.getAccessToken().getToken()) == null)
-                            getFacebookData(loginResult);
-                        else
-                            Toast.makeText(getApplicationContext(), "Your name is " + currentUser.getName(), Toast.LENGTH_SHORT).show();
+                        //onFacebookAccessTokenChange(loginResult.getAccessToken());
+
+                        getFacebookData(loginResult);
 
                         Progress(getString(R.string.progress_status_connect));
 
@@ -167,6 +173,23 @@ public class LoginActivity extends AppCompatActivity {
         request.executeAsync();
     }
 
+    private void onFacebookAccessTokenChange(AccessToken token) {
+        if (token != null) {
+            ref.authWithOAuthToken("facebook", token.getToken(), new Firebase.AuthResultHandler() {
+                @Override
+                public void onAuthenticated(AuthData authData) {
+                    Toast.makeText(getApplicationContext(), "Auth success", Toast.LENGTH_SHORT).show();
+                }
+                @Override
+                public void onAuthenticationError(FirebaseError firebaseError) {
+                    Toast.makeText(getApplicationContext(), "Auth error", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(getApplicationContext(), "ta gueule correntin", Toast.LENGTH_SHORT).show();
+            ref.unauth();
+        }
+    }
     private User getUserFromFirebase(String fbToken)
     {
         Firebase ref = new Firebase("https://intense-fire-5226.firebaseio.com/users/" + fbToken);
@@ -189,7 +212,7 @@ public class LoginActivity extends AppCompatActivity {
     {
         Firebase ref = new Firebase("https://intense-fire-5226.firebaseio.com/");
 
-        Firebase userRef = ref.child("users").child(user.getFacebookToken());
+        Firebase userRef = ref.child("users").child(user.getName());
 
         userRef.setValue(user);
     }
