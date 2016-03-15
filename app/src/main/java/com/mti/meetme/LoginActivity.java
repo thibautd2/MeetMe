@@ -45,7 +45,6 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
                                                                 GraphRequest.GraphJSONObjectCallback,
                                                                 Firebase.AuthResultHandler
 {
-
     //Facebook stuff
     CallbackManager callbackManager;
     String fb_token, fb_name, fb_img, fb_email, fb_birthday, fb_age_range, fb_gender;
@@ -59,27 +58,24 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     //Current User
     User currentUser;
 
-    //Firebase unique reference
     Firebase ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.actionbar_custom_layout);
 
         //Firebase + Facebook initialization
         FacebookSdk.sdkInitialize(this);
         callbackManager = CallbackManager.Factory.create();
-        Firebase.setAndroidContext(this);
         ref = new Firebase("https://intense-fire-5226.firebaseio.com/");
 
         //UI handling
+        setContentView(R.layout.activity_login);
         bindViews();
         populateViews();
-        setContentView(R.layout.activity_login);
-
-        //Firebase Auth handling
-        onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());
 
         //Facebook login handling (see method implementations)
         LoginManager.getInstance().registerCallback(callbackManager, this);
@@ -89,12 +85,8 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     //Facebook login callbacks
     @Override
     public void onSuccess(LoginResult loginResult) {
-
-        //onFacebookAccessTokenChange(loginResult.getAccessToken());
-
-        getFacebookData(loginResult);
-
         Progress(getString(R.string.progress_status_connect));
+        getFacebookData(loginResult);
     }
 
     @Override
@@ -121,9 +113,6 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
 
         img_user = (ImageView)findViewById(R.id.imageView);
         Picasso.with(getApplication()).load(R.drawable.chut).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
-
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(R.layout.actionbar_custom_layout);
     }
 
     @Override
@@ -160,58 +149,45 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
         fb_birthday = object.optString("birthday");
         fb_gender = object.optString("gender");
 
-        currentUser = new User(fb_age_range, fb_token, fb_name, fb_birthday, "", fb_email, fb_img, fb_gender);
-        FacebookUser.setFacebookUser(currentUser);
+        currentUser = new User(fb_age_range, null, fb_name, fb_birthday, "Trololo", fb_email, fb_img, fb_gender);
 
         if (progress != null)
             progress.dismiss();
 
-        saveToFirebase(currentUser);
+        onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());
     }
 
     private void onFacebookAccessTokenChange(AccessToken token) {
+        Progress(getString(R.string.progress_status_retrieving));
+
         if (token != null) {
             ref.authWithOAuthToken("facebook", token.getToken(), this);
         }
         else {
-            Toast.makeText(getApplicationContext(), "ta gueule corentin", Toast.LENGTH_SHORT).show();
             ref.unauth();
         }
     }
 
     @Override
-    public void onAuthenticated(AuthData authData) {
-        Toast.makeText(getApplicationContext(), "Auth success", Toast.LENGTH_SHORT).show();
+    public void onAuthenticated(AuthData authData)
+    {
+        currentUser.setUid(authData.getUid());
+        FacebookUser.setFacebookUser(currentUser);
+        saveToFirebase(currentUser);
+
+        Intent intent = new Intent(this, ProfileActivity.class);
+        startActivity(intent);
     }
     @Override
     public void onAuthenticationError(FirebaseError firebaseError) {
-        Toast.makeText(getApplicationContext(), "Auth error", Toast.LENGTH_SHORT).show();
-    }
-
-
-    private User getUserFromFirebase(String fbToken)
-    {
-        Firebase ref = new Firebase("https://intense-fire-5226.firebaseio.com/users/" + fbToken);
-
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                currentUser = (User) snapshot.getValue();
-            }
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                System.out.println("The read failed: " + firebaseError.getMessage());
-            }
-        });
-
-        return currentUser;
+        Toast.makeText(getApplicationContext(), firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
     }
 
     private void saveToFirebase(User user)
     {
         Firebase ref = new Firebase("https://intense-fire-5226.firebaseio.com/");
 
-        Firebase userRef = ref.child("users").child(user.getName());
+        Firebase userRef = ref.child("users").child(user.getUid());
 
         userRef.setValue(user);
     }
