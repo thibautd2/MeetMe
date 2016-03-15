@@ -37,8 +37,8 @@ public class User implements Serializable {
     @com.google.gson.annotations.SerializedName("Description")
     private String Description;
 
-    @com.google.gson.annotations.SerializedName("FacebookToken")
-    private String FacebookToken;
+    @com.google.gson.annotations.SerializedName("Uid")
+    private String Uid;
 
     @com.google.gson.annotations.SerializedName("Pic1")
     private String Pic1;
@@ -57,11 +57,11 @@ public class User implements Serializable {
 
     public User() {}
 
-    public User(String ageRange, String facebookToken, String name, String birthday, String description, String email, String pic1, String gender) {
+    public User(String ageRange, String uid, String name, String birthday, String description, String email, String pic1, String gender) {
         Name = name;
         Birthday = birthday;
         Description = description;
-        FacebookToken = facebookToken;
+        Uid = uid;
         Pic1 = pic1;
         Gender = gender;
         Email = email;
@@ -140,13 +140,11 @@ public class User implements Serializable {
         Description = description;
     }
 
-    public String getFacebookToken() {
-        return FacebookToken;
+    public String getUid() {
+        return Uid;
     }
 
-    public void setFacebookToken(String facebookToken) {
-        FacebookToken = facebookToken;
-    }
+    public void setUid(String uid) { Uid = uid; }
 
     public String getPic1() {
         return Pic1;
