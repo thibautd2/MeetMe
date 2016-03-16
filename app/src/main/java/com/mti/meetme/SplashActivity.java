@@ -3,6 +3,7 @@ package com.mti.meetme;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -56,7 +57,8 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
 
     @Override
     public void onAuthenticationError(FirebaseError firebaseError) {
-        Toast.makeText(getApplicationContext(), firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 
     private void getUserFromFirebase(String Uid)
