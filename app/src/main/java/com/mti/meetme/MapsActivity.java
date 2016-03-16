@@ -13,6 +13,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -22,6 +26,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.microsoft.windowsazure.mobileservices.MobileServiceList;
+import com.mti.meetme.Tools.Network;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.RoundedPicasso;
@@ -61,7 +66,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         FacebookUser.getInstance().setLatitude(pos.latitude);
         FacebookUser.getInstance().setLongitude(pos.longitude);
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(d[0], d[1]), 17));
-        new SendPosition().execute();
+        sendPosition();
     }
 
     public double[] getlocation() {
@@ -102,22 +107,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-
-    public class SendPosition extends AsyncTask<Void, Void, Void>
+    private void sendPosition()
     {
-        @Override
-        protected Void doInBackground(Void... params) {
-            List<Pair<String, String>> modifs= new ArrayList<Pair<String, String> >();;
-            modifs.add(new Pair<String, String>("Latitude", String.valueOf(FacebookUser.getInstance().getLatitude())));
-            modifs.add(new Pair<String, String>("Longitude", String.valueOf(FacebookUser.getInstance().getLatitude())));
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            }
+        Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
+        ref.child("Latitude").setValue(String.valueOf(FacebookUser.getInstance().getLatitude()));
+        ref.child("Longitude").setValue(String.valueOf(FacebookUser.getInstance().getLongitude()));
     }
+
     /*public class GetAllUsersPosition extends AsyncTask<Void, Void, Void> // A MODIFIER UTILISER UN RAYON
     {
 

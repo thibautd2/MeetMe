@@ -11,6 +11,5 @@ public class FacebookUser {
     public static User getInstance() {
         return _facebookUser;
     }
-
     public static void setFacebookUser(User facebookUser) { _facebookUser = facebookUser; }
 }

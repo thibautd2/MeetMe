@@ -28,17 +28,13 @@ import com.firebase.client.ValueEventListener;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
+import com.mti.meetme.Tools.Network;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.Locale;
 
 
 public class LoginActivity extends AppCompatActivity implements FacebookCallback<LoginResult>,
@@ -66,21 +62,17 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
         //Firebase + Facebook initialization
         FacebookSdk.sdkInitialize(this);
         callbackManager = CallbackManager.Factory.create();
         Firebase.setAndroidContext(this);
-        ref = new Firebase("https://intense-fire-5226.firebaseio.com/");
-
+        ref = Network.bdd_connexion;
         //UI handling
         bindViews();
         populateViews();
         setContentView(R.layout.activity_login);
-
         //Firebase Auth handling
         onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());
-
         //Facebook login handling (see method implementations)
         LoginManager.getInstance().registerCallback(callbackManager, this);
         loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_friends"));
@@ -89,11 +81,7 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     //Facebook login callbacks
     @Override
     public void onSuccess(LoginResult loginResult) {
-
-        //onFacebookAccessTokenChange(loginResult.getAccessToken());
-
         getFacebookData(loginResult);
-
         Progress(getString(R.string.progress_status_connect));
     }
 
@@ -129,7 +117,6 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -137,9 +124,7 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     {
         fb_token = result.getAccessToken().getToken();
         GraphRequest request = GraphRequest.newMeRequest(result.getAccessToken(), this);
-
         Bundle parameters = new Bundle();
-
         parameters.putString("fields", "id,picture.height(300),name,email,gender,birthday,age_range");
         request.setParameters(parameters);
         request.executeAsync();
@@ -154,15 +139,12 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         fb_name = object.optString("name").split(" ")[0];
         fb_email = object.optString("email");
         fb_birthday = object.optString("birthday");
         fb_gender = object.optString("gender");
-
         currentUser = new User(fb_age_range, fb_token, fb_name, fb_birthday, "", fb_email, fb_img, fb_gender);
         FacebookUser.setFacebookUser(currentUser);
-
         if (progress != null)
             progress.dismiss();
 
@@ -191,12 +173,11 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
 
     private User getUserFromFirebase(String fbToken)
     {
-        Firebase ref = new Firebase("https://intense-fire-5226.firebaseio.com/users/" + fbToken);
+      // Firebase ref = Network.find_user(Uid) ;
 
         ref.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                currentUser = (User) snapshot.getValue();
+            public void onDataChange(DataSnapshot snapshot){
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
@@ -210,9 +191,7 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     private void saveToFirebase(User user)
     {
         Firebase ref = new Firebase("https://intense-fire-5226.firebaseio.com/");
-
         Firebase userRef = ref.child("users").child(user.getName());
-
         userRef.setValue(user);
     }
 
