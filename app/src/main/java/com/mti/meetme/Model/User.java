@@ -1,7 +1,5 @@
 package com.mti.meetme.Model;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
 import org.json.JSONObject;
@@ -92,16 +90,15 @@ public class User implements Serializable {
         Latitude = 0.0;
     }
 
-    public int getAge()
+    public int convertBirthdayToAge()
     {
         if (Birthday != null) {
             LocalDate birthdate = new LocalDate(Integer.parseInt(Birthday.split("/")[2]), //YYYY
                                                 Integer.parseInt(Birthday.split("/")[0]), //MM
                                                 Integer.parseInt(Birthday.split("/")[1])); //DD
             LocalDate now = new LocalDate();
-            Years age = Years.yearsBetween(birthdate, now);
 
-            return age.getYears();
+            return Years.yearsBetween(birthdate, now).getYears();
         }
 
         return 0;

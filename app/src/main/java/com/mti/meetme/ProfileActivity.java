@@ -43,6 +43,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void populateViews()
     {
         User currentUser;
+
         map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,13 +51,14 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
         if(user == null)
             currentUser = FacebookUser.getInstance();
         else
             currentUser = user;
             Picasso.with(this).load(currentUser.getPic1()).fit().centerCrop().into(profilePic);
             nameTextView.setText(currentUser.getName() + ",");
-            ageTextView.setText("" + currentUser.getAge());
+            ageTextView.setText("" + currentUser.convertBirthdayToAge());
             likesTextView.setText(getString(R.string.likes_title));
 
 
