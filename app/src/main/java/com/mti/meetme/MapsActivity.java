@@ -59,13 +59,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setZoomControlsEnabled(false);
         GetCurrentLocation();
         getAllUSerPosition();
-        //GetCurrentLocation();
+
     }
 
     private void GetCurrentLocation() {
         double[] d = getlocation();
         LatLng pos = new LatLng(d[0], d[1]);
-
         FacebookUser.getInstance().setLatitude(pos.latitude);
         FacebookUser.getInstance().setLongitude(pos.longitude);
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(d[0], d[1]), 17));
@@ -91,9 +90,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onLocationChanged(Location location) {
-        GetCurrentLocation();
+    public void onLocationChanged(Location location){
+        FacebookUser.getInstance().setLatitude(location.getLatitude());
+        FacebookUser.getInstance().setLongitude(location.getLongitude());
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17));
+        sendPosition();
     }
+
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -126,18 +129,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 int i = 0;
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     User u = postSnapshot.getValue(User.class);
-
                     if(u.getLatitude()!= null && u.getLongitude() != null) {
                         mMap.addMarker(new MarkerOptions().position(new LatLng(
                                 u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(i)));
                         all_user.add(u);
                         i++;
                     }
-
                 }
                 init_infos_window();
             }
-
             @Override
             public void onCancelled(FirebaseError firebaseError) {
 

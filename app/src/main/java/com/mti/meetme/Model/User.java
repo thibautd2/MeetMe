@@ -50,17 +50,6 @@ public class User implements Serializable {
     @com.google.gson.annotations.SerializedName("AgeRange")
     private String AgeRange;
 
-    public String getAge() {
-        return Age;
-    }
-
-    public void setAge(String age) {
-        Age = age;
-    }
-
-    @com.google.gson.annotations.SerializedName("age")
-    private String Age;
-
     @com.google.gson.annotations.SerializedName("Description")
     private String Description;
 
@@ -84,7 +73,7 @@ public class User implements Serializable {
 
     public User() {}
 
-    public User(String age,String ageRange, String uid, String name, String birthday, String description, String email, String pic1, String gender) {
+    public User(String ageRange, String uid, String name, String birthday, String description, String email, String pic1, String gender) {
         Name = name;
         Birthday = birthday;
         Description = description;
@@ -92,7 +81,7 @@ public class User implements Serializable {
         Pic1 = pic1;
         Gender = gender;
         Email = email;
-        Age = age;
+
         AgeRange = ageRange;
         Longitude = 0.0;
         Latitude = 0.0;
