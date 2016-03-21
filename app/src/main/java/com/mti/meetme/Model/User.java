@@ -2,6 +2,10 @@ package com.mti.meetme.Model;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.joda.time.LocalDate;
+import org.joda.time.Years;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.sql.Date;
 
@@ -26,7 +30,7 @@ public class User implements Serializable {
     private String Email;
 
     @com.google.gson.annotations.SerializedName("Birthday")
-    private String Birthday;
+    private String Birthday; //Format : MM/DD/YYYY
 
     @com.google.gson.annotations.SerializedName("Name")
     private String Name;
@@ -55,6 +59,8 @@ public class User implements Serializable {
     @com.google.gson.annotations.SerializedName("Pic5")
     private String Pic5;
 
+    private JSONObject Likes;
+
     public User() {}
 
     public User(String ageRange, String uid, String name, String birthday, String description, String email, String pic1, String gender) {
@@ -67,6 +73,23 @@ public class User implements Serializable {
         Email = email;
         AgeRange = ageRange;
     }
+
+    public int getAge()
+    {
+        if (Birthday != null) {
+            LocalDate birthdate = new LocalDate(Integer.parseInt(Birthday.split("/")[2]), //YYYY
+                                                Integer.parseInt(Birthday.split("/")[0]), //MM
+                                                Integer.parseInt(Birthday.split("/")[1])); //DD
+            LocalDate now = new LocalDate();
+            Years age = Years.yearsBetween(birthdate, now);
+
+            return age.getYears();
+        }
+
+        return 0;
+    }
+
+    public void setLikes(JSONObject likes) { this.Likes = likes; }
 
     public String getId() {
         return id;

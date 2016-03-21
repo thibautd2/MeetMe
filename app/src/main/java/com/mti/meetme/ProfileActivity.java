@@ -15,7 +15,9 @@ public class ProfileActivity extends AppCompatActivity {
 
     ImageView profilePic;
     TextView  nameTextView;
-    TextView title;
+    TextView  title;
+    TextView  ageTextView;
+    TextView  likesTextView;
 
     User user;
 
@@ -43,7 +45,10 @@ public class ProfileActivity extends AppCompatActivity {
         else
             currentUser = user;
             Picasso.with(this).load(currentUser.getPic1()).fit().centerCrop().into(profilePic);
-            nameTextView.setText(currentUser.getName());
+            nameTextView.setText(currentUser.getName() + ",");
+            ageTextView.setText("" + currentUser.getAge());
+            likesTextView.setText(getString(R.string.likes_title));
+
 
         title.setText(R.string.profile_title);
     }
@@ -53,6 +58,8 @@ public class ProfileActivity extends AppCompatActivity {
         profilePic = (ImageView) findViewById(R.id.profile_pic);
         nameTextView = (TextView) findViewById(R.id.name_textview);
         title = (TextView) findViewById(R.id.ActionBarLoginTitle);
+        ageTextView = (TextView) findViewById(R.id.age_textview);
+        likesTextView = (TextView) findViewById(R.id.likes_textview);
     }
 
 }

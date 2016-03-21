@@ -69,16 +69,20 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
 
     @Override
     public void onDataChange(DataSnapshot snapshot) {
-        Toast.makeText(getApplicationContext(), "Attempting to read user", Toast.LENGTH_SHORT).show();
-        Log.w("USER JSON", (snapshot.getValue(User.class)).toString());
-
-        //Gson gson = new Gson();
         currentUser = snapshot.getValue(User.class);
 
-        FacebookUser.setFacebookUser(currentUser);
+        if (currentUser != null) {
+            FacebookUser.setFacebookUser(currentUser);
 
-        Intent intent = new Intent(this, ProfileActivity.class);
-        startActivity(intent);
+            Intent intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
+        }
+        else
+        {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
+
     }
     @Override
     public void onCancelled(FirebaseError firebaseError) {

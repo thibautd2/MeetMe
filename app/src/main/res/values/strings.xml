@@ -11,4 +11,5 @@
 
     <!-- ProfileActivity -->
     <string name="profile_title">Profile</string>
+    <string name="likes_title">Likes :</string>
 </resources>

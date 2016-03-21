@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +18,7 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -79,7 +81,7 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
 
         //Facebook login handling (see method implementations)
         LoginManager.getInstance().registerCallback(callbackManager, this);
-        loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_friends"));
+        loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_friends, user_likes"));
     }
 
     //Facebook login callbacks
@@ -140,9 +142,11 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
         try {
             fb_img = object.getJSONObject("picture").getJSONObject("data").getString("url");
             fb_age_range = object.getJSONObject("age_range").getString("min");
+            Log.w("LIKES", response.getJSONObject().toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
 
         fb_name = object.optString("name").split(" ")[0];
         fb_email = object.optString("email");
@@ -172,8 +176,10 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     public void onAuthenticated(AuthData authData)
     {
         currentUser.setUid(authData.getUid());
-        FacebookUser.setFacebookUser(currentUser);
         saveToFirebase(currentUser);
+
+        getUserLikes();
+        FacebookUser.setFacebookUser(currentUser);
 
         Intent intent = new Intent(this, ProfileActivity.class);
         startActivity(intent);
@@ -198,5 +204,21 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
         progress.setMessage(text);
         progress.setCancelable(false);
         progress.show();
+    }
+
+    public void getUserLikes()
+    {
+        new GraphRequest(
+                AccessToken.getCurrentAccessToken(),
+                "/me/likes",
+                null,
+                HttpMethod.GET,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                        currentUser.setLikes(response.getJSONObject());
+                    }
+                }
+        ).executeAsync();
+
     }
 }
