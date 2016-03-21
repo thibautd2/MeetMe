@@ -25,15 +25,5 @@ public class ActionBarManager {
          actionBar.setDisplayShowTitleEnabled(false);
          actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
          actionBar.setCustomView(R.layout.actionbar_custom_layout);
-         Button map = (Button) acti.findViewById(R.id.map);
-         Button profil = (Button) acti.findViewById(R.id.profil);
-         map.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View v) {
-                 Intent intent = new Intent(acti.getApplication(), MapsActivity.class);
-                 acti.startActivity(intent);
-             }
-         });
-
      }
 }

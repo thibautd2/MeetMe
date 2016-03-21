@@ -18,23 +18,6 @@
             android:textStyle="italic|bold"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="MAP"
-            android:id="@+id/map"
-            android:layout_alignParentStart="false"
-            android:background="#4c5dba" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="profil"
-            android:id="@+id/profil"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:background="#4c5dba" />
     </RelativeLayout>
 
 </LinearLayout>
