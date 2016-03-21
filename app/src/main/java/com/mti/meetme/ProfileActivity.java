@@ -1,8 +1,11 @@
 package com.mti.meetme;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +22,7 @@ public class ProfileActivity extends AppCompatActivity {
     TextView  ageTextView;
     TextView  likesTextView;
 
+    Button map;
     User user;
 
     @Override
@@ -39,7 +43,13 @@ public class ProfileActivity extends AppCompatActivity {
     private void populateViews()
     {
         User currentUser;
-
+        map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), MapsActivity.class);
+                startActivity(intent);
+            }
+        });
         if(user == null)
             currentUser = FacebookUser.getInstance();
         else
@@ -60,6 +70,7 @@ public class ProfileActivity extends AppCompatActivity {
         title = (TextView) findViewById(R.id.ActionBarLoginTitle);
         ageTextView = (TextView) findViewById(R.id.age_textview);
         likesTextView = (TextView) findViewById(R.id.likes_textview);
+        map = (Button) findViewById(R.id.map);
     }
 
 }

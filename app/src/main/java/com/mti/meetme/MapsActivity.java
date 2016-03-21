@@ -13,6 +13,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -22,6 +26,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.microsoft.windowsazure.mobileservices.MobileServiceList;
+import com.mti.meetme.Tools.Network;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.RoundedPicasso;
@@ -35,7 +40,7 @@ import java.util.concurrent.ExecutionException;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,LocationListener {
 
     private GoogleMap mMap;
-    public MobileServiceList<User> all;
+    private ArrayList<User> all_user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +48,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        //new GetAllUsersPosition().execute();
+        all_user = new ArrayList<>();
     }
 
     @Override
@@ -53,15 +58,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(false);
         GetCurrentLocation();
+        getAllUSerPosition();
+        //GetCurrentLocation();
     }
 
     private void GetCurrentLocation() {
         double[] d = getlocation();
         LatLng pos = new LatLng(d[0], d[1]);
+
         FacebookUser.getInstance().setLatitude(pos.latitude);
         FacebookUser.getInstance().setLongitude(pos.longitude);
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(d[0], d[1]), 17));
-        new SendPosition().execute();
+        sendPosition();
     }
 
     public double[] getlocation() {
@@ -84,7 +92,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onLocationChanged(Location location) {
-
+        GetCurrentLocation();
     }
 
     @Override
@@ -102,55 +110,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-
-    public class SendPosition extends AsyncTask<Void, Void, Void>
+    private void sendPosition()
     {
-        @Override
-        protected Void doInBackground(Void... params) {
-            List<Pair<String, String>> modifs= new ArrayList<Pair<String, String> >();;
-            modifs.add(new Pair<String, String>("Latitude", String.valueOf(FacebookUser.getInstance().getLatitude())));
-            modifs.add(new Pair<String, String>("Longitude", String.valueOf(FacebookUser.getInstance().getLatitude())));
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            }
+        Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
+        ref.child("latitude").setValue(String.valueOf(FacebookUser.getInstance().getLatitude()));
+        ref.child("longitude").setValue(String.valueOf(FacebookUser.getInstance().getLongitude()));
     }
-    /*public class GetAllUsersPosition extends AsyncTask<Void, Void, Void> // A MODIFIER UTILISER UN RAYON
+
+    private void getAllUSerPosition()
     {
+        Firebase ref = Network.getAlluser;
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                int i = 0;
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                    User u = postSnapshot.getValue(User.class);
 
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            int i =0;
-            if(all!=null) {
-                for (User u : all) {
-                    if(u.getLongitude()!=null && u.getLatitude()!=null)
-                        if(u.getGender()!=null && u.getGender()==true)
-                            mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                              u.getLatitude(),u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(i)));
-                        else
-                            mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                    u.getLatitude(),u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(i)));
-                    i++;
+                    if(u.getLatitude()!= null && u.getLongitude() != null) {
+                        mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(i)));
+                        all_user.add(u);
+                        i++;
+                    }
+
                 }
+                init_infos_window();
             }
-            init_infos_window();
-        }
 
-    }*/
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
 
     public void init_infos_window()
     {
@@ -158,7 +151,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onInfoWindowClick(Marker marker) {
                 String r = marker.getId().substring(1);
-                User user = all.get(Integer.parseInt(r));
+                User user = all_user.get(Integer.parseInt(r));
                 Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
                 Bundle b = new Bundle();
                 b.putSerializable("User", user);
@@ -173,7 +166,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public View getInfoWindow(Marker arg0) {
                 int id = Integer.parseInt(arg0.getSnippet());
-                User u =  all.get(id);
+                User u =  all_user.get(id);
                 View v = getLayoutInflater().inflate(R.layout.info_window, null);
                 ImageView img = (ImageView) v.findViewById(R.id.user_image);
                 TextView name = (TextView) v.findViewById(R.id.user_name);

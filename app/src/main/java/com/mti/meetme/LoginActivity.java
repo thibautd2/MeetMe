@@ -6,7 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,17 +33,13 @@ import com.firebase.client.ValueEventListener;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
+import com.mti.meetme.Tools.Network;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.Locale;
 
 
 public class LoginActivity extends AppCompatActivity implements FacebookCallback<LoginResult>,
@@ -51,7 +50,7 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     CallbackManager callbackManager;
     String fb_token, fb_name, fb_img, fb_email, fb_birthday, fb_age_range, fb_gender;
     LoginButton loginButton;
-
+    Button map;
     //UI elements
     ImageView img_user;
     ProgressDialog progress;
@@ -66,13 +65,14 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.actionbar_custom_layout);
 
         //Firebase + Facebook initialization
         FacebookSdk.sdkInitialize(this);
         callbackManager = CallbackManager.Factory.create();
-        ref = new Firebase("https://intense-fire-5226.firebaseio.com/");
+        ref = Network.bdd_connexion;
 
         //UI handling
         setContentView(R.layout.activity_login);
@@ -87,6 +87,7 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     //Facebook login callbacks
     @Override
     public void onSuccess(LoginResult loginResult) {
+
         Progress(getString(R.string.progress_status_connect));
         getFacebookData(loginResult);
     }
@@ -120,7 +121,6 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -128,9 +128,7 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     {
         fb_token = result.getAccessToken().getToken();
         GraphRequest request = GraphRequest.newMeRequest(result.getAccessToken(), this);
-
         Bundle parameters = new Bundle();
-
         parameters.putString("fields", "id,picture.height(300),name,email,gender,birthday,age_range");
         request.setParameters(parameters);
         request.executeAsync();
@@ -147,7 +145,6 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
             e.printStackTrace();
         }
 
-
         fb_name = object.optString("name").split(" ")[0];
         fb_email = object.optString("email");
         fb_birthday = object.optString("birthday");
@@ -157,7 +154,6 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
 
         if (progress != null)
             progress.dismiss();
-
         onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());
     }
 
@@ -175,6 +171,9 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     @Override
     public void onAuthenticated(AuthData authData)
     {
+        if(progress!=null)
+            progress.dismiss();
+
         currentUser.setUid(authData.getUid());
         saveToFirebase(currentUser);
 
@@ -186,14 +185,15 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     }
     @Override
     public void onAuthenticationError(FirebaseError firebaseError) {
-        Toast.makeText(getApplicationContext(), firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
+        if(progress!=null)
+            progress.dismiss();
     }
 
     private void saveToFirebase(User user)
     {
-        Firebase ref = new Firebase("https://intense-fire-5226.firebaseio.com/");
+        Firebase ref = Network.getAlluser;
 
-        Firebase userRef = ref.child("users").child(user.getUid());
+        Firebase userRef = ref.child(user.getUid());
 
         userRef.setValue(user);
     }

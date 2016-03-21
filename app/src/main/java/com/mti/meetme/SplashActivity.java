@@ -17,6 +17,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.google.gson.Gson;
 import com.mti.meetme.Model.User;
+import com.mti.meetme.Tools.Network;
 import com.mti.meetme.controller.FacebookUser;
 
 import org.json.JSONObject;
@@ -34,7 +35,7 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
 
         FacebookSdk.sdkInitialize(this);
         Firebase.setAndroidContext(this);
-        ref = new Firebase("https://intense-fire-5226.firebaseio.com/");
+        ref = Network.bdd_connexion;
 
         onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());
     }
@@ -63,7 +64,7 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
 
     private void getUserFromFirebase(String Uid)
     {
-        Firebase ref = new Firebase("https://intense-fire-5226.firebaseio.com/users/" + Uid);
+        Firebase ref = Network.find_user(Uid);
         ref.addValueEventListener(this);
     }
 
