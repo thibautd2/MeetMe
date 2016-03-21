@@ -151,7 +151,7 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
         fb_email = object.optString("email");
         fb_birthday = object.optString("birthday");
         fb_gender = object.optString("gender");
-        currentUser = new User(fb_age_range, null, fb_name, fb_birthday, "Trololo", fb_email, fb_img, fb_gender);
+        currentUser = new User("21", fb_age_range, null, fb_name, fb_birthday, "Trololo", fb_email, fb_img, fb_gender);
         if (progress != null)
             progress.dismiss();
         onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());

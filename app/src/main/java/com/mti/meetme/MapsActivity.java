@@ -67,7 +67,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng pos = new LatLng(d[0], d[1]);
 
         FacebookUser.getInstance().setLatitude(pos.latitude);
-        FacebookUser.getInstance().setLongitude(pos.latitude);
+        FacebookUser.getInstance().setLongitude(pos.longitude);
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(d[0], d[1]), 17));
         sendPosition();
     }
@@ -92,7 +92,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onLocationChanged(Location location) {
-
+        GetCurrentLocation();
     }
 
     @Override
@@ -126,11 +126,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 int i = 0;
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     User u = postSnapshot.getValue(User.class);
-                    all_user.add(u);
-                    if(u.getLatitude()!= null && u.getLongitude() != null)
-                    mMap.addMarker(new MarkerOptions().position(new LatLng(
-                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(i)));
-                    i++;
+
+                    if(u.getLatitude()!= null && u.getLongitude() != null) {
+                        mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(i)));
+                        all_user.add(u);
+                        i++;
+                    }
+
                 }
                 init_infos_window();
             }
@@ -141,40 +144,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
-
-    /*public class GetAllUsersPosition extends AsyncTask<Void, Void, Void> // A MODIFIER UTILISER UN RAYON
-    {
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            int i =0;
-            if(all!=null) {
-                for (User u : all) {
-                    if(u.getLongitude()!=null && u.getLatitude()!=null)
-                        if(u.getGender()!=null && u.getGender()==true)
-                            mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                              u.getLatitude(),u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(i)));
-                        else
-                            mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                    u.getLatitude(),u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(i)));
-                    i++;
-                }
-            }
-            init_infos_window();
-        }
-
-    }*/
 
     public void init_infos_window()
     {
