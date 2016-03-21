@@ -16,6 +16,22 @@ public class User implements Serializable {
     @com.google.gson.annotations.SerializedName("Gender")
     private String Gender;
 
+    public Double getLongitude() {
+        return Longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        Longitude = longitude;
+    }
+
+    public Double getLatitude() {
+        return Latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        Latitude = latitude;
+    }
+
     @com.google.gson.annotations.SerializedName("Latitude")
     private Double Latitude;
 
@@ -33,6 +49,9 @@ public class User implements Serializable {
 
     @com.google.gson.annotations.SerializedName("AgeRange")
     private String AgeRange;
+
+    @com.google.gson.annotations.SerializedName("age")
+    private String Age;
 
     @com.google.gson.annotations.SerializedName("Description")
     private String Description;
@@ -66,6 +85,8 @@ public class User implements Serializable {
         Gender = gender;
         Email = email;
         AgeRange = ageRange;
+        Longitude = 0.0;
+        Latitude = 0.0;
     }
 
     public String getId() {
@@ -82,22 +103,6 @@ public class User implements Serializable {
 
     public void setGender(String gender) {
         Gender = gender;
-    }
-
-    public Double getLatitude() {
-        return Latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        Latitude = latitude;
-    }
-
-    public Double getLongitude() {
-        return Longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        Longitude = longitude;
     }
 
     public String getEmail() {

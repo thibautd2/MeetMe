@@ -40,7 +40,7 @@ import java.util.concurrent.ExecutionException;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,LocationListener {
 
     private GoogleMap mMap;
-    public MobileServiceList<User> all;
+    private ArrayList<User> all_user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +48,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        //new GetAllUsersPosition().execute();
+        all_user = new ArrayList<>();
     }
 
     @Override
@@ -58,13 +58,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(false);
         GetCurrentLocation();
+        getAllUSerPosition();
+        //GetCurrentLocation();
     }
 
     private void GetCurrentLocation() {
         double[] d = getlocation();
         LatLng pos = new LatLng(d[0], d[1]);
+
         FacebookUser.getInstance().setLatitude(pos.latitude);
-        FacebookUser.getInstance().setLongitude(pos.longitude);
+        FacebookUser.getInstance().setLongitude(pos.latitude);
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(d[0], d[1]), 17));
         sendPosition();
     }
@@ -110,8 +113,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void sendPosition()
     {
         Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
-        ref.child("Latitude").setValue(String.valueOf(FacebookUser.getInstance().getLatitude()));
-        ref.child("Longitude").setValue(String.valueOf(FacebookUser.getInstance().getLongitude()));
+        ref.child("latitude").setValue(String.valueOf(FacebookUser.getInstance().getLatitude()));
+        ref.child("longitude").setValue(String.valueOf(FacebookUser.getInstance().getLongitude()));
+    }
+
+    private void getAllUSerPosition()
+    {
+        Firebase ref = Network.getAlluser;
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                int i = 0;
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                    User u = postSnapshot.getValue(User.class);
+                    all_user.add(u);
+                    if(u.getLatitude()!= null && u.getLongitude() != null)
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(
+                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(i)));
+                    i++;
+                }
+                init_infos_window();
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
     }
 
     /*public class GetAllUsersPosition extends AsyncTask<Void, Void, Void> // A MODIFIER UTILISER UN RAYON
@@ -154,7 +182,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onInfoWindowClick(Marker marker) {
                 String r = marker.getId().substring(1);
-                User user = all.get(Integer.parseInt(r));
+                User user = all_user.get(Integer.parseInt(r));
                 Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
                 Bundle b = new Bundle();
                 b.putSerializable("User", user);
@@ -169,7 +197,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public View getInfoWindow(Marker arg0) {
                 int id = Integer.parseInt(arg0.getSnippet());
-                User u =  all.get(id);
+                User u =  all_user.get(id);
                 View v = getLayoutInflater().inflate(R.layout.info_window, null);
                 ImageView img = (ImageView) v.findViewById(R.id.user_image);
                 TextView name = (TextView) v.findViewById(R.id.user_name);

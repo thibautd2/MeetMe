@@ -9,12 +9,12 @@ import java.net.URI;
  */
 public class Network {
     static String URL = "https://intense-fire-5226.firebaseio.com/";
-    public static Firebase connexion_user = new Firebase(URL+"Users/");
+    public static Firebase connexion_to_user = new Firebase(URL+"users");
     public static Firebase bdd_connexion = new Firebase(URL);
-
+    public static Firebase getAlluser = connexion_to_user;
     public static  Firebase find_user(String Uid)
     {
-        return new Firebase(connexion_user+Uid);
+        return new Firebase(connexion_to_user+"/"+Uid);
     }
 
 }

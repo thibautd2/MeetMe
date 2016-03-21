@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,12 +43,11 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
                                                                 GraphRequest.GraphJSONObjectCallback,
                                                                 Firebase.AuthResultHandler
 {
-
     //Facebook stuff
     CallbackManager callbackManager;
     String fb_token, fb_name, fb_img, fb_email, fb_birthday, fb_age_range, fb_gender;
     LoginButton loginButton;
-
+    Button map;
     //UI elements
     ImageView img_user;
     ProgressDialog progress;
@@ -55,24 +56,26 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     //Current User
     User currentUser;
 
-    //Firebase unique reference
     Firebase ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.actionbar_custom_layout);
+
         //Firebase + Facebook initialization
         FacebookSdk.sdkInitialize(this);
         callbackManager = CallbackManager.Factory.create();
-        Firebase.setAndroidContext(this);
         ref = Network.bdd_connexion;
+
         //UI handling
+        setContentView(R.layout.activity_login);
         bindViews();
         populateViews();
-        setContentView(R.layout.activity_login);
-        //Firebase Auth handling
-        onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());
+
         //Facebook login handling (see method implementations)
         LoginManager.getInstance().registerCallback(callbackManager, this);
         loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_friends"));
@@ -81,8 +84,9 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     //Facebook login callbacks
     @Override
     public void onSuccess(LoginResult loginResult) {
-        getFacebookData(loginResult);
+
         Progress(getString(R.string.progress_status_connect));
+        getFacebookData(loginResult);
     }
 
     @Override
@@ -101,17 +105,21 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
         loginButton = (LoginButton) findViewById(R.id.login_button);
         title = (TextView) findViewById(R.id.ActionBarLoginTitle);
         loginButton = (LoginButton) findViewById(R.id.login_button);
+        map = (Button) findViewById(R.id.map);
     }
 
     private void populateViews()
     {
         title.setText(getResources().getText(R.string.app_name));
-
+        map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                startActivity(intent);
+            }
+        });
         img_user = (ImageView)findViewById(R.id.imageView);
         Picasso.with(getApplication()).load(R.drawable.chut).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
-
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(R.layout.actionbar_custom_layout);
     }
 
     @Override
@@ -143,55 +151,44 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
         fb_email = object.optString("email");
         fb_birthday = object.optString("birthday");
         fb_gender = object.optString("gender");
-        currentUser = new User(fb_age_range, fb_token, fb_name, fb_birthday, "", fb_email, fb_img, fb_gender);
-        FacebookUser.setFacebookUser(currentUser);
+        currentUser = new User(fb_age_range, null, fb_name, fb_birthday, "Trololo", fb_email, fb_img, fb_gender);
         if (progress != null)
             progress.dismiss();
-
-        saveToFirebase(currentUser);
+        onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());
     }
 
     private void onFacebookAccessTokenChange(AccessToken token) {
+        Progress(getString(R.string.progress_status_retrieving));
+
         if (token != null) {
             ref.authWithOAuthToken("facebook", token.getToken(), this);
         }
         else {
-            Toast.makeText(getApplicationContext(), "ta gueule corentin", Toast.LENGTH_SHORT).show();
             ref.unauth();
         }
     }
 
     @Override
-    public void onAuthenticated(AuthData authData) {
-        Toast.makeText(getApplicationContext(), "Auth success", Toast.LENGTH_SHORT).show();
+    public void onAuthenticated(AuthData authData)
+    {
+        if(progress!=null)
+            progress.dismiss();
+        currentUser.setUid(authData.getUid());
+        FacebookUser.setFacebookUser(currentUser);
+        saveToFirebase(currentUser);
+        Intent intent = new Intent(this, ProfileActivity.class);
+        startActivity(intent);
     }
     @Override
     public void onAuthenticationError(FirebaseError firebaseError) {
-        Toast.makeText(getApplicationContext(), "Auth error", Toast.LENGTH_SHORT).show();
-    }
-
-
-    private User getUserFromFirebase(String fbToken)
-    {
-      // Firebase ref = Network.find_user(Uid) ;
-
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot){
-            }
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                System.out.println("The read failed: " + firebaseError.getMessage());
-            }
-        });
-
-        return currentUser;
+        if(progress!=null)
+            progress.dismiss();
     }
 
     private void saveToFirebase(User user)
     {
-        Firebase ref = new Firebase("https://intense-fire-5226.firebaseio.com/");
-        Firebase userRef = ref.child("users").child(user.getName());
+        Firebase ref = Network.getAlluser;
+        Firebase userRef = ref.child(user.getUid());
         userRef.setValue(user);
     }
 
