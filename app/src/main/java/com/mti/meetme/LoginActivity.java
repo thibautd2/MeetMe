@@ -102,8 +102,6 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     public void onError(FacebookException exception) {
         Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
     }
-
-
     //UI Handling
     private void bindViews()
     {
@@ -115,7 +113,6 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     private void populateViews()
     {
         title.setText(getResources().getText(R.string.app_name));
-
         img_user = (ImageView)findViewById(R.id.imageView);
         Picasso.with(getApplication()).load(R.drawable.chut).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
     }
@@ -142,8 +139,6 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
         try {
             fb_img = object.getJSONObject("picture").getJSONObject("data").getString("url");
             fb_age_range = object.getJSONObject("age_range").getString("min");
-         //   JSONObject photosobject = object.getJSONObject("photos");
-
             Log.w("LIKES", response.getJSONObject().toString());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -157,10 +152,11 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
         if (progress != null)
             progress.dismiss();
         Bundle params = new Bundle();
-        params.putString("fields", "picture.width(500)");
+        params.putString("fields", "source,album");
+        String userphotos = fb_id +"/photos/uploaded";
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
-                "me/albums",
+                userphotos,
                 params,
                 HttpMethod.GET,
                 new GraphRequest.Callback() {
@@ -168,33 +164,29 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
                         JSONObject json = response.getJSONObject();
                         JSONArray jarray = null;
                         try {
+                            int i  = 0;
                             jarray = json.getJSONArray("data");
+                            while (i < jarray.length()) {
+                                JSONObject picture = null;
+                                picture = jarray.getJSONObject(i);
+                                String album_name = picture.getJSONObject("album").optString("name");
+                                if(album_name == "Profile Pictures") {
+                                   String url = picture.optString("url");
+                                    if(i == 2)
+                                        currentUser.setPic2(url);
+                                    if(i == 3)
+                                        currentUser.setPic3(url);
+                                    if(i == 4)
+                                        currentUser.setPic4(url);
+                                    if(i == 5)
+                                        currentUser.setPic5(url);
+                                }
+                                i++;
+                            }
+                            onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        int i = 0;
-                        while (i < jarray.length()) {
-                            JSONObject picure = null;
-                            try {
-                                picure = jarray.getJSONObject(i);
-                                if(i == 0)
-                                currentUser.setPic2(picure.getJSONObject("picture").getJSONObject("data").getString("url"));
-                                if(i == 1)
-                                    currentUser.setPic3(picure.getJSONObject("picture").getJSONObject("data").getString("url"));
-                                if(i == 2)
-                                    currentUser.setPic4(picure.getJSONObject("picture").getJSONObject("data").getString("url"));
-                                if(i == 3)
-                                    currentUser.setPic5(picure.getJSONObject("picture").getJSONObject("data").getString("url"));
-
-                                i++;
-                                if(i > 3)
-                                    break;
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            //get your values
-                        }
-                        onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());
                     }
                 }
         ).executeAsync();
