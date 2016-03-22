@@ -90,8 +90,8 @@ public class User implements Serializable {
         Gender = gender;
         Email = email;
         AgeRange = ageRange;
-        Longitude = 0.0;
-        Latitude = 0.0;
+      /*  Longitude = 0.0;
+        Latitude = 0.0;*/
     }
 
     public int convertBirthdayToAge()

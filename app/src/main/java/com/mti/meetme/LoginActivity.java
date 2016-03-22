@@ -170,17 +170,17 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
                                 JSONObject picture = null;
                                 picture = jarray.getJSONObject(i);
                                 String album_name = picture.getJSONObject("album").optString("name");
-                                if(album_name == "Profile Pictures") {
-                                   String url = picture.optString("url");
-                                    if(i == 2)
+                              //  if(album_name == "Profile Pictures") {
+                                   String url = picture.optString("source");
+                                    if(i == 0)
                                         currentUser.setPic2(url);
-                                    if(i == 3)
+                                    if(i == 1)
                                         currentUser.setPic3(url);
-                                    if(i == 4)
+                                    if(i == 2)
                                         currentUser.setPic4(url);
-                                    if(i == 5)
+                                    if(i == 3)
                                         currentUser.setPic5(url);
-                                }
+                               // }
                                 i++;
                             }
                             onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());
