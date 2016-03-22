@@ -156,12 +156,12 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
         currentUser = new User(fb_age_range, null, fb_name, fb_birthday, "Trololo", fb_email, fb_img, fb_gender);
         if (progress != null)
             progress.dismiss();
-         Bundle params = new Bundle();
+        Bundle params = new Bundle();
         params.putString("fields", "picture.width(500)");
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
                 "me/albums",
-                null,
+                params,
                 HttpMethod.GET,
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {

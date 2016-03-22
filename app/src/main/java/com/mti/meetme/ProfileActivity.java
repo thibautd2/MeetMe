@@ -56,8 +56,8 @@ public class ProfileActivity extends AppCompatActivity {
             currentUser = FacebookUser.getInstance();
         else
             currentUser = user;
-            if(currentUser.getPic2()!=null)
-            Picasso.with(this).load(currentUser.getPic2()).fit().centerCrop().into(profilePic);
+
+            Picasso.with(this).load(currentUser.getPic1()).fit().centerCrop().into(profilePic);
             nameTextView.setText(currentUser.getName() + ",");
             ageTextView.setText("" + currentUser.convertBirthdayToAge());
             likesTextView.setText(getString(R.string.likes_title));
