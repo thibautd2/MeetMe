@@ -36,9 +36,11 @@ import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.Tools.Network;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 
@@ -48,7 +50,7 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
 {
     //Facebook stuff
     CallbackManager callbackManager;
-    String fb_token, fb_name, fb_img, fb_email, fb_birthday, fb_age_range, fb_gender;
+    String fb_token, fb_name, fb_img, fb_email, fb_birthday, fb_age_range, fb_gender, fb_id;
     LoginButton loginButton;
     Button map;
     //UI elements
@@ -81,7 +83,7 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
 
         //Facebook login handling (see method implementations)
         LoginManager.getInstance().registerCallback(callbackManager, this);
-        loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_friends, user_likes"));
+        loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_friends, user_likes, user_photos"));
     }
 
     //Facebook login callbacks
@@ -140,19 +142,62 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
         try {
             fb_img = object.getJSONObject("picture").getJSONObject("data").getString("url");
             fb_age_range = object.getJSONObject("age_range").getString("min");
+         //   JSONObject photosobject = object.getJSONObject("photos");
+
             Log.w("LIKES", response.getJSONObject().toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         fb_name = object.optString("name").split(" ")[0];
         fb_email = object.optString("email");
         fb_birthday = object.optString("birthday");
         fb_gender = object.optString("gender");
+        fb_id = object.optString("id");
         currentUser = new User(fb_age_range, null, fb_name, fb_birthday, "Trololo", fb_email, fb_img, fb_gender);
         if (progress != null)
             progress.dismiss();
-        onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());
+         Bundle params = new Bundle();
+        params.putString("fields", "picture.width(500)");
+        new GraphRequest(
+                AccessToken.getCurrentAccessToken(),
+                "me/albums",
+                null,
+                HttpMethod.GET,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                        JSONObject json = response.getJSONObject();
+                        JSONArray jarray = null;
+                        try {
+                            jarray = json.getJSONArray("data");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        int i = 0;
+                        while (i < jarray.length()) {
+                            JSONObject picure = null;
+                            try {
+                                picure = jarray.getJSONObject(i);
+                                if(i == 0)
+                                currentUser.setPic2(picure.getJSONObject("picture").getJSONObject("data").getString("url"));
+                                if(i == 1)
+                                    currentUser.setPic3(picure.getJSONObject("picture").getJSONObject("data").getString("url"));
+                                if(i == 2)
+                                    currentUser.setPic4(picure.getJSONObject("picture").getJSONObject("data").getString("url"));
+                                if(i == 3)
+                                    currentUser.setPic5(picure.getJSONObject("picture").getJSONObject("data").getString("url"));
+
+                                i++;
+                                if(i > 3)
+                                    break;
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            //get your values
+                        }
+                        onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());
+                    }
+                }
+        ).executeAsync();
     }
 
     private void onFacebookAccessTokenChange(AccessToken token) {
@@ -177,9 +222,6 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
 
         getUserLikes();
         FacebookUser.setFacebookUser(currentUser);
-
-        Intent intent = new Intent(this, ProfileActivity.class);
-        startActivity(intent);
     }
     @Override
     public void onAuthenticationError(FirebaseError firebaseError) {
@@ -214,6 +256,8 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
                         currentUser.setLikes(response.getJSONObject());
+                        Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
+                        startActivity(intent);
                     }
                 }
         ).executeAsync();

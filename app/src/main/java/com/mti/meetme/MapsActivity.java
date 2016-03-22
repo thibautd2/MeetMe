@@ -1,15 +1,16 @@
 package com.mti.meetme;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Pair;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,7 +26,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.microsoft.windowsazure.mobileservices.MobileServiceList;
+//import com.microsoft.windowsazure.mobileservices.MobileServiceList;
 import com.mti.meetme.Tools.Network;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.Model.User;
@@ -35,7 +36,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,LocationListener {
 
@@ -57,9 +57,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(false);
-        GetCurrentLocation();
         getAllUSerPosition();
-
+        GetCurrentLocation();
     }
 
     private void GetCurrentLocation() {
@@ -91,6 +90,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onLocationChanged(Location location){
+
+        Log.e("POSITION CAHNGED", "POSITION CHANGED");
+
         FacebookUser.getInstance().setLatitude(location.getLatitude());
         FacebookUser.getInstance().setLongitude(location.getLongitude());
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17));
@@ -100,12 +102,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-
+        Log.e("STATUS CHANGED", "STATUS CHANGER");
     }
 
     @Override
     public void onProviderEnabled(String provider) {
-
+        Log.e("Provider ENABLE", "PROVIDER ENABLE");
+        GetCurrentLocation();
     }
 
     @Override
@@ -115,6 +118,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void sendPosition()
     {
+        Log.e("SEND NEW POSITION", "SEND NEW POSITION :"+ FacebookUser.getInstance().getLatitude().toString()+" "+FacebookUser.getInstance().getLongitude().toString());
         Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
         ref.child("latitude").setValue(String.valueOf(FacebookUser.getInstance().getLatitude()));
         ref.child("longitude").setValue(String.valueOf(FacebookUser.getInstance().getLongitude()));
@@ -147,16 +151,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void init_infos_window()
     {
+
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
                 String r = marker.getId().substring(1);
-                User user = all_user.get(Integer.parseInt(r));
-                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-                Bundle b = new Bundle();
-                b.putSerializable("User", user);
-                intent.putExtras(b);
-                startActivity(intent);
+                final User user = all_user.get(Integer.parseInt(r));
+                final Dialog dialog = new Dialog(MapsActivity.this);
+                dialog.setContentView(R.layout.user_pop_up);
+                dialog.setTitle(user.getName() + "  " + user.convertBirthdayToAge() + " ans " + "  75%");
+                ImageView image = (ImageView) dialog.findViewById(R.id.user_img);
+                Picasso.with(MapsActivity.this).load(user.getPic1()).fit().centerCrop().into(image);
+                TextView interessé = (TextView) dialog.findViewById(R.id.interessé);
+                TextView pasinteressé = (TextView) dialog.findViewById(R.id.pasinteressé);
+                interessé.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MapsActivity.this, ProfileActivity.class);
+                        Bundle b = new Bundle();
+                        b.putSerializable("User", user);
+                        intent.putExtras(b);
+                        startActivity(intent);
+                    }
+                });
+                pasinteressé.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
             }
         });
 

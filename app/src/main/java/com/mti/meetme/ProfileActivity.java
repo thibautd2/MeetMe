@@ -43,24 +43,25 @@ public class ProfileActivity extends AppCompatActivity {
     private void populateViews()
     {
         User currentUser;
+
         map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), MapsActivity.class);
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                 startActivity(intent);
             }
         });
+
         if(user == null)
             currentUser = FacebookUser.getInstance();
         else
             currentUser = user;
-            Picasso.with(this).load(currentUser.getPic1()).fit().centerCrop().into(profilePic);
+            if(currentUser.getPic2()!=null)
+            Picasso.with(this).load(currentUser.getPic2()).fit().centerCrop().into(profilePic);
             nameTextView.setText(currentUser.getName() + ",");
-            ageTextView.setText("" + currentUser.getAge());
+            ageTextView.setText("" + currentUser.convertBirthdayToAge());
             likesTextView.setText(getString(R.string.likes_title));
-
-
-        title.setText(R.string.profile_title);
+            title.setText(R.string.profile_title);
     }
 
     private void bindViews()

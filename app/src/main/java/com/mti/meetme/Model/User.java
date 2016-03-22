@@ -1,10 +1,11 @@
 package com.mti.meetme.Model;
 
+
 import com.google.android.gms.maps.model.LatLng;
-/*
+
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
-*/
+
 import org.json.JSONObject;
 
 import java.io.Serializable;
@@ -92,7 +93,20 @@ public class User implements Serializable {
         Longitude = 0.0;
         Latitude = 0.0;
     }
-    
+
+    public int convertBirthdayToAge()
+    {
+        if (Birthday != null) {
+            LocalDate birthdate = new LocalDate(Integer.parseInt(Birthday.split("/")[2]), //YYYY
+                                                Integer.parseInt(Birthday.split("/")[0]), //MM
+                                                Integer.parseInt(Birthday.split("/")[1])); //DD
+            LocalDate now = new LocalDate();
+
+            return Years.yearsBetween(birthdate, now).getYears();
+        }
+
+        return 0;
+    }
 
     public void setLikes(JSONObject likes) { this.Likes = likes; }
 
