@@ -40,15 +40,49 @@
         android:id="@+id/likes_textview"
         android:layout_below="@id/name_textview"
         android:textSize="15sp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="15dp"
         android:layout_marginTop="10dp"/>
 
-    <LinearLayout
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollLikes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/likes_textview"
+        android:animateLayoutChanges="true"
         android:layout_marginLeft="10dp"
-        />
+        android:layout_marginTop="5dp"
+        android:scrollbars="none">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/likes_layout"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/friends_textview"
+        android:layout_below="@id/horizontalScrollLikes"
+        android:textSize="15sp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"/>
+
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollFriends"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/friends_textview"
+        android:animateLayoutChanges="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:scrollbars="none">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/friends_layout"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
 
 
 </RelativeLayout>

@@ -12,4 +12,7 @@
     <!-- ProfileActivity -->
     <string name="profile_title">Profile</string>
     <string name="likes_title">Likes :</string>
+    <string name="likes_common_title">Mutual likes:</string>
+    <string name="friends_title">Friends :</string>
+    <string name="friends_common_title">Mutual friends:</string>
 </resources>

@@ -4,26 +4,49 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.mti.meetme.Model.User;
+import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class ProfileActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+
+public class ProfileActivity extends AppCompatActivity implements View.OnClickListener{
+
+    LinearLayout likesLayout;
+    LinearLayout friendsLayout;
 
     ImageView profilePic;
     TextView  nameTextView;
     TextView  title;
     TextView  ageTextView;
     TextView  likesTextView;
+    TextView  friendsTextView;
 
     Button map;
     User user;
+
+    private ArrayList<String> resultLikes;
+    private ArrayList<String> resultFriends;
+
+    private int idLikesCount = 0;
+    private int idFriendsCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,41 +60,287 @@ public class ProfileActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_profile);
         bindViews();
-        populateViews();
+
+        try {
+            populateViews();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void populateViews()
-    {
+    private void populateViews() throws JSONException {
         User currentUser;
 
-        map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                startActivity(intent);
-            }
-        });
+        map.setOnClickListener(this);
+        resultLikes = new ArrayList<>();
+        resultFriends = new ArrayList<>();
 
         if(user == null)
             currentUser = FacebookUser.getInstance();
-        else
-            currentUser = user;
+        else {
+            populateViewsOther();
+            return;
+        }
 
-            Picasso.with(this).load(currentUser.getPic1()).fit().centerCrop().into(profilePic);
-            nameTextView.setText(currentUser.getName() + ",");
-            ageTextView.setText("" + currentUser.convertBirthdayToAge());
-            likesTextView.setText(getString(R.string.likes_title));
-            title.setText(R.string.profile_title);
+        Picasso.with(this).load(currentUser.getPic1()).fit().centerCrop().into(profilePic);
+        nameTextView.setText(currentUser.getName() + ",");
+        ageTextView.setText("" + currentUser.convertBirthdayToAge());
+        likesTextView.setText(getString(R.string.likes_title));
+        friendsTextView.setText(getString(R.string.friends_title));
+        title.setText(R.string.profile_title);
+
+        getLikesPictures(currentUser.getLikes());
+        getFriendsPictures(currentUser.getFriends());
+    }
+
+    private void populateViewsOther() throws JSONException {
+
+        Picasso.with(this).load(user.getPic1()).fit().centerCrop().into(profilePic);
+        nameTextView.setText(user.getName() + ",");
+        ageTextView.setText("" + user.convertBirthdayToAge());
+        likesTextView.setText(getString(R.string.likes_common_title));
+        friendsTextView.setText(getString(R.string.friends_common_title));
+        title.setText(R.string.profile_title);
+
+        getUserFriends();
+        getUserLikes();
     }
 
     private void bindViews()
     {
+        map = (Button) findViewById(R.id.map);
+
         profilePic = (ImageView) findViewById(R.id.profile_pic);
         nameTextView = (TextView) findViewById(R.id.name_textview);
         title = (TextView) findViewById(R.id.ActionBarLoginTitle);
         ageTextView = (TextView) findViewById(R.id.age_textview);
         likesTextView = (TextView) findViewById(R.id.likes_textview);
-        map = (Button) findViewById(R.id.map);
+        friendsTextView = (TextView) findViewById(R.id.friends_textview);
+        likesLayout = (LinearLayout) findViewById(R.id.likes_layout);
+        friendsLayout = (LinearLayout) findViewById(R.id.friends_layout);
     }
 
+    @Override
+    public void onClick(View v)
+    {
+        if (v == map) {
+            Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    /*********************************************************************
+     *
+     *                  FRIENDS HANDLING
+     *
+     *********************************************************************/
+
+    private void getFriendsPictures(JSONObject friends) throws JSONException {
+
+        JSONArray friendsArray = friends.getJSONArray("data");
+        idFriendsCount = friendsArray.length();
+
+        ArrayList<String> friendsId = new ArrayList<String>();
+
+        for (int i = 0; i < friendsArray.length(); i++)
+        {
+            friendsId.add(friendsArray.getJSONObject(i).getString("id"));
+        }
+
+        getFriendsPicturesURL(friendsId);
+    }
+
+    private void getFriendsPicturesURL(final ArrayList<String> likesId)
+    {
+        for (int i = 0; i < likesId.size(); i++) {
+            Bundle params = new Bundle();
+            params.putBoolean("redirect", false);
+
+            new GraphRequest(
+                    AccessToken.getCurrentAccessToken(),
+                    "/" + likesId.get(i) + "/picture",
+                    params,
+                    HttpMethod.GET,
+                    new GraphRequest.Callback()
+                    {
+                        public void onCompleted(GraphResponse response) {
+                            try {
+                                resultFriends.add(response.getJSONObject().getJSONObject("data").getString("url"));
+
+                                if (resultFriends.size() == idFriendsCount)
+                                {
+                                    for (int i = 0; i < resultFriends.size(); i++)
+                                    {
+                                        ImageView newItem = new ImageView(ProfileActivity.this);
+                                        Picasso.with(ProfileActivity.this).load(resultFriends.get(i)).transform(new RoundedPicasso()).into(newItem);
+                                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params.width = 120;
+                                        params.height = 120;
+                                        params.setMargins(0, 0, 10, 0);
+
+                                        friendsLayout.addView(newItem, params);
+                                    }
+
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+            ).executeAsync();
+        }
+    }
+
+    private void getFriendsInCommonPictures(JSONObject friends) throws JSONException {
+
+        JSONArray friendsArray = friends.getJSONArray("data");
+
+        ArrayList<String> friendsId = new ArrayList<String>();
+        ArrayList<String> friendsIdCurrent = new ArrayList<String>();
+
+        for (int i = 0; i < friendsArray.length(); i++)
+        {
+            friendsId.add(friendsArray.getJSONObject(i).getString("id"));
+        }
+
+        for (int i = 0; i < FacebookUser.getInstance().getFriends().length(); i++)
+        {
+            friendsIdCurrent.add(FacebookUser.getInstance().getFriends().getJSONArray("data").getJSONObject(i).getString("id"));
+        }
+
+        friendsId.retainAll(friendsIdCurrent);
+
+        idFriendsCount = friendsId.size();
+        getFriendsPicturesURL(friendsId);
+    }
+
+    public void getUserFriends() {
+        new GraphRequest(
+                AccessToken.getCurrentAccessToken(),
+                "/" + user.getUid().split(":")[1] + "/friends",
+                null,
+                HttpMethod.GET,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                        user.setFriends(response.getJSONObject());
+                        try {
+                            getFriendsInCommonPictures(user.getFriends());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+        ).executeAsync();
+    }
+    /*********************************************************************
+     *
+     *                  LIKES HANDLING
+     *
+     *********************************************************************/
+
+    private void getLikesPictures(JSONObject likes) throws JSONException {
+
+        JSONArray likesArray = likes.getJSONArray("data");
+        idLikesCount = likesArray.length();
+
+        ArrayList<String> likesId = new ArrayList<String>();
+
+        for (int i = 0; i < likesArray.length(); i++)
+        {
+           likesId.add(likesArray.getJSONObject(i).getString("id"));
+        }
+
+        getLikesPicturesURL(likesId);
+    }
+
+    private void getLikesInCommonPictures(JSONObject likes) throws JSONException {
+
+        JSONArray likesArray = likes.getJSONArray("data");
+
+        ArrayList<String> likesId = new ArrayList<String>();
+        ArrayList<String> likesIdCurrent = new ArrayList<String>();
+
+        for (int i = 0; i < likesArray.length(); i++)
+        {
+            likesId.add(likesArray.getJSONObject(i).getString("id"));
+        }
+
+        for (int i = 0; i < FacebookUser.getInstance().getLikes().length(); i++)
+        {
+            likesIdCurrent.add(FacebookUser.getInstance().getLikes().getJSONArray("data").getJSONObject(i).getString("id"));
+        }
+
+        likesId.retainAll(likesIdCurrent);
+
+        idLikesCount = likesId.size();
+        getLikesPicturesURL(likesId);
+    }
+
+    private void getLikesPicturesURL(final ArrayList<String> likesId)
+    {
+        for (int i = 0; i < likesId.size(); i++) {
+            Bundle params = new Bundle();
+            params.putBoolean("redirect", false);
+
+            new GraphRequest(
+                    AccessToken.getCurrentAccessToken(),
+                    "/" + likesId.get(i) + "/picture",
+                    params,
+                    HttpMethod.GET,
+                    new GraphRequest.Callback()
+                    {
+                        public void onCompleted(GraphResponse response) {
+                            try {
+                                resultLikes.add(response.getJSONObject().getJSONObject("data").getString("url"));
+
+                                if (resultLikes.size() == idLikesCount)
+                                {
+                                    for (int i = 0; i < resultLikes.size(); i++)
+                                    {
+                                        ImageView newItem = new ImageView(ProfileActivity.this);
+                                        Picasso.with(ProfileActivity.this).load(resultLikes.get(i)).transform(new RoundedPicasso()).into(newItem);
+                                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params.width = 120;
+                                        params.height = 120;
+                                        params.setMargins(0, 0, 10, 0);
+
+                                        likesLayout.addView(newItem, params);
+                                    }
+
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+            ).executeAsync();
+        }
+    }
+
+    public void getUserLikes()
+    {
+        new GraphRequest(
+                AccessToken.getCurrentAccessToken(),
+                "/" + user.getUid().split(":")[1] + "/likes",
+                null,
+                HttpMethod.GET,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                        Log.i("Pagination", response.toString());
+                        user.setLikes(response.getJSONObject());
+                        try {
+                            getLikesInCommonPictures(user.getLikes());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+        ).executeAsync();
+    }
 }
