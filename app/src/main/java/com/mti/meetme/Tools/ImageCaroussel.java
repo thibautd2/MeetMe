@@ -57,22 +57,42 @@ public class ImageCaroussel extends Fragment {
         t3 = (TextView) view.findViewById(R.id.r3);
         t4 = (TextView) view.findViewById(R.id.r4);
         t5 = (TextView) view.findViewById(R.id.r5);
-
+        inti_alpha();
         switch (count)
         {
-            case 0:
-                t1.setVisibility(View.VISIBLE);
-                break;
             case 1:
-                t2.setVisibility(View.VISIBLE);
+                t1.setVisibility(View.VISIBLE);
+                t2.setVisibility(View.GONE);
+                t3.setVisibility(View.GONE);
+                t4.setVisibility(View.GONE);
+                t5.setVisibility(View.GONE);
                 break;
             case 2:
-                t3.setVisibility(View.VISIBLE);
+                t1.setVisibility(View.VISIBLE);
+                t2.setVisibility(View.VISIBLE);
+                t3.setVisibility(View.GONE);
+                t4.setVisibility(View.GONE);
+                t5.setVisibility(View.GONE);
                 break;
             case 3:
-                t4.setVisibility(View.VISIBLE);
+                t1.setVisibility(View.VISIBLE);
+                t2.setVisibility(View.VISIBLE);
+                t3.setVisibility(View.VISIBLE);
+                t4.setVisibility(View.GONE);
+                t5.setVisibility(View.GONE);
                 break;
             case 4:
+                t1.setVisibility(View.VISIBLE);
+                t2.setVisibility(View.VISIBLE);
+                t3.setVisibility(View.VISIBLE);
+                t4.setVisibility(View.VISIBLE);
+                t5.setVisibility(View.GONE);
+                break;
+            case 5:
+                t1.setVisibility(View.VISIBLE);
+                t2.setVisibility(View.VISIBLE);
+                t3.setVisibility(View.VISIBLE);
+                t4.setVisibility(View.VISIBLE);
                 t5.setVisibility(View.VISIBLE);
                 break;
 
@@ -97,9 +117,21 @@ public class ImageCaroussel extends Fragment {
                 Picasso.with(getActivity()).load(user.getPic4()).fit().centerCrop().into(img);
                 t4.setAlpha(1.f);
                 break;
+            case 4:
+                Picasso.with(getActivity()).load(user.getPic5()).fit().centerCrop().into(img);
+                t5.setAlpha(1.f);
+                break;
         }
             return view;
         }
+    public void inti_alpha()
+    {
+        t1.setAlpha(0.6f);
+        t2.setAlpha(0.6f);
+        t3.setAlpha(0.6f);
+        t4.setAlpha(0.6f);
+        t5.setAlpha(0.6f);
 
+    }
 }
 

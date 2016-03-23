@@ -107,7 +107,7 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
 
     private void populateViews()
     {
-        title.setText(getResources().getText(R.string.app_name));
+//        title.setText(getResources().getText(R.string.app_name));
         img_user = (ImageView)findViewById(R.id.imageView);
         Picasso.with(getApplication()).load(R.drawable.chut).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
     }
