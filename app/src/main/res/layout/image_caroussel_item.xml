@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/item_image"
+            android:layout_gravity="center_horizontal"
+            android:background="#090909"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="0dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="."
+                android:id="@+id/r1"
+                android:layout_gravity="center_horizontal"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="40dp"
+                android:textColor="#ffffff"
+                android:textSize="60dp"
+                android:layout_marginRight="5dp"
+                android:alpha="0.6"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="."
+                android:id="@+id/r2"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#ffffff"
+                android:textSize="60dp"
+                android:layout_alignBottom="@+id/r1"
+                android:layout_toEndOf="@+id/r1"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:visibility="visible"
+                android:alpha="0.6"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="."
+                android:id="@+id/r3"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#ffffff"
+                android:textSize="60dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_alignBottom="@+id/r2"
+                android:layout_toEndOf="@+id/r2"
+                android:visibility="visible"
+                android:alpha="0.6"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="."
+                android:id="@+id/r4"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#ffffff"
+                android:textSize="60dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_alignBottom="@+id/r3"
+                android:layout_toEndOf="@+id/r3"
+                android:visibility="visible"
+                android:alpha="0.6"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="."
+                android:id="@+id/r5"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#ffffff"
+                android:textSize="60dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_alignBottom="@+id/r4"
+                android:layout_toEndOf="@+id/r4"
+                android:visibility="visible"
+                android:alpha="0.6"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </RelativeLayout>
+</LinearLayout>

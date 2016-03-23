@@ -1,8 +1,13 @@
 package com.mti.meetme.Model;
 
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.JodaTimePermission;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
 
@@ -78,6 +83,7 @@ public class User implements Serializable {
     private String Pic5;
 
     private JSONObject Likes;
+    private JSONObject Friends;
 
     public User() {}
 
@@ -96,17 +102,30 @@ public class User implements Serializable {
 
     public int convertBirthdayToAge()
     {
-        if (Birthday != null) {
-            LocalDate birthdate = new LocalDate(Integer.parseInt(Birthday.split("/")[2]), //YYYY
-                                                Integer.parseInt(Birthday.split("/")[0]), //MM
-                                                Integer.parseInt(Birthday.split("/")[1])); //DD
-            LocalDate now = new LocalDate();
+        if (Birthday != null && !Birthday.isEmpty()) {
+            try {
+                LocalDate birthdate = new LocalDate(Integer.parseInt(Birthday.split("/")[2]), //YYYY
+                        Integer.parseInt(Birthday.split("/")[0]), //MM
+                        Integer.parseInt(Birthday.split("/")[1])); //DD
+                LocalDate now = new LocalDate();
 
-            return Years.yearsBetween(birthdate, now).getYears();
+                return Years.yearsBetween(birthdate, now).getYears();
+            }
+            catch (NoClassDefFoundError e)
+            {
+                return 54;
+            }
         }
 
-        return 0;
+        Log.i("AGE", "Returning Range");
+        return Integer.parseInt(AgeRange);
     }
+
+    public JSONObject getFriends() { return Friends; }
+
+    public void setFriends(JSONObject friends) { this.Friends = friends; }
+
+    public JSONObject getLikes() { return Likes; }
 
     public void setLikes(JSONObject likes) { this.Likes = likes; }
 

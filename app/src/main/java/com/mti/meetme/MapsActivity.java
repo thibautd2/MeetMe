@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 //import com.microsoft.windowsazure.mobileservices.MobileServiceList;
+import com.mti.meetme.Tools.CarousselPager;
 import com.mti.meetme.Tools.Network;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.Model.User;
@@ -45,6 +46,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private ArrayList<User> all_user;
+    public static CarousselPager mpager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,8 +140,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     User u = postSnapshot.getValue(User.class);
                     if(u.getLatitude()!= null && u.getLongitude() != null) {
+                        if(u.getGender().compareTo("male")==0)
                         mMap.addMarker(new MarkerOptions().position(new LatLng(
                                 u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(i)));
+                        else
+                            mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                    u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(i)));
+
                         all_user.add(u);
                         i++;
                     }
@@ -155,7 +162,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void init_infos_window()
     {
-
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
@@ -163,7 +169,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 final User user = all_user.get(Integer.parseInt(r));
                 final Dialog dialog = new Dialog(MapsActivity.this);
                 dialog.setContentView(R.layout.user_pop_up);
-                dialog.setTitle(user.getName() + "  " + user.convertBirthdayToAge() + " ans " + "  75%");
+                dialog.setTitle(user.getName()+"  "+user.convertBirthdayToAge() +" ans");
                 ImageView image = (ImageView) dialog.findViewById(R.id.user_img);
                 Picasso.with(MapsActivity.this).load(user.getPic1()).fit().centerCrop().into(image);
                 TextView interessé = (TextView) dialog.findViewById(R.id.interessé);
