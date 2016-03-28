@@ -105,7 +105,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         sendPosition();
     }
 
+    private GoogleMap.OnMyLocationChangeListener myLocationChangeListener = new GoogleMap.OnMyLocationChangeListener() {
+        @Override
+        public void onMyLocationChange(Location location) {
+            LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
+            Log.e("POSITION CAHNGED", "POSITION CHANGED");
 
+        }
+    };
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         Log.e("STATUS CHANGED", "STATUS CHANGER");
@@ -184,6 +191,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         startActivity(intent);
                     }
                 });
+
                 pasinteressé.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

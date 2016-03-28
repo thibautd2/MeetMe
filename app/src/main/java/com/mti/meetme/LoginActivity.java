@@ -1,6 +1,7 @@
 package com.mti.meetme;
 
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -45,7 +46,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-public class LoginActivity extends AppCompatActivity implements FacebookCallback<LoginResult>,
+public class LoginActivity extends Activity implements FacebookCallback<LoginResult>,
                                                                 GraphRequest.GraphJSONObjectCallback,
                                                                 Firebase.AuthResultHandler
 {
