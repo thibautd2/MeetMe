@@ -66,8 +66,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(false);
         mMap.clear();
-        getAllUSerPosition();
         GetCurrentLocation();
+        getAllUSerPosition();
+
     }
 
     private void GetCurrentLocation() {
@@ -148,16 +149,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void getAllUSerPosition()
     {
         Firebase ref = Network.getAlluser;
+        User ud =  FacebookUser.getInstance();
+       // final String currentuser_id = FacebookUser.getInstance().getId();
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 int i = 0;
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     User u = postSnapshot.getValue(User.class);
-                    if(u.getLatitude()!= null && u.getLongitude() != null) {
-                        if(u.getGender().compareTo("male")==0)
-                        mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(i)));
+
+                    if (u.getLatitude() != null && u.getLongitude() != null )//&& u.getId().compareTo(currentuser_id)==0) {
+                    {    if (u.getGender().compareTo("male") == 0)
+                            mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                    u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(i)));
                         else
                             mMap.addMarker(new MarkerOptions().position(new LatLng(
                                     u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(i)));
@@ -168,6 +172,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 init_infos_window();
             }
+
             @Override
             public void onCancelled(FirebaseError firebaseError) {
 
@@ -184,7 +189,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 final User user = all_user.get(Integer.parseInt(r));
                 final Dialog dialog = new Dialog(MapsActivity.this);
                 dialog.setContentView(R.layout.user_pop_up);
-                dialog.setTitle(user.getName()+"  "+user.convertBirthdayToAge() +" ans");
+                int age = user.convertBirthdayToAge();
+                dialog.setTitle(user.getName()+"  "+age+" ans");
                 ImageView image = (ImageView) dialog.findViewById(R.id.user_img);
                 Picasso.with(MapsActivity.this).load(user.getPic1()).fit().centerCrop().into(image);
                 TextView interessé = (TextView) dialog.findViewById(R.id.interessé);
@@ -221,7 +227,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 ImageView img = (ImageView) v.findViewById(R.id.user_image);
                 TextView name = (TextView) v.findViewById(R.id.user_name);
                 TextView age = (TextView) v.findViewById(R.id.user_age);
+                TextView distance = (TextView) v.findViewById(R.id.distance);
+                String dist = String.valueOf((int)getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(u.getLatitude(), u.getLongitude())));
+
+                distance.setText(dist +" m");
                 name.setText(u.getName());
+                age.setText(String.valueOf(u.convertBirthdayToAge()));
                 if (not_first_time_showing_info_window)
                 {
                     Picasso.with(MapsActivity.this)
@@ -246,6 +257,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         };
         mMap.setInfoWindowAdapter(adapt);
     }
+
+    public static double getDistance(LatLng oldPos, LatLng newPos) {
+        double lat1 = oldPos.latitude;
+        double lng1 = oldPos.longitude;
+        double lat2 = newPos.latitude;
+        double lng2 = newPos.longitude;
+        double earthRadius = 3958.75;
+        double dLat = Math.toRadians(lat2-lat1);
+        double dLng = Math.toRadians(lng2-lng1);
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(dLng/2) * Math.sin(dLng/2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        double dist = earthRadius * c;
+        int meterConversion = 1609;
+        return Double.valueOf(dist * meterConversion);
+    }
+
+
     private class InfoWindowRefresher implements Callback {
         private Marker markerToRefresh;
 
