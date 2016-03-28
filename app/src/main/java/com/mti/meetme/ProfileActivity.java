@@ -1,16 +1,22 @@
 package com.mti.meetme;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.menu.MenuView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
@@ -29,7 +35,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 
-public class ProfileActivity extends FragmentActivity implements View.OnClickListener{
+public class ProfileActivity extends ActionBarActivity{
 
     LinearLayout likesLayout;
     LinearLayout friendsLayout;
@@ -41,7 +47,6 @@ public class ProfileActivity extends FragmentActivity implements View.OnClickLis
     TextView  likesTextView;
     TextView  friendsTextView;
 
-    Button map;
     User user;
     User currentUser;
     private ArrayList<String> resultLikes;
@@ -66,8 +71,38 @@ public class ProfileActivity extends FragmentActivity implements View.OnClickLis
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_profile, menu);
+        super.onCreateOptionsMenu(menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_maps:
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.menu_settings:
+                displaySettings(false);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void displaySettings(boolean visible) {
+        MenuView.ItemView item = (MenuView.ItemView) findViewById(R.id.menu_settings);
+
+        if (visible)
+            item.getItemData().setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        else
+            item.getItemData().setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+    }
+
     private void populateViews() throws JSONException {
-        map.setOnClickListener(this);
         resultLikes = new ArrayList<>();
         resultFriends = new ArrayList<>();
 
@@ -110,7 +145,6 @@ public class ProfileActivity extends FragmentActivity implements View.OnClickLis
 
     private void bindViews()
     {
-        map = (Button) findViewById(R.id.map2);
         nameTextView = (TextView) findViewById(R.id.name_textview);
         title = (TextView) findViewById(R.id.ActionBarLoginTitle);
         ageTextView = (TextView) findViewById(R.id.age_textview);
@@ -119,15 +153,6 @@ public class ProfileActivity extends FragmentActivity implements View.OnClickLis
         likesLayout = (LinearLayout) findViewById(R.id.likes_layout);
         friendsLayout = (LinearLayout) findViewById(R.id.friends_layout);
         pager = (ViewPager) findViewById(R.id.user_img);
-    }
-
-    @Override
-    public void onClick(View v)
-    {
-        if (v == map) {
-            Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-            startActivity(intent);
-        }
     }
 
     /*********************************************************************
@@ -182,7 +207,6 @@ public class ProfileActivity extends FragmentActivity implements View.OnClickLis
                                         friendsLayout.addView(newItem, params);
                                     }
                                 }
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
