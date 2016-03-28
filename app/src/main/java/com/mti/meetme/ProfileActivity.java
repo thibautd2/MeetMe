@@ -56,8 +56,6 @@ public class ProfileActivity extends FragmentActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         user = (User) getIntent().getSerializableExtra("User");
-
-
         bindViews();
 
         try {
@@ -180,9 +178,7 @@ public class ProfileActivity extends FragmentActivity implements View.OnClickLis
                                         params.setMargins(10, 0, 10, 0);
                                         friendsLayout.addView(newItem, params);
                                     }
-
                                 }
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

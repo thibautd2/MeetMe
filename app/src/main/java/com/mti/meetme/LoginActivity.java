@@ -247,11 +247,12 @@ public class LoginActivity extends Activity implements FacebookCallback<LoginRes
                             int i  = 0;
                             int nbr = 0;
                             jarray = json.getJSONArray("data");
-                            while (i < jarray.length() && nbr < 4) {
+                            while (i < jarray.length())// && nbr < 4)
+                             {
                                 JSONObject picture = null;
                                 picture = jarray.getJSONObject(i);
                                 String album_name = picture.getJSONObject("album").optString("name");
-                                if (album_name == "Profile Pictures") {
+                              //  if (album_name == "Profile Pictures") {
                                     String url = picture.optString("source");
                                     if (nbr == 0)
                                         currentUser.setPic2(url);
@@ -261,12 +262,12 @@ public class LoginActivity extends Activity implements FacebookCallback<LoginRes
                                         currentUser.setPic4(url);
                                     if (nbr == 3)
                                         currentUser.setPic5(url);
-                                  nbr++;
-                                }
+                          //        nbr++;
                                 i++;
-                            }
+                                }
                             onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());
-                        } catch (JSONException e) {
+                            }
+                        catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
