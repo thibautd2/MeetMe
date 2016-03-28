@@ -21,8 +21,6 @@ import java.sql.Date;
  */
 public class User implements Serializable {
 
-    @com.google.gson.annotations.SerializedName("Id")
-    private String id;
 
     @com.google.gson.annotations.SerializedName("Gender")
     private String Gender;
@@ -96,8 +94,8 @@ public class User implements Serializable {
         Gender = gender;
         Email = email;
         AgeRange = ageRange;
-      /*  Longitude = 0.0;
-        Latitude = 0.0;*/
+       Longitude = null;
+        Latitude = null;
     }
 
     public int convertBirthdayToAge()
@@ -113,7 +111,7 @@ public class User implements Serializable {
             }
             catch (NoClassDefFoundError e)
             {
-                return 54;
+                return 23;
             }
         }
 
@@ -129,13 +127,6 @@ public class User implements Serializable {
 
     public void setLikes(JSONObject likes) { this.Likes = likes; }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getGender() {
         return Gender;

@@ -87,6 +87,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         GetCurrentLocation();
         getAllUSerPosition();
 
+
     }
 
     private void GetCurrentLocation() {
@@ -167,16 +168,17 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     private void getAllUSerPosition()
     {
         Firebase ref = Network.getAlluser;
-        User ud =  FacebookUser.getInstance();
-       // final String currentuser_id = FacebookUser.getInstance().getId();
+        final String currentuser_id = FacebookUser.getInstance().getUid();
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                mMap.clear();
+                all_user.clear();
                 int i = 0;
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     User u = postSnapshot.getValue(User.class);
 
-                    if (u.getLatitude() != null && u.getLongitude() != null )//&& u.getId().compareTo(currentuser_id)==0) {
+                    if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(currentuser_id)!=0)
                     {    if (u.getGender().compareTo("male") == 0)
                             mMap.addMarker(new MarkerOptions().position(new LatLng(
                                     u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(i)));
@@ -247,7 +249,6 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 TextView age = (TextView) v.findViewById(R.id.user_age);
                 TextView distance = (TextView) v.findViewById(R.id.distance);
                 String dist = String.valueOf((int)getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(u.getLatitude(), u.getLongitude())));
-
                 distance.setText(dist +" m");
                 name.setText(u.getName());
                 age.setText(String.valueOf(u.convertBirthdayToAge()));
