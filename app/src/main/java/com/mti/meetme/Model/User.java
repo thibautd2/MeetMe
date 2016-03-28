@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
 
 /**
  * Created by thiba_000 on 26/02/2016.
@@ -83,6 +84,8 @@ public class User implements Serializable {
     private JSONObject Likes;
     private JSONObject Friends;
 
+    private ArrayList<String> LikesURL;
+
     public User() {}
 
     public User(String ageRange, String uid, String name, String birthday, String description, String email, String pic1, String gender) {
@@ -117,6 +120,14 @@ public class User implements Serializable {
 
         Log.i("AGE", "Returning Range");
         return Integer.parseInt(AgeRange);
+    }
+
+    public ArrayList<String> getLikesURL() {
+        return LikesURL;
+    }
+
+    public void setLikesURL(ArrayList<String> likesURL) {
+        LikesURL = likesURL;
     }
 
     public JSONObject getFriends() { return Friends; }

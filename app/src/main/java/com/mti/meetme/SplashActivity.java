@@ -6,10 +6,12 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
+import com.facebook.GraphRequestAsyncTask;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.firebase.client.AuthData;
@@ -18,13 +20,21 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.mti.meetme.Model.User;
+import com.mti.meetme.Tools.FacebookHandler;
 import com.mti.meetme.Tools.Network;
 import com.mti.meetme.controller.FacebookUser;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class SplashActivity extends Activity implements Firebase.AuthResultHandler, ValueEventListener {
 
     Firebase ref;
     User currentUser;
+
+    private JSONObject fullLikes;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +84,7 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
             FacebookUser.setFacebookUser(currentUser);
 
             getUserFriends();
-            getUserLikes();
+            getUserLikes("");
         }
         else
         {
@@ -88,22 +98,52 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
         System.out.println("The read failed: " + firebaseError.getMessage());
     }
 
-    public void getUserLikes()
+    public void getUserLikes(String next)
     {
-        new GraphRequest(
+        GraphRequest request = new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
                 "/me/likes",
                 null,
                 HttpMethod.GET,
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
-                        FacebookUser.getInstance().setLikes(response.getJSONObject());
+                        try {
+                            if (fullLikes == null)
+                                fullLikes = response.getJSONObject();
+                            else {
+                                JSONArray array = response.getJSONObject().getJSONArray("data");
 
-                        Intent intent = new Intent(SplashActivity.this, ProfileActivity.class);
-                        startActivity(intent);
+                                for (int i = 0; i < array.length(); i++)
+                                    fullLikes.getJSONArray("data").put(response.getJSONObject().getJSONArray("data").get(i));
+
+                            }
+
+                            if (!response.getJSONObject().getJSONObject("paging").isNull("next"))
+                                 getUserLikes(response.getJSONObject().getJSONObject("paging").getJSONObject("cursors").getString("after"));
+                            else {
+                                FacebookUser.getInstance().setLikes(fullLikes);
+
+                                Intent intent = new Intent(SplashActivity.this, ProfileActivity.class);
+                                startActivity(intent);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-        ).executeAsync();
+        );
+
+        if (next == null)
+        {
+            request.executeAsync();
+        }
+        else {
+            Bundle parameters = new Bundle();
+            parameters.putString("after", next);
+            request.setParameters(parameters);
+            request.executeAsync();
+        }
     }
 
     public void getUserFriends()
@@ -115,6 +155,7 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
                 HttpMethod.GET,
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
+                        Log.i("Friends Request", response.toString());
                         FacebookUser.getInstance().setFriends(response.getJSONObject());
                     }
                 }

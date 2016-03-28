@@ -6,12 +6,7 @@
         android:icon="@drawable/ic_profile"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/menu_about"
-        android:icon="@drawable/ic_action_settings"
-        app:showAsAction="ifRoom"
-        android:title="menu_settings"/>
-    <item
-        android:id="@+id/menu_settings"
+        android:id="@+id/menu_plus"
         android:icon="@drawable/ic_action_settings"
         app:showAsAction="never"
         android:title="menu_settings2"/>

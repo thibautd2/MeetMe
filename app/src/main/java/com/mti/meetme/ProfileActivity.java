@@ -1,18 +1,22 @@
 package com.mti.meetme;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.menu.MenuView;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
@@ -57,6 +61,7 @@ public class ProfileActivity extends ActionBarActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         user = (User) getIntent().getSerializableExtra("User");
+
         bindViews();
 
         try {
@@ -81,18 +86,27 @@ public class ProfileActivity extends ActionBarActivity{
                 startActivity(intent);
                 return true;
             case R.id.menu_settings:
-                // Comportement du bouton "Paramètres"
+                displaySettings(false);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    public void displaySettings(boolean visible) {
+        MenuView.ItemView item = (MenuView.ItemView) findViewById(R.id.menu_settings);
+
+        if (visible)
+            item.getItemData().setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        else
+            item.getItemData().setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+    }
+
     private void populateViews() throws JSONException {
         resultLikes = new ArrayList<>();
         resultFriends = new ArrayList<>();
 
-        if(user == null)
+        if (user == null)
             currentUser = FacebookUser.getInstance();
         else {
             populateViewsOther();
@@ -113,6 +127,7 @@ public class ProfileActivity extends ActionBarActivity{
         getLikesPictures(currentUser.getLikes());
         getFriendsPictures(currentUser.getFriends());
     }
+
 
     private void populateViewsOther() throws JSONException {
 
@@ -183,6 +198,7 @@ public class ProfileActivity extends ActionBarActivity{
                                     for (int i = 0; i < resultFriends.size(); i++)
                                     {
                                         ImageView newItem = new ImageView(ProfileActivity.this);
+
                                         Picasso.with(ProfileActivity.this).load(resultFriends.get(i)).transform(new RoundedPicasso()).into(newItem);
                                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                                         params.height = friendsLayout.getHeight();
@@ -306,12 +322,15 @@ public class ProfileActivity extends ActionBarActivity{
                                 {
                                     for (int i = 0; i < resultLikes.size(); i++)
                                     {
+                                        Log.i("URL GOOD", resultLikes.get(i));
                                         ImageView newItem = new ImageView(ProfileActivity.this);
                                         Picasso.with(ProfileActivity.this).load(resultLikes.get(i)).transform(new RoundedPicasso()).into(newItem);
+
                                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                                         params.height = likesLayout.getHeight();
                                         params.width = params.height;
                                         params.setMargins(10, 0, 10, 0);
+
                                         likesLayout.addView(newItem, params);
                                     }
 

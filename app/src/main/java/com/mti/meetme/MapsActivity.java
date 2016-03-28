@@ -209,9 +209,11 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 final User user = all_user.get(Integer.parseInt(r));
                 final Dialog dialog = new Dialog(MapsActivity.this);
                 dialog.setContentView(R.layout.user_pop_up);
+
                 int age = user.convertBirthdayToAge();
                 dialog.setTitle(user.getName()+"  "+age+" ans");
-                ImageView image = (ImageView) dialog.findViewById(R.id.user_img);
+                ImageView image = (ImageView) dialog.findViewById(R.id.user_img2);
+
                 Picasso.with(MapsActivity.this).load(user.getPic1()).fit().centerCrop().into(image);
                 TextView interessé = (TextView) dialog.findViewById(R.id.interessé);
                 TextView pasinteressé = (TextView) dialog.findViewById(R.id.pasinteressé);
@@ -244,6 +246,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 int id = Integer.parseInt(arg0.getSnippet());
                 User u =  all_user.get(id);
                 View v = getLayoutInflater().inflate(R.layout.info_window, null);
+
                 ImageView img = (ImageView) v.findViewById(R.id.user_image);
                 TextView name = (TextView) v.findViewById(R.id.user_name);
                 TextView age = (TextView) v.findViewById(R.id.user_age);

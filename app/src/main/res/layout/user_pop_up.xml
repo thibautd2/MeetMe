@@ -8,7 +8,7 @@
         android:layout_height="wrap_content">
         <ImageView
             xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/user_img"
+            android:id="@+id/user_img2"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             />
@@ -19,7 +19,7 @@
             android:text="Cherche à faire des rencontres"
             android:id="@+id/user_informations"
             android:gravity="center"
-            android:layout_below="@+id/user_img"
+            android:layout_below="@+id/user_img2"
             android:layout_alignParentStart="true" />
 
     </RelativeLayout>
@@ -46,7 +46,6 @@
             android:layout_marginRight="10dp" />
 
         <TextView
-
             android:layout_height="50dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="X"
