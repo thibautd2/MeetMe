@@ -244,21 +244,24 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
                         JSONArray jarray = null;
                         try {
                             int i  = 0;
+                            int nbr = 0;
                             jarray = json.getJSONArray("data");
-                            while (i < jarray.length()) {
+                            while (i < jarray.length() && nbr < 4) {
                                 JSONObject picture = null;
                                 picture = jarray.getJSONObject(i);
                                 String album_name = picture.getJSONObject("album").optString("name");
-                                //  if(album_name == "Profile Pictures") {
-                                String url = picture.optString("source");
-                                if(i == 0)
-                                    currentUser.setPic2(url);
-                                if(i == 1)
-                                    currentUser.setPic3(url);
-                                if(i == 2)
-                                    currentUser.setPic4(url);
-                                if(i == 3)
-                                    currentUser.setPic5(url);
+                                if (album_name == "Profile Pictures") {
+                                    String url = picture.optString("source");
+                                    if (nbr == 0)
+                                        currentUser.setPic2(url);
+                                    if (nbr == 1)
+                                        currentUser.setPic3(url);
+                                    if (nbr == 2)
+                                        currentUser.setPic4(url);
+                                    if (nbr == 3)
+                                        currentUser.setPic5(url);
+                                  nbr++;
+                                }
                                 i++;
                             }
                             onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());

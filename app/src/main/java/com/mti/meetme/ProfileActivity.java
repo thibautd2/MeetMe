@@ -177,7 +177,7 @@ public class ProfileActivity extends FragmentActivity implements View.OnClickLis
                                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                                         params.height = friendsLayout.getHeight();
                                         params.width = params.height;
-                                        params.setMargins(0, 0, 10, 0);
+                                        params.setMargins(10, 0, 10, 0);
                                         friendsLayout.addView(newItem, params);
                                     }
 
@@ -251,7 +251,6 @@ public class ProfileActivity extends FragmentActivity implements View.OnClickLis
         {
            likesId.add(likesArray.getJSONObject(i).getString("id"));
         }
-
         getLikesPicturesURL(likesId);
     }
 
@@ -304,7 +303,7 @@ public class ProfileActivity extends FragmentActivity implements View.OnClickLis
                                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                                         params.height = likesLayout.getHeight();
                                         params.width = params.height;
-                                        params.setMargins(0, 0, 10, 0);
+                                        params.setMargins(10, 0, 10, 0);
                                         likesLayout.addView(newItem, params);
                                     }
 
