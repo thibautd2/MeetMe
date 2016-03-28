@@ -57,7 +57,6 @@ public class ProfileActivity extends FragmentActivity implements View.OnClickLis
         setContentView(R.layout.activity_profile);
         user = (User) getIntent().getSerializableExtra("User");
 
-
         bindViews();
 
         try {
@@ -72,7 +71,7 @@ public class ProfileActivity extends FragmentActivity implements View.OnClickLis
         resultLikes = new ArrayList<>();
         resultFriends = new ArrayList<>();
 
-        if(user == null)
+        if (user == null)
             currentUser = FacebookUser.getInstance();
         else {
             populateViewsOther();
@@ -93,6 +92,7 @@ public class ProfileActivity extends FragmentActivity implements View.OnClickLis
         getLikesPictures(currentUser.getLikes());
         getFriendsPictures(currentUser.getFriends());
     }
+
 
     private void populateViewsOther() throws JSONException {
 
@@ -173,6 +173,7 @@ public class ProfileActivity extends FragmentActivity implements View.OnClickLis
                                     for (int i = 0; i < resultFriends.size(); i++)
                                     {
                                         ImageView newItem = new ImageView(ProfileActivity.this);
+
                                         Picasso.with(ProfileActivity.this).load(resultFriends.get(i)).transform(new RoundedPicasso()).into(newItem);
                                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                                         params.height = friendsLayout.getHeight();
@@ -180,7 +181,6 @@ public class ProfileActivity extends FragmentActivity implements View.OnClickLis
                                         params.setMargins(10, 0, 10, 0);
                                         friendsLayout.addView(newItem, params);
                                     }
-
                                 }
 
                             } catch (JSONException e) {
@@ -298,12 +298,15 @@ public class ProfileActivity extends FragmentActivity implements View.OnClickLis
                                 {
                                     for (int i = 0; i < resultLikes.size(); i++)
                                     {
+                                        Log.i("URL GOOD", resultLikes.get(i));
                                         ImageView newItem = new ImageView(ProfileActivity.this);
                                         Picasso.with(ProfileActivity.this).load(resultLikes.get(i)).transform(new RoundedPicasso()).into(newItem);
+
                                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                                         params.height = likesLayout.getHeight();
                                         params.width = params.height;
                                         params.setMargins(10, 0, 10, 0);
+
                                         likesLayout.addView(newItem, params);
                                     }
 

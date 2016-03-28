@@ -45,17 +45,11 @@
         android:layout_alignTop="@+id/name_textview"
         android:layout_toEndOf="@+id/name_textview" />
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/name_textview"
-        android:layout_marginTop="10dp">
-
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/likes_relative"
+            android:layout_below="@id/name_textview">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -63,13 +57,12 @@
                 android:id="@+id/likes_textview"
                 android:textSize="15sp"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
-                android:text="likes" />
+                android:layout_marginTop="10dp" />
 
             <HorizontalScrollView
                 android:id="@+id/horizontalScrollLikes"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:animateLayoutChanges="true"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
@@ -77,7 +70,7 @@
                 android:layout_below="@+id/likes_textview">
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
+                    android:layout_height="35dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
                     android:id="@+id/likes_layout"
@@ -86,18 +79,17 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/likes_relative">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/friends_textview"
                 android:textSize="15sp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
-                android:text="Friends" />
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp" />
 
             <HorizontalScrollView
                 android:id="@+id/horizontalScrollFriends"
@@ -110,14 +102,13 @@
                 android:layout_below="@+id/friends_textview">
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
+                    android:layout_height="35dp"
                     android:id="@+id/friends_layout"
                     android:orientation="horizontal"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"/>
             </HorizontalScrollView>
         </RelativeLayout>
-    </LinearLayout>
 
     <Button
         style="?android:attr/buttonStyleSmall"
