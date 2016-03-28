@@ -143,7 +143,6 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
         fb_birthday = object.optString("birthday");
         fb_gender = object.optString("gender");
         fb_id = object.optString("id");
-
         currentUser = new User(fb_age_range, null, fb_name, fb_birthday, "Trololo", fb_email, fb_img, fb_gender);
 
         if (progress != null)
@@ -169,13 +168,12 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
             progress.dismiss();
 
         currentUser.setUid(authData.getUid());
-
         saveToFirebase(currentUser);
         FacebookUser.setFacebookUser(currentUser);
-
         getUserFriends();
         getUserLikes();
     }
+
     @Override
     public void onAuthenticationError(FirebaseError firebaseError) {
         if(progress!=null)
@@ -185,9 +183,7 @@ public class LoginActivity extends AppCompatActivity implements FacebookCallback
     private void saveToFirebase(User user)
     {
         Firebase ref = Network.getAlluser;
-
         Firebase userRef = ref.child(user.getUid());
-
         userRef.setValue(user);
     }
 
