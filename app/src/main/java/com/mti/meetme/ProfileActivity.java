@@ -1,18 +1,22 @@
 package com.mti.meetme;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.menu.MenuView;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
@@ -81,11 +85,20 @@ public class ProfileActivity extends ActionBarActivity{
                 startActivity(intent);
                 return true;
             case R.id.menu_settings:
-                // Comportement du bouton "Paramètres"
+                displaySettings(false);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void displaySettings(boolean visible) {
+        MenuView.ItemView item = (MenuView.ItemView) findViewById(R.id.menu_settings);
+
+        if (visible)
+            item.getItemData().setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        else
+            item.getItemData().setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
     }
 
     private void populateViews() throws JSONException {
