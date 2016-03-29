@@ -98,6 +98,15 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(false);
         mMap.clear();
+        mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+            @Override
+            public void onMyLocationChange(Location location) {
+                FacebookUser.getInstance().setLatitude(location.getLatitude());
+                FacebookUser.getInstance().setLongitude(location.getLongitude());
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17));
+                sendPosition();
+            }
+        });
         GetCurrentLocation();
         getAllUSerPosition();
 
@@ -146,13 +155,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         sendPosition();
     }
 
-    private GoogleMap.OnMyLocationChangeListener myLocationChangeListener = new GoogleMap.OnMyLocationChangeListener() {
-        @Override
-        public void onMyLocationChange(Location location) {
-            LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
-            Log.e("POSITION CAHNGED", "POSITION CHANGED");
-        }
-    };
+
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         Log.e("STATUS CHANGED", "STATUS CHANGER");
@@ -186,6 +189,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
             public void onDataChange(DataSnapshot snapshot) {
                 mMap.clear();
                 all_user.clear();
+                Log.e("MORTEL", "MORTEL");
                 int i = 0;
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     User u = postSnapshot.getValue(User.class);
