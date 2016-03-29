@@ -254,7 +254,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         });
 
         GoogleMap.InfoWindowAdapter adapt = new GoogleMap.InfoWindowAdapter() {
-            Boolean not_first_time_showing_info_window = false;
+
 
             @Override
             public View getInfoWindow(Marker arg0) {
@@ -270,21 +270,10 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 distance.setText(dist +" m");
                 name.setText(u.getName());
                 age.setText(String.valueOf(u.convertBirthdayToAge()));
-                if (not_first_time_showing_info_window)
-                {
-                    Picasso.with(MapsActivity.this)
-                            .load(u.getPic1())
-                            .transform(new RoundedPicasso())
-                            .into(img);
-                }
-                else
-                {
-                    not_first_time_showing_info_window = true;
-                        Picasso.with(MapsActivity.this)
+                Picasso.with(MapsActivity.this)
                                 .load(u.getPic1())
                                 .transform(new RoundedPicasso())
                                 .into(img, new InfoWindowRefresher(arg0));
-                }
                 return v;
             }
             @Override
@@ -319,11 +308,16 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         }
 
         @Override
-        public void onSuccess() {
-            markerToRefresh.showInfoWindow();
+        public void onError() {
+            Log.e(getClass().getSimpleName(), "Error loading thumbnail!");
         }
 
         @Override
-        public void onError() {}
+        public void onSuccess() {
+            if (markerToRefresh != null && markerToRefresh.isInfoWindowShown()) {
+                markerToRefresh.hideInfoWindow();
+                markerToRefresh.showInfoWindow();
+            }
+        }
     }
 }

@@ -22,7 +22,10 @@
             android:layout_height="50dp"
             android:id="@+id/user_image"
             android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:cropToPadding="false"
+            android:focusableInTouchMode="false"
+            android:scaleType="centerCrop"/>
 
         <TextView
             android:layout_width="wrap_content"
