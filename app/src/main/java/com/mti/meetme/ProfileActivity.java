@@ -40,6 +40,7 @@ public class ProfileActivity extends ActionBarActivity{
     LinearLayout likesLayout;
     LinearLayout friendsLayout;
     public static ViewPager pager;
+
     ImageView profilePic;
     TextView  nameTextView;
     TextView  title;
@@ -49,6 +50,7 @@ public class ProfileActivity extends ActionBarActivity{
 
     User user;
     User currentUser;
+
     private ArrayList<String> resultLikes;
     private ArrayList<String> resultFriends;
 
@@ -83,6 +85,7 @@ public class ProfileActivity extends ActionBarActivity{
         switch (item.getItemId()) {
             case R.id.menu_maps:
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 return true;
             case R.id.menu_settings:
@@ -138,6 +141,7 @@ public class ProfileActivity extends ActionBarActivity{
         friendsTextView.setText(getString(R.string.friends_common_title));
         getUserFriends();
         getUserLikes();
+
         CarousselPager adapter = new CarousselPager(getSupportFragmentManager());
         adapter.setUser(user);
         pager.setAdapter(adapter);
@@ -322,7 +326,6 @@ public class ProfileActivity extends ActionBarActivity{
                                 {
                                     for (int i = 0; i < resultLikes.size(); i++)
                                     {
-                                        Log.i("URL GOOD", resultLikes.get(i));
                                         ImageView newItem = new ImageView(ProfileActivity.this);
                                         Picasso.with(ProfileActivity.this).load(resultLikes.get(i)).transform(new RoundedPicasso()).into(newItem);
 

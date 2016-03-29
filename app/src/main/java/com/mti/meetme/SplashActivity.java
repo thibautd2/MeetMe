@@ -123,7 +123,8 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
                             else {
                                 FacebookUser.getInstance().setLikes(fullLikes);
 
-                                Intent intent = new Intent(SplashActivity.this, ProfileActivity.class);
+                                Intent intent = new Intent(SplashActivity.this, MapsActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                                 startActivity(intent);
                             }
 

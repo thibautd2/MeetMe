@@ -37,5 +37,6 @@ dependencies {
     compile 'commons-codec:commons-codec:1.10'
     compile 'org.apache.httpcomponents:httpclient-android:+'
     compile 'com.firebase:firebase-client-android:2.5.1+'
-    compile 'joda-time:joda-time:2.9.2'
+    compile 'joda-time:joda-tim' +
+            'e:2.9.2'
 }
