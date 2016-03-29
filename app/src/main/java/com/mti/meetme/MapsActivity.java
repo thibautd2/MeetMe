@@ -103,7 +103,6 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
             public void onMyLocationChange(Location location) {
                 FacebookUser.getInstance().setLatitude(location.getLatitude());
                 FacebookUser.getInstance().setLongitude(location.getLongitude());
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17));
                 sendPosition();
             }
         });
