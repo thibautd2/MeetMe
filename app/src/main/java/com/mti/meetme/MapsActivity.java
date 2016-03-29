@@ -21,6 +21,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -125,9 +126,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     @Override
     public void onLocationChanged(Location location){
-
         Log.e("POSITION CAHNGED", "POSITION CHANGED");
-
         FacebookUser.getInstance().setLatitude(location.getLatitude());
         FacebookUser.getInstance().setLongitude(location.getLongitude());
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17));
@@ -178,8 +177,8 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     User u = postSnapshot.getValue(User.class);
 
-                    if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(currentuser_id)!=0)
-                    {    if (u.getGender().compareTo("male") == 0)
+                    if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(currentuser_id) != 0) {
+                        if (u.getGender().compareTo("male") == 0)
                             mMap.addMarker(new MarkerOptions().position(new LatLng(
                                     u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(i)));
                         else
@@ -199,6 +198,8 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
         });
     }
+
+
 
     public void init_infos_window()
     {
