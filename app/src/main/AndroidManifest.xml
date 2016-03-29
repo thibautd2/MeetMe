@@ -55,7 +55,6 @@
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:name=".MapsActivity"
-            android:launchMode="singleTask"
             android:label="@string/title_activity_maps"></activity>
     </application>
 

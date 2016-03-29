@@ -3,10 +3,12 @@ package com.mti.meetme;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -14,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -54,6 +57,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         all_user = new ArrayList<>();
+
     }
 
     @Override
@@ -81,6 +85,15 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            Toast.makeText(this, getString(R.string.no_permission_granted), Toast.LENGTH_LONG);
+            Intent intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
+        }
+
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(false);
@@ -93,7 +106,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     private void GetCurrentLocation() {
 
-        mMap.setMyLocationEnabled(true);
+        //mMap.setMyLocationEnabled(true);
       /*  double latitude = mMap.getMyLocation().getLatitude();
         double longitude= mMap.getMyLocation().getLongitude();
 */
@@ -221,6 +234,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 interessé.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        dialog.dismiss();
                         Intent intent = new Intent(MapsActivity.this, ProfileActivity.class);
                         Bundle b = new Bundle();
                         b.putSerializable("User", user);

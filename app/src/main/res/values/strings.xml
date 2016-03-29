@@ -15,4 +15,7 @@
     <string name="likes_common_title">Mutual likes:</string>
     <string name="friends_title">Friends :</string>
     <string name="friends_common_title">Mutual friends:</string>
+
+    <!-- MapsActivity -->
+    <string name="no_permission_granted">Please grant location permission to MeetMe.</string>
 </resources>

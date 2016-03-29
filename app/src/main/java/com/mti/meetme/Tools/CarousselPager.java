@@ -12,17 +12,16 @@ import com.mti.meetme.Model.User;
  */
 public class CarousselPager  extends FragmentStatePagerAdapter {
 
+        User user;
 
-    public User getUser() {
+        public User getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+        public void setUser(User user) {
         this.user = user;
     }
 
-
-     User user;
 
         public CarousselPager(FragmentManager fm) {
             super(fm);

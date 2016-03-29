@@ -207,7 +207,8 @@ public class LoginActivity extends Activity implements FacebookCallback<LoginRes
                     public void onCompleted(GraphResponse response) {
                         FacebookUser.getInstance().setLikes(response.getJSONObject());
 
-                        Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(intent);
                     }
                 }
