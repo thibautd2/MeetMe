@@ -127,7 +127,7 @@ public class ProfileActivity extends ActionBarActivity{
         friendsTextView.setText(getString(R.string.friends_title));
 //      title.setText(R.string.profile_title);
 
-       getLikesPictures(currentUser.getLikes());
+        getLikesPictures(currentUser.getLikes());
         getFriendsPictures(currentUser.getFriends());
     }
 
@@ -280,7 +280,8 @@ public class ProfileActivity extends ActionBarActivity{
         for (int i = 0; i < likesArray.length(); i++) {
             likesId.add(likesArray.getJSONObject(i).getString("id"));
         }
-        getLikesPicturesURL(likesId);
+            this.likesId = likesId;
+            getLikesPicturesURL();
         }
     }
 
@@ -304,40 +305,46 @@ public class ProfileActivity extends ActionBarActivity{
         likesId.retainAll(likesIdCurrent);
 
         idLikesCount = likesId.size();
-        getLikesPicturesURL(likesId);
+        this.likesId = likesId;
+        getLikesPicturesURL();
     }
 
-    private void getLikesPicturesURL(final ArrayList<String> likesId)
+    ArrayList<String> likesId = new ArrayList<>();
+    int count = 0;
+
+    private void getLikesPicturesURL()//final ArrayList<String> likesId)
     {
-    for (int i = 0; i < likesId.size(); i++) {
+        if (likesId.size() == 0)
+            return;
+
             Bundle params = new Bundle();
             params.putBoolean("redirect", false);
 
             new GraphRequest(
                     AccessToken.getCurrentAccessToken(),
-                    "/" + likesId.get(i) + "/picture",
+                    "/" + likesId.get(count) + "/picture",
                     params,
                     HttpMethod.GET,
                     new GraphRequest.Callback()
                     {
                         public void onCompleted(GraphResponse response) {
                             try {
-                                resultLikes.add(response.getJSONObject().getJSONObject("data").getString("url"));
+                                //resultLikes.add(response.getJSONObject().getJSONObject("data").getString("url"));
+                                ImageView newItem = new ImageView(ProfileActivity.this);
+                                Picasso.with(ProfileActivity.this).load(response.getJSONObject().getJSONObject("data").getString("url")).transform(new RoundedPicasso()).into(newItem);
 
-                                if (resultLikes.size() == idLikesCount)
-                                {
-                                    for (int i = 0; i < resultLikes.size(); i++)
-                                    {
-                                        ImageView newItem = new ImageView(ProfileActivity.this);
-                                        Picasso.with(ProfileActivity.this).load(resultLikes.get(i)).transform(new RoundedPicasso()).into(newItem);
+                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                params.height = likesLayout.getHeight();
+                                params.width = params.height;
+                                params.setMargins(10, 0, 10, 0);
+                                likesLayout.addView(newItem, params);
+                                count++;
 
-                                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                        params.height = likesLayout.getHeight();
-                                        params.width = params.height;
-                                        params.setMargins(10, 0, 10, 0);
-                                        likesLayout.addView(newItem, params);
-                                    }
+                                if (count < idLikesCount) {
+                                    getLikesPicturesURL();
                                 }
+
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -345,7 +352,6 @@ public class ProfileActivity extends ActionBarActivity{
 
                     }
             ).executeAsync();
-        }
 
    }
 
@@ -358,7 +364,6 @@ public class ProfileActivity extends ActionBarActivity{
                 HttpMethod.GET,
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
-                        Log.i("Pagination", response.toString());
                         user.setLikes(response.getJSONObject());
                         try {
                             getLikesInCommonPictures(user.getLikes());

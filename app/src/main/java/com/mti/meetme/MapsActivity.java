@@ -101,6 +101,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         switch (item.getItemId()) {
             case R.id.menu_profile:
                 Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 return true;
             case R.id.menu_settings:
