@@ -120,21 +120,21 @@ public class ProfileActivity extends ActionBarActivity{
         adapter.setUser(currentUser);
         pager.setAdapter(adapter);
 
-//        Picasso.with(this).load(currentUser.getPic1()).fit().centerCrop().into(profilePic);
+//      Picasso.with(this).load(currentUser.getPic1()).fit().centerCrop().into(profilePic);
         nameTextView.setText(currentUser.getName() + ",");
         ageTextView.setText("" + currentUser.convertBirthdayToAge());
         likesTextView.setText(getString(R.string.likes_title));
         friendsTextView.setText(getString(R.string.friends_title));
-//        title.setText(R.string.profile_title);
+//      title.setText(R.string.profile_title);
 
-        getLikesPictures(currentUser.getLikes());
+       getLikesPictures(currentUser.getLikes());
         getFriendsPictures(currentUser.getFriends());
     }
 
 
     private void populateViewsOther() throws JSONException {
 
-      //  Picasso.with(this).load(user.getPic1()).fit().centerCrop().into(profilePic);
+      //Picasso.with(this).load(user.getPic1()).fit().centerCrop().into(profilePic);
         nameTextView.setText(user.getName() + ",");
         ageTextView.setText("" + user.convertBirthdayToAge());
         likesTextView.setText(getString(R.string.likes_common_title));
@@ -270,16 +270,18 @@ public class ProfileActivity extends ActionBarActivity{
 
     private void getLikesPictures(JSONObject likes) throws JSONException {
 
+        if (likes != null)
+        {
         JSONArray likesArray = likes.getJSONArray("data");
         idLikesCount = likesArray.length();
 
         ArrayList<String> likesId = new ArrayList<String>();
 
-        for (int i = 0; i < likesArray.length(); i++)
-        {
-           likesId.add(likesArray.getJSONObject(i).getString("id"));
+        for (int i = 0; i < likesArray.length(); i++) {
+            likesId.add(likesArray.getJSONObject(i).getString("id"));
         }
         getLikesPicturesURL(likesId);
+        }
     }
 
     private void getLikesInCommonPictures(JSONObject likes) throws JSONException {
@@ -307,7 +309,7 @@ public class ProfileActivity extends ActionBarActivity{
 
     private void getLikesPicturesURL(final ArrayList<String> likesId)
     {
-        for (int i = 0; i < likesId.size(); i++) {
+    for (int i = 0; i < likesId.size(); i++) {
             Bundle params = new Bundle();
             params.putBoolean("redirect", false);
 
@@ -333,12 +335,9 @@ public class ProfileActivity extends ActionBarActivity{
                                         params.height = likesLayout.getHeight();
                                         params.width = params.height;
                                         params.setMargins(10, 0, 10, 0);
-
                                         likesLayout.addView(newItem, params);
                                     }
-
                                 }
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -347,7 +346,8 @@ public class ProfileActivity extends ActionBarActivity{
                     }
             ).executeAsync();
         }
-    }
+
+   }
 
     public void getUserLikes()
     {

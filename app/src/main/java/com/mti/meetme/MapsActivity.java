@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -24,6 +25,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -40,15 +42,20 @@ import com.mti.meetme.Tools.RoundedPicasso;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimerTask;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapsActivity extends ActionBarActivity implements OnMapReadyCallback, LocationListener {
+public class MapsActivity extends ActionBarActivity implements OnMapReadyCallback{
 
     private GoogleMap mMap;
     private ArrayList<User> all_user;
     public static CarousselPager mpager;
+    boolean dispo = true;
 
+    FollowMeLocationSource followMeLocationSource;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,9 +64,31 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         all_user = new ArrayList<>();
+        followMeLocationSource = new FollowMeLocationSource();
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        followMeLocationSource.getBestAvailableProvider();
+        if(mMap!=null)
+        mMap.setMyLocationEnabled(true);
+       // setUpMapIfNeeded();
+
+        /* Enable the my-location layer (this causes our LocationSource to be automatically activated.)
+         * While enabled, the my-location layer continuously draws an indication of a user's
+         * current location and bearing, and displays UI controls that allow a user to interact
+         * with their location (for example, to enable or disable camera tracking of their location and bearing).*/
+       // mMap.setMyLocationEnabled(true);
+    }
+
+    private void setUpMapIfNeeded() {
+
+        if(mMap == null) {
+
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_maps, menu);
@@ -84,8 +113,6 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
@@ -93,23 +120,15 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
             Intent intent = new Intent(this, ProfileActivity.class);
             startActivity(intent);
         }
-
-        mMap.setMyLocationEnabled(true);
-        mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        mMap.getUiSettings().setZoomControlsEnabled(false);
-        mMap.clear();
-        mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
-            @Override
-            public void onMyLocationChange(Location location) {
-                FacebookUser.getInstance().setLatitude(location.getLatitude());
-                FacebookUser.getInstance().setLongitude(location.getLongitude());
-                sendPosition();
-            }
-        });
+        if(mMap == null) {
+            mMap = googleMap;
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(true);
+            mMap.getUiSettings().setZoomControlsEnabled(false);
+            mMap.setLocationSource(followMeLocationSource);
+        }
         GetCurrentLocation();
         getAllUSerPosition();
-
-
     }
 
     private void GetCurrentLocation() {
@@ -118,7 +137,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
       /*  double latitude = mMap.getMyLocation().getLatitude();
         double longitude= mMap.getMyLocation().getLongitude();
 */
-       double[] d = getlocation();
+        double[] d = getlocation();
         LatLng pos = new LatLng(d[0], d[1]);
         FacebookUser.getInstance().setLatitude(pos.latitude);
         FacebookUser.getInstance().setLongitude(pos.longitude);
@@ -145,54 +164,43 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         return gps;
     }
 
-    @Override
-    public void onLocationChanged(Location location){
-        Log.e("POSITION CAHNGED", "POSITION CHANGED");
-        FacebookUser.getInstance().setLatitude(location.getLatitude());
-        FacebookUser.getInstance().setLongitude(location.getLongitude());
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17));
-        sendPosition();
-    }
 
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        Log.e("STATUS CHANGED", "STATUS CHANGER");
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-        Log.e("Provider ENABLE", "PROVIDER ENABLE");
-        GetCurrentLocation();
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-        Log.e("Provider ENABLE", "PROVIDER ENABLE");
-    }
-
-    private void sendPosition()
-    {
+    private void sendPosition() {
+        dispo = false;
         Log.e("SEND NEW POSITION", "SEND NEW POSITION :"+ FacebookUser.getInstance().getLatitude().toString()+" "+FacebookUser.getInstance().getLongitude().toString());
         Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
-        ref.child("latitude").setValue(String.valueOf(FacebookUser.getInstance().getLatitude()));
-        ref.child("longitude").setValue(String.valueOf(FacebookUser.getInstance().getLongitude()));
+        Map<String, Object> pos = new HashMap<String, Object>();
+        pos.put("latitude", String.valueOf(FacebookUser.getInstance().getLatitude()));
+        pos.put("longitude", String.valueOf(FacebookUser.getInstance().getLongitude()));
+        ref.updateChildren(pos, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if (firebaseError != null) {
+                   dispo = true;
+                } else {
+                    dispo = true;
+                }
+            }
+        });
+
     }
 
     private void getAllUSerPosition()
     {
         Firebase ref = Network.getAlluser;
         final String currentuser_id = FacebookUser.getInstance().getUid();
+        all_user.clear();
+        mMap.clear();
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                mMap.clear();
-                all_user.clear();
                 Log.e("MORTEL", "MORTEL");
                 int i = 0;
+                all_user.clear();
+                mMap.clear();
+
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     User u = postSnapshot.getValue(User.class);
-
                     if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(currentuser_id) != 0) {
                         if (u.getGender().compareTo("male") == 0)
                             mMap.addMarker(new MarkerOptions().position(new LatLng(
@@ -200,17 +208,18 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                         else
                             mMap.addMarker(new MarkerOptions().position(new LatLng(
                                     u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(i)));
-
+                        Log.e("NB_USEr", "NB8USER : " + all_user.size());
                         all_user.add(u);
                         i++;
                     }
                 }
                 init_infos_window();
+
+
             }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-
             }
         });
     }
@@ -222,8 +231,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                String r = marker.getId().substring(1);
-                final User user = all_user.get(Integer.parseInt(r));
+                final User user = all_user.get(Integer.parseInt(marker.getSnippet()));
                 final Dialog dialog = new Dialog(MapsActivity.this);
                 dialog.setContentView(R.layout.user_pop_up);
 
@@ -262,9 +270,9 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
             @Override
             public View getInfoWindow(Marker arg0) {
                 int id = Integer.parseInt(arg0.getSnippet());
+                Log.e("MARKER ID", "MARKER ID : "+ id);
                 User u =  all_user.get(id);
                 View v = getLayoutInflater().inflate(R.layout.info_window, null);
-
                 ImageView img = (ImageView) v.findViewById(R.id.user_image);
                 TextView name = (TextView) v.findViewById(R.id.user_name);
                 TextView age = (TextView) v.findViewById(R.id.user_age);
@@ -301,6 +309,96 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         int meterConversion = 1609;
         return Double.valueOf(dist * meterConversion);
     }
+
+    private class FollowMeLocationSource implements LocationSource, LocationListener {
+
+        private OnLocationChangedListener mListener;
+        private LocationManager locationManager;
+        private final Criteria criteria = new Criteria();
+        private String bestAvailableProvider;
+        /* Updates are restricted to one every 10 seconds, and only when
+         * movement of more than 10 meters has been detected.*/
+        private final int minTime = 20000;     // minimum time interval between location updates, in milliseconds
+        private final int minDistance = 1;    // minimum distance between location updates, in meters
+
+        private FollowMeLocationSource() {
+            // Get reference to Location Manager
+            locationManager = (LocationManager) getApplication().getSystemService(Context.LOCATION_SERVICE);
+
+            // Specify Location Provider criteria
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            criteria.setPowerRequirement(Criteria.POWER_LOW);
+            criteria.setAltitudeRequired(true);
+            criteria.setBearingRequired(true);
+            criteria.setSpeedRequired(true);
+            criteria.setCostAllowed(true);
+        }
+
+        private void getBestAvailableProvider() {
+            /* The preffered way of specifying the location provider (e.g. GPS, NETWORK) to use
+             * is to ask the Location Manager for the one that best satisfies our criteria.
+             * By passing the 'true' boolean we ask for the best available (enabled) provider. */
+            bestAvailableProvider = locationManager.getBestProvider(criteria, true);
+        }
+
+        /* Activates this provider. This provider will notify the supplied listener
+         * periodically, until you call deactivate().
+         * This method is automatically invoked by enabling my-location layer. */
+        @Override
+        public void activate(OnLocationChangedListener listener) {
+            // We need to keep a reference to my-location layer's listener so we can push forward
+            // location updates to it when we receive them from Location Manager.
+            mListener = listener;
+
+            // Request location updates from Location Manager
+            if (bestAvailableProvider != null) {
+                locationManager.requestLocationUpdates(bestAvailableProvider, minTime, minDistance, this);
+            } else {
+                // (Display a message/dialog) No Location Providers currently available.
+            }
+        }
+
+        /* Deactivates this provider.
+         * This method is automatically invoked by disabling my-location layer. */
+        @Override
+        public void deactivate() {
+            // Remove location updates from Location Manager
+            locationManager.removeUpdates(this);
+
+            mListener = null;
+        }
+
+        @Override
+        public void onLocationChanged(Location location) {
+            /* Push location updates to the registered listener..
+             * (this ensures that my-location layer will set the blue dot at the new/received location) */
+            if (mListener != null) {
+                mListener.onLocationChanged(location);
+            }
+            Log.e("VERRIFFF", "fezfe");
+            FacebookUser.getInstance().setLongitude(location.getLongitude());
+            FacebookUser.getInstance().setLatitude(location.getLatitude());
+            sendPosition();
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+
+        }
+    }
+
+
+
 
 
     private class InfoWindowRefresher implements Callback {
