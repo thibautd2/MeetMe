@@ -61,7 +61,7 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
 
     @Override
     public void onAuthenticated(AuthData authData) {
-        getUserFromFirebase(authData.getUid());
+        getUserFromFirebase(authData.getUid().split(":")[1]);
     }
 
     @Override
@@ -83,8 +83,8 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
         if (currentUser != null) {
             FacebookUser.setFacebookUser(currentUser);
 
-            getUserFriends();
-            getUserLikes("");
+            FacebookHandler handler = new FacebookHandler(this);
+            handler.loadFacebookDataForCurrentUser();
         }
         else
         {
@@ -98,7 +98,7 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
         System.out.println("The read failed: " + firebaseError.getMessage());
     }
 
-    public void getUserLikes(String next)
+    /*public void getUserLikes(String next)
     {
         GraphRequest request = new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
@@ -145,9 +145,9 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
             request.setParameters(parameters);
             request.executeAsync();
         }
-    }
+    }*/
 
-    public void getUserFriends()
+    /*public void getUserFriends()
     {
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
@@ -161,5 +161,5 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
                     }
                 }
         ).executeAsync();
-    }
+    }*/
 }
