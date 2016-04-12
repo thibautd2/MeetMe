@@ -23,6 +23,10 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
@@ -39,6 +43,7 @@ import com.mti.meetme.Tools.Network;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.RoundedPicasso;
+import com.mti.meetme.controller.UserList;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -54,8 +59,10 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     private ArrayList<User> all_user;
     public static CarousselPager mpager;
     boolean dispo = true;
-
+    GeoFire geoFire;
     FollowMeLocationSource followMeLocationSource;
+    private Map<String,Marker> markers;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,9 +70,9 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        geoFire = new GeoFire(Network.geofire);
         all_user = new ArrayList<>();
         followMeLocationSource = new FollowMeLocationSource();
-
     }
 
     @Override
@@ -100,7 +107,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_profile:
-                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                Intent intent = new Intent(getApplicationContext(), ProfilsListActiity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 return true;
@@ -168,16 +175,19 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     private void sendPosition() {
         dispo = false;
-        Log.e("SEND NEW POSITION", "SEND NEW POSITION :"+ FacebookUser.getInstance().getLatitude().toString()+" "+FacebookUser.getInstance().getLongitude().toString());
+        Log.e("SEND NEW POSITION", "SEND NEW POSITION :" + FacebookUser.getInstance().getLatitude().toString() + " " + FacebookUser.getInstance().getLongitude().toString());
         Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
         Map<String, Object> pos = new HashMap<String, Object>();
         pos.put("latitude", String.valueOf(FacebookUser.getInstance().getLatitude()));
         pos.put("longitude", String.valueOf(FacebookUser.getInstance().getLongitude()));
+        geoFire.setLocation(FacebookUser.getInstance().getUid(), new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()));
         ref.updateChildren(pos, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError != null) {
-                   dispo = true;
+                    {
+                        dispo = true;
+                          }
                 } else {
                     dispo = true;
                 }
@@ -188,44 +198,110 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     private void getAllUSerPosition()
     {
-        Firebase ref = Network.getAlluser;
-        final String currentuser_id = FacebookUser.getInstance().getUid();
-        all_user.clear();
-        mMap.clear();
-        ref.addValueEventListener(new ValueEventListener() {
+        GeoLocation geoLocation = new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
+        GeoQuery geoQuery = geoFire.queryAtLocation(geoLocation, 10);
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                Log.e("MORTEL", "MORTEL");
-                int i = 0;
-                all_user.clear();
-                mMap.clear();
+            public void onKeyEntered(String key, GeoLocation location) {
+                Firebase ref = Network.find_user(key);
+                final String user_id = key;
+                ref.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        int i = 0;
+                            User u = snapshot.getValue(User.class);
 
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    User u = postSnapshot.getValue(User.class);
-                    if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(currentuser_id) != 0) {
-                        if (u.getGender().compareTo("male") == 0)
-                            mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                    u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(i)));
-                        else
-                            mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                    u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(i)));
-                        Log.e("NB_USEr", "NB8USER : " + all_user.size());
-                        all_user.add(u);
-                        i++;
+                            if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(user_id) != 0) {
+                                if (u.getGender().compareTo("male") == 0) {
+                                    mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(i)));
+                                } else {
+                                    mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(i)));
+
+                                }
+                                Log.e("NB_USEr", "NB8USER : " + all_user.size());
+                                all_user.add(u);
+                                i++;
+                            }
+                        }
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+
                     }
-                }
-                init_infos_window();
-
+                });
 
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onKeyExited(String key) {
+
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+
+            }
+
+            @Override
+            public void onGeoQueryError(FirebaseError error) {
+
             }
         });
-    }
 
 
+           /* Firebase ref = Network.getAlluser;
+            final String currentuser_id = FacebookUser.getInstance().getUid();
+            all_user.clear();
+            mMap.clear();*/
+        /*
+        ref.addValueEventListener(new
+
+            ValueEventListener() {
+                @Override
+                public void onDataChange (DataSnapshot snapshot){
+                    Log.e("MORTEL", "MORTEL");
+                    int i = 0;
+                    all_user.clear();
+                    mMap.clear();
+
+                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                        User u = postSnapshot.getValue(User.class);
+                        if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(currentuser_id) != 0)
+                        {
+                            if (u.getGender().compareTo("male") == 0) {
+                                mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                        u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(i)));
+
+                            }else {
+                                mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                        u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(i)));
+
+                            }
+                            Log.e("NB_USEr", "NB8USER : " + all_user.size());
+                            all_user.add(u);
+                            i++;
+                        }
+                    }
+                    UserList.setAll_users(all_user);
+                    init_infos_window();
+
+
+                }
+
+                @Override
+                public void onCancelled (FirebaseError firebaseError){
+                }
+            }
+
+            );
+            */
+        }
 
     public void init_infos_window()
     {
@@ -281,7 +357,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 String dist = String.valueOf((int)getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(u.getLatitude(), u.getLongitude())));
                 distance.setText(dist +" m");
                 name.setText(u.getName());
-                age.setText(String.valueOf(u.convertBirthdayToAge()));
+                age.setText(String.valueOf(u.convertBirthdayToAge()) +" ans");
                 Picasso.with(MapsActivity.this)
                                 .load(u.getPic1())
                                 .transform(new RoundedPicasso())
@@ -317,15 +393,12 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         private LocationManager locationManager;
         private final Criteria criteria = new Criteria();
         private String bestAvailableProvider;
-        /* Updates are restricted to one every 10 seconds, and only when
-         * movement of more than 10 meters has been detected.*/
         private final int minTime = 20000;     // minimum time interval between location updates, in milliseconds
         private final int minDistance = 1;    // minimum distance between location updates, in meters
 
         private FollowMeLocationSource() {
             // Get reference to Location Manager
             locationManager = (LocationManager) getApplication().getSystemService(Context.LOCATION_SERVICE);
-
             // Specify Location Provider criteria
             criteria.setAccuracy(Criteria.ACCURACY_FINE);
             criteria.setPowerRequirement(Criteria.POWER_LOW);
@@ -334,7 +407,6 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
             criteria.setSpeedRequired(true);
             criteria.setCostAllowed(true);
         }
-
         private void getBestAvailableProvider() {
             /* The preffered way of specifying the location provider (e.g. GPS, NETWORK) to use
              * is to ask the Location Manager for the one that best satisfies our criteria.
@@ -358,14 +430,12 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 // (Display a message/dialog) No Location Providers currently available.
             }
         }
-
         /* Deactivates this provider.
          * This method is automatically invoked by disabling my-location layer. */
         @Override
         public void deactivate() {
             // Remove location updates from Location Manager
             locationManager.removeUpdates(this);
-
             mListener = null;
         }
 
@@ -384,23 +454,14 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
 
         @Override
         public void onStatusChanged(String s, int i, Bundle bundle) {
-
         }
-
         @Override
         public void onProviderEnabled(String s) {
-
         }
-
         @Override
         public void onProviderDisabled(String s) {
-
         }
     }
-
-
-
-
 
     private class InfoWindowRefresher implements Callback {
         private Marker markerToRefresh;

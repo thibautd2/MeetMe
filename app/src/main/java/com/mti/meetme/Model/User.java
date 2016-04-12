@@ -44,9 +44,12 @@ public class User implements Serializable {
 
     @com.google.gson.annotations.SerializedName("Latitude")
     private Double Latitude;
-
     @com.google.gson.annotations.SerializedName("Longitude")
     private Double Longitude;
+
+    @com.google.gson.annotations.SerializedName("Position")
+    private Double[] Position;
+
 
     @com.google.gson.annotations.SerializedName("Email")
     private String Email;
@@ -103,6 +106,7 @@ public class User implements Serializable {
 
     public int convertBirthdayToAge()
     {
+        /*AgeRange = "23";
         if (Birthday != null && !Birthday.isEmpty()) {
             try {
                 LocalDate birthdate = new LocalDate(Integer.parseInt(Birthday.split("/")[2]), //YYYY
@@ -115,12 +119,13 @@ public class User implements Serializable {
             catch (NoClassDefFoundError e)
             {
                 return 23;
-            }
+            }*/
+        return 23;
         }
 
-        Log.i("AGE", "Returning Range");
-        return Integer.parseInt(AgeRange);
-    }
+//        Log.i("AGE", "Returning Range");
+//        return Integer.parseInt(AgeRange);
+//    }
 
     public ArrayList<String> getLikesURL() {
         return LikesURL;

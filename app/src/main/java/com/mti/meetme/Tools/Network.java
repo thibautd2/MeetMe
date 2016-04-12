@@ -10,6 +10,7 @@ import java.net.URI;
 public class Network {
     static String URL = "https://intense-fire-5226.firebaseio.com/";
     public static Firebase connexion_to_user = new Firebase(URL+"users");
+    public static Firebase geofire = new Firebase(URL+"geofire");
     public static Firebase bdd_connexion = new Firebase(URL);
     public static Firebase getAlluser = connexion_to_user;
     public static  Firebase find_user(String Uid)
