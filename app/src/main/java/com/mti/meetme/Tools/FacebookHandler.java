@@ -55,6 +55,10 @@ public class FacebookHandler
         fullFriends = null;
         fullPictures = null;
 
+        likesReady = false;
+        picturesReady = false;
+        friendsReady = false;
+
         getUserLikes("");
         getUserFriends("");
         getUserProfilePics("");
@@ -105,7 +109,7 @@ public class FacebookHandler
                                 getUserLikes(response.getJSONObject().getJSONObject("paging").getJSONObject("cursors").getString("after"));
                             else {
                                 likesReady = true;
-
+                                Log.w("Likes", "READY");
                                 if (likesReady && friendsReady && picturesReady)
                                     switchToMaps();
                             }
@@ -152,7 +156,7 @@ public class FacebookHandler
                                 getUserFriends(response.getJSONObject().getJSONObject("paging").getJSONObject("cursors").getString("after"));
                             else {
                                 friendsReady = true;
-
+                                Log.w("Friends", "READY");
                                 if (likesReady && friendsReady && picturesReady)
                                     switchToMaps();
                             }
@@ -199,7 +203,7 @@ public class FacebookHandler
                                 int nbPics = 0;
                                 JSONArray array = fullPictures.getJSONArray("data");
 
-                                for (int i = 0; i < array.length() && nbPics < 4; i++)
+                                for (int i = 0; i < array.length() && nbPics < 5; i++)
                                 {
                                     JSONObject picture = array.getJSONObject(i);
                                     String album_name = picture.getJSONObject("album").optString("name");
@@ -208,20 +212,23 @@ public class FacebookHandler
                                         String url = picture.optString("source");
 
                                         if (nbPics == 0)
-                                            currentUser.setPic2(url);
+                                            currentUser.setPic1(url);
                                         else if (nbPics == 1)
-                                            currentUser.setPic3(url);
+                                            currentUser.setPic2(url);
                                         else if (nbPics == 2)
-                                            currentUser.setPic4(url);
+                                            currentUser.setPic3(url);
                                         else if (nbPics == 3)
+                                            currentUser.setPic4(url);
+                                        else if (nbPics == 4)
                                             currentUser.setPic5(url);
+
 
                                         nbPics++;
                                     }
                                 }
 
                                 picturesReady = true;
-                                Log.w("SURPRISE", "MOTHERFUCKER");
+                                Log.w("Pictures", "READY");
                                 if (likesReady && friendsReady && picturesReady)
                                     switchToMaps();
                             }

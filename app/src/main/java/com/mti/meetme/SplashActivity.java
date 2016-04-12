@@ -30,8 +30,9 @@ import org.json.JSONObject;
 
 public class SplashActivity extends Activity implements Firebase.AuthResultHandler, ValueEventListener {
 
-    Firebase ref;
-    User currentUser;
+    private Firebase ref;
+    private User currentUser;
+    private boolean launcher;
 
     private JSONObject fullLikes;
 
@@ -44,6 +45,7 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
         FacebookSdk.sdkInitialize(this);
         Firebase.setAndroidContext(this);
         ref = Network.bdd_connexion;
+        launcher = false;
 
         onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());
     }
@@ -80,13 +82,14 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
     public void onDataChange(DataSnapshot snapshot) {
         currentUser = snapshot.getValue(User.class);
 
-        if (currentUser != null) {
+        if (currentUser != null && launcher == false) {
             FacebookUser.setFacebookUser(currentUser);
+            launcher = true;
 
             FacebookHandler handler = new FacebookHandler(this);
             handler.loadFacebookDataForCurrentUser();
         }
-        else
+        else if (currentUser == null)
         {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
