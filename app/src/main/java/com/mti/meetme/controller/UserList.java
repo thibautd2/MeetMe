@@ -13,5 +13,4 @@ public class UserList {
         return _all_users;
     }
     public static void setAll_users(ArrayList<User> users) { _all_users = users;}
-
 }

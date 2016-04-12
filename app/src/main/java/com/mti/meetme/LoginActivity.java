@@ -33,6 +33,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.mti.meetme.Model.User;
+import com.mti.meetme.Tools.FacebookHandler;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.Tools.Network;
@@ -148,7 +149,8 @@ public class LoginActivity extends Activity implements FacebookCallback<LoginRes
 
         if (progress != null)
             progress.dismiss();
-        getUserProfilePics();
+
+        onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());
     }
 
     private void onFacebookAccessTokenChange(AccessToken token) {
@@ -165,27 +167,20 @@ public class LoginActivity extends Activity implements FacebookCallback<LoginRes
     @Override
     public void onAuthenticated(AuthData authData)
     {
-        if(progress!=null)
+        if(progress != null)
             progress.dismiss();
 
-        currentUser.setUid(authData.getUid());
-        saveToFirebase(currentUser);
+        currentUser.setUid(authData.getUid().split(":")[1]);
         FacebookUser.setFacebookUser(currentUser);
-        getUserFriends();
-        getUserLikes();
+
+        FacebookHandler handler = new FacebookHandler(this);
+        handler.loadFacebookDataForCurrentUser();
     }
 
     @Override
     public void onAuthenticationError(FirebaseError firebaseError) {
         if(progress!=null)
             progress.dismiss();
-    }
-
-    private void saveToFirebase(User user)
-    {
-        Firebase ref = Network.getAlluser;
-        Firebase userRef = ref.child(user.getUid());
-        userRef.setValue(user);
     }
 
     public void Progress(String text)
@@ -196,7 +191,7 @@ public class LoginActivity extends Activity implements FacebookCallback<LoginRes
         progress.show();
     }
 
-    public void getUserLikes()
+    /*public void getUserLikes()
     {
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
@@ -274,5 +269,5 @@ public class LoginActivity extends Activity implements FacebookCallback<LoginRes
                     }
                 }
         ).executeAsync();
-    }
+    }*/
 }
