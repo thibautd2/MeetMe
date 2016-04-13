@@ -284,10 +284,7 @@ public class FacebookHandler
         if (friends != null)
         {
             JSONArray friendsArray = friends.getJSONArray("data");
-
             ArrayList<String> friendsIdCurrent = new ArrayList<String>();
-
-
             for (int i = 0; i < friendsArray.length(); i++) {
                 friendsIdCurrent.add(FacebookUser.getInstance().getFriends().getJSONArray("data").getJSONObject(i).getString("id"));
             }
