@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBarActivity;
-import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,7 +35,6 @@ import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -46,21 +44,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 //import com.microsoft.windowsazure.mobileservices.MobileServiceList;
-import com.mti.meetme.Tools.CarousselPager;
-import com.mti.meetme.Tools.FacebookHandler;
 import com.mti.meetme.Tools.Network;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.RoundedPicasso;
-import com.mti.meetme.controller.UserList;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
-
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimerTask;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.WeakHashMap;
@@ -126,7 +118,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 startActivity(intent);
                 return true;
             case R.id.menu_list:
-                Intent intent2 = new Intent(getApplicationContext(), ProfilsListActiity.class);
+                Intent intent2 = new Intent(getApplicationContext(), UserListActivity.class);
                 intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent2);
                 return true;
@@ -220,7 +212,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     private void getAllUSerPosition()
     {
         GeoLocation geoLocation = new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
-        GeoQuery geoQuery = geoFire.queryAtLocation(geoLocation, 10);
+        GeoQuery geoQuery = geoFire.queryAtLocation(geoLocation, rayon/1000);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {

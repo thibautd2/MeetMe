@@ -25,7 +25,7 @@ import java.util.ArrayList;
 /**
  * Created by thiba_000 on 12/04/2016.
  */
-public class ProfilsListActiity extends ActionBarActivity{
+public class UserListActivity extends ActionBarActivity{
 
     LinearLayoutManager mLinearLayoutManager;
     RecyclerView mRecyclerView;
