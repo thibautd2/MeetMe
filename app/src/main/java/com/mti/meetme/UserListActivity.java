@@ -58,19 +58,9 @@ public class UserListActivity extends ActionBarActivity{
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 return true;
-            case R.id.menu_settings:
-                displaySettings(false);
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-    public void displaySettings(boolean visible) {
-        MenuView.ItemView item = (MenuView.ItemView) findViewById(R.id.menu_settings);
-        if (visible)
-            item.getItemData().setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        else
-            item.getItemData().setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
     }
 
     public void bindViews()

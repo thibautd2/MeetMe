@@ -122,9 +122,6 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent2);
                 return true;
-            case R.id.menu_settings:
-                // Comportement du bouton "Paramètres"
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -195,6 +192,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         pos.put("latitude", String.valueOf(FacebookUser.getInstance().getLatitude()));
         pos.put("longitude", String.valueOf(FacebookUser.getInstance().getLongitude()));
         geoFire.setLocation(FacebookUser.getInstance().getUid(), new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()));
+
         ref.updateChildren(pos, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
