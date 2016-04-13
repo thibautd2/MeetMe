@@ -209,9 +209,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                     {
                         dispo = true;
                     }
-                }
-                else
-                {
+                } else {
                     dispo = true;
                 }
             }
@@ -274,28 +272,30 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
             @Override
             public void onKeyMoved(String key, GeoLocation location) {
                 final Marker marker = markers.get(key);
-                final Handler handler = new Handler();
-                final long start = SystemClock.uptimeMillis();
-                final long DURATION_MS = 2000;
-                final Interpolator interpolator = new AccelerateDecelerateInterpolator();
-                final LatLng startPosition = marker.getPosition();
-                final double lat = location.latitude;
-                final double lng = location.longitude;
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        float elapsed = SystemClock.uptimeMillis() - start;
-                        float t = elapsed/DURATION_MS;
-                        float v = interpolator.getInterpolation(t);
-                        double currentLat = (lat - startPosition.latitude) * v + startPosition.latitude;
-                        double currentLng = (lng - startPosition.longitude) * v + startPosition.longitude;
-                        marker.setPosition(new LatLng(currentLat, currentLng));
-                        // if animation is not finished yet, repeat
-                        if (t < 1) {
-                            handler.postDelayed(this, 16);
+                if(marker!= null) {
+                    final Handler handler = new Handler();
+                    final long start = SystemClock.uptimeMillis();
+                    final long DURATION_MS = 2000;
+                    final Interpolator interpolator = new AccelerateDecelerateInterpolator();
+                    final LatLng startPosition = marker.getPosition();
+                    final double lat = location.latitude;
+                    final double lng = location.longitude;
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            float elapsed = SystemClock.uptimeMillis() - start;
+                            float t = elapsed / DURATION_MS;
+                            float v = interpolator.getInterpolation(t);
+                            double currentLat = (lat - startPosition.latitude) * v + startPosition.latitude;
+                            double currentLng = (lng - startPosition.longitude) * v + startPosition.longitude;
+                            marker.setPosition(new LatLng(currentLat, currentLng));
+                            // if animation is not finished yet, repeat
+                            if (t < 1) {
+                                handler.postDelayed(this, 16);
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
 
             @Override
