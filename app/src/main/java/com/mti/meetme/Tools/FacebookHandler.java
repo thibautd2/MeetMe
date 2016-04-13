@@ -249,13 +249,10 @@ public class FacebookHandler
                                         nbPics++;
                                     }
                                 }
-
                                 picturesReady = true;
-
                                 if (likesReady && friendsReady && picturesReady)
                                     switchToMaps();
                             }
-
                         }
                         catch (JSONException e) {
                             e.printStackTrace();
@@ -263,7 +260,6 @@ public class FacebookHandler
                     }
                 }
         );
-
         if (next == null)
         {
             Bundle parameters = new Bundle();

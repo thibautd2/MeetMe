@@ -108,12 +108,10 @@ public class ProfileActivity extends ActionBarActivity{
         CarousselPager adapter = new CarousselPager(getSupportFragmentManager());
         adapter.setUser(currentUser);
         pager.setAdapter(adapter);
-
         nameTextView.setText(currentUser.getName() + ",");
         ageTextView.setText("" + currentUser.convertBirthdayToAge());
         likesTextView.setText(getString(R.string.likes_title));
         friendsTextView.setText(getString(R.string.friends_title));
-
         getLikesPictures();
         getFriendsPictures();
     }

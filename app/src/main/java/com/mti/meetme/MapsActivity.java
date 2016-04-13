@@ -161,7 +161,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         FacebookUser.getInstance().setLatitude(pos.latitude);
         FacebookUser.getInstance().setLongitude(pos.longitude);
         latLngCenter = pos;
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(pos.latitude, pos.longitude), rayon));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(pos.latitude, pos.longitude), 17));
         sendPosition();
     }
 
@@ -218,17 +218,22 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 ref.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
-                            User u = snapshot.getValue(User.class);
-                            if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(FacebookUser.getInstance().getUid()) != 0) {
+                        User u = snapshot.getValue(User.class);
+                        final String  uid = FacebookUser.getInstance().getUid();
+                        if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(uid) != 0) {
                                 if (u.getGender().compareTo("male") == 0) {
                                     mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(all_user.size()-1)));
+                                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(all_user.size())));
                                 } else {
                                     mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(all_user.size()-1)));
+                                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(all_user.size())));
                                 }
                                 Log.e("NB_USEr", "NB8USER : " + all_user.size());
-                                all_user.add(u);
+                                for (int i = 0; i <  all_user.size(); i++) {
+                                if(all_user.get(i).getUid() == u.getUid())
+                                    all_user.set(i, u);
+                            }
+
                             }
                         init_infos_window();
                         }
@@ -346,8 +351,6 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         });
 
         GoogleMap.InfoWindowAdapter adapt = new GoogleMap.InfoWindowAdapter() {
-
-
             @Override
             public View getInfoWindow(Marker arg0) {
                 int id = Integer.parseInt(arg0.getSnippet());
