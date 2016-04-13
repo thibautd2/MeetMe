@@ -63,6 +63,7 @@ import java.util.Map;
 import java.util.TimerTask;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.WeakHashMap;
 
 public class MapsActivity extends ActionBarActivity implements OnMapReadyCallback{
 
@@ -73,12 +74,12 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     boolean dispo = true;
     GeoFire geoFire;
     FollowMeLocationSource followMeLocationSource;
-    private Map<String,Marker> markers;
+    private WeakHashMap<String,Marker> markers;
     private int rayon = 10000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        markers = new HashMap<String, Marker>();
+        markers = new WeakHashMap<String, Marker>();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -225,7 +226,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
             public void onKeyEntered(String key, GeoLocation location) {
                 Firebase ref = Network.find_user(key);
                 final String fKey = key;
-                ref.addValueEventListener(new ValueEventListener() {
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
                         boolean userExist = false;
@@ -235,12 +236,12 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                             if (u.getGender().compareTo("male") == 0) {
                                 Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
                                         u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(all_user.size())));
-                                if (fKey != null && marker != null && markers.get(fKey)==null)
+                                if (fKey != null && marker != null && markers.get(fKey) == null)
                                     markers.put(fKey, marker);
                             } else {
                                 Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
                                         u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(all_user.size())));
-                                if (fKey != null && marker != null  && markers.get(fKey)==null)
+                                if (fKey != null && marker != null && markers.get(fKey) == null)
                                     markers.put(fKey, marker);
                             }
                             Log.e("NB_USEr", "NB8USER : " + all_user.size());
@@ -250,8 +251,8 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                                     all_user.set(i, u);
                                 }
                             }
-                            if(!userExist)
-                            all_user.add(u);
+                            if (!userExist)
+                                all_user.add(u);
                         }
                         init_infos_window();
                     }
