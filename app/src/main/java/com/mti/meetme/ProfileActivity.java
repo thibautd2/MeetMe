@@ -109,6 +109,13 @@ public class ProfileActivity extends ActionBarActivity{
         }
     }
 
+    @Override
+    public void onBackPressed()
+    {
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
+    }
+
     public void displayEditDescription()
     {
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
