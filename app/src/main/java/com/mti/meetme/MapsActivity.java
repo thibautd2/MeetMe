@@ -35,12 +35,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 //import com.microsoft.windowsazure.mobileservices.MobileServiceList;
 import com.mti.meetme.Tools.CarousselPager;
+import com.mti.meetme.Tools.FacebookHandler;
 import com.mti.meetme.Tools.Network;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -247,6 +250,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
+
                         Intent intent = new Intent(MapsActivity.this, ProfileActivity.class);
                         Bundle b = new Bundle();
                         b.putSerializable("User", user);
