@@ -192,14 +192,13 @@ public class ProfileActivity extends ActionBarActivity{
                 new GraphRequest.Callback(){
                         public void onCompleted(GraphResponse response) {try {
                             ImageView newItem = new ImageView(ProfileActivity.this);
-                            Picasso.with(ProfileActivity.this).load(response.getJSONObject().getJSONObject("data").getString("url")).transform(new RoundedPicasso()).into(newItem);
-
+                            String url = response.getJSONObject().getJSONObject("data").getString("url");
+                            Picasso.with(ProfileActivity.this).load(url).transform(new RoundedPicasso()).into(newItem);
                             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                             params.height = likesLayout.getHeight();
                             params.width = params.height;
                             params.setMargins(10, 0, 10, 0);
                             likesLayout.addView(newItem, params);
-
                             idLikesCount++;
 
                             if (idLikesCount < currentUser.getLikesID().size()) {
@@ -229,8 +228,8 @@ public class ProfileActivity extends ActionBarActivity{
                 {
                     public void onCompleted(GraphResponse response) {try {
                         ImageView newItem = new ImageView(ProfileActivity.this);
-                        Picasso.with(ProfileActivity.this).load(response.getJSONObject().getJSONObject("data").getString("url")).transform(new RoundedPicasso()).into(newItem);
-
+                        String url = response.getJSONObject().getJSONObject("data").getString("url");
+                        Picasso.with(ProfileActivity.this).load(url).transform(new RoundedPicasso()).into(newItem);
                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         params.height = likesLayout.getHeight();
                         params.width = params.height;

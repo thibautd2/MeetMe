@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -20,7 +22,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,6 +74,12 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     private WeakHashMap<String,Marker> markers;
     private int rayon = 10000;
 
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+    private CharSequence mDrawerTitle;
+    private CharSequence mTitle;
+    private String[] optionTitle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         markers = new WeakHashMap<String, Marker>();
@@ -80,6 +91,17 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         geoFire = new GeoFire(Network.geofire);
         all_user = new ArrayList<>();
         followMeLocationSource = new FollowMeLocationSource();
+
+        optionTitle = getResources().getStringArray(R.array.option_map);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+
+        // set a custom shadow that overlays the main content when the drawer opens
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        // set up the drawer's list view with items and click listener
+        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+                R.layout.drawer_list_item, optionTitle));
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
     }
 
     @Override
@@ -102,6 +124,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         if(mMap == null) {
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_maps, menu);
@@ -127,6 +150,46 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         }
     }
 
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            selectItem(position);
+        }
+    }
+
+
+    private void selectItem(int position) {
+        // update the main content by replacing fragments
+       /* Fragment fragment = new MapsActivity.PlanetFragment();
+        Bundle args = new Bundle();
+        args.putInt(MapsActivity.PlanetFragment.ARG_PLANET_NUMBER, position);
+        fragment.setArguments(args);
+
+        FragmentManager fragmentManager = currentActivity.getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+*/
+        // update selected item and title, then close the drawer
+        mDrawerList.setItemChecked(position, true);
+       // mDrawerList.setSelection(1);
+
+        switch (optionTitle[position]) {
+            case "1 km" :
+                rayon = 1000;
+                break;
+            case "4 km" :
+                rayon = 4000;
+                break;
+            case "10 km" :
+                rayon = 10000;
+                break;
+            default:
+                break;
+        }
+
+        updateMap();
+        mDrawerLayout.closeDrawer(mDrawerList);
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -144,12 +207,21 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
             mMap.setLocationSource(followMeLocationSource);
         }
         GetCurrentLocation();
-        getAllUSerPosition();
+        updateMap();
+    }
+
+    private void updateMap() {
+        mMap.clear();
+
+        all_user.clear();
+        markers.clear();
 
         searchCircle = mMap.addCircle(new CircleOptions().center(latLngCenter).radius(rayon));
         searchCircle.setFillColor(Color.argb(95, 255, 255, 255));
         searchCircle.setStrokeWidth(4);
         searchCircle.setStrokeColor(Color.argb(60, 0, 0, 0));
+
+        getAllUSerPosition();
     }
 
     private void GetCurrentLocation() {
@@ -211,6 +283,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     {
         GeoLocation geoLocation = new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
         GeoQuery geoQuery = geoFire.queryAtLocation(geoLocation, rayon/1000);
+
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
