@@ -228,25 +228,29 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 ref.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
+                        boolean userExist = false;
                         User u = snapshot.getValue(User.class);
                         final String uid = FacebookUser.getInstance().getUid();
                         if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(uid) != 0) {
                             if (u.getGender().compareTo("male") == 0) {
                                 Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
                                         u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(all_user.size())));
-                                if (fKey != null && marker != null)
+                                if (fKey != null && marker != null && markers.get(fKey)==null)
                                     markers.put(fKey, marker);
                             } else {
                                 Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
                                         u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(all_user.size())));
-                                if (fKey != null && marker != null)
+                                if (fKey != null && marker != null  && markers.get(fKey)==null)
                                     markers.put(fKey, marker);
                             }
                             Log.e("NB_USEr", "NB8USER : " + all_user.size());
                             for (int i = 0; i < all_user.size(); i++) {
-                                if (all_user.get(i).getUid().compareTo(u.getUid()) == 0)
+                                if (all_user.get(i).getUid().compareTo(u.getUid()) == 0) {
+                                    userExist = true;
                                     all_user.set(i, u);
+                                }
                             }
+                            if(!userExist)
                             all_user.add(u);
                         }
                         init_infos_window();
