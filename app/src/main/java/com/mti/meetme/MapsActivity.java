@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -34,6 +35,8 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -57,11 +60,13 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     private GoogleMap mMap;
     private ArrayList<User> all_user;
-    public static CarousselPager mpager;
+    private Circle searchCircle;
+    LatLng latLngCenter;
     boolean dispo = true;
     GeoFire geoFire;
     FollowMeLocationSource followMeLocationSource;
     private Map<String,Marker> markers;
+    private int rayon = 10000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +98,6 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     private void setUpMapIfNeeded() {
 
         if(mMap == null) {
-
         }
     }
     @Override
@@ -137,10 +141,14 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         }
         GetCurrentLocation();
         getAllUSerPosition();
+
+        searchCircle = mMap.addCircle(new CircleOptions().center(latLngCenter).radius(rayon));
+        searchCircle.setFillColor(Color.argb(95, 255, 255, 255));
+        searchCircle.setStrokeWidth(4);
+        searchCircle.setStrokeColor(Color.argb(60, 0, 0, 0));
     }
 
     private void GetCurrentLocation() {
-
         //mMap.setMyLocationEnabled(true);
       /*  double latitude = mMap.getMyLocation().getLatitude();
         double longitude= mMap.getMyLocation().getLongitude();
@@ -149,8 +157,8 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         LatLng pos = new LatLng(d[0], d[1]);
         FacebookUser.getInstance().setLatitude(pos.latitude);
         FacebookUser.getInstance().setLongitude(pos.longitude);
-
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(pos.latitude, pos.longitude), 17));
+        latLngCenter = pos;
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(pos.latitude, pos.longitude), rayon));
         sendPosition();
     }
 
@@ -172,7 +180,6 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         return gps;
     }
 
-
     private void sendPosition() {
         dispo = false;
         Log.e("SEND NEW POSITION", "SEND NEW POSITION :" + FacebookUser.getInstance().getLatitude().toString() + " " + FacebookUser.getInstance().getLongitude().toString());
@@ -187,13 +194,14 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 if (firebaseError != null) {
                     {
                         dispo = true;
-                          }
-                } else {
+                    }
+                }
+                else
+                {
                     dispo = true;
                 }
             }
         });
-
     }
 
     private void getAllUSerPosition()
@@ -204,26 +212,22 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
                 Firebase ref = Network.find_user(key);
-                final String user_id = key;
                 ref.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
-                        int i = 0;
                             User u = snapshot.getValue(User.class);
-
-                            if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(user_id) != 0) {
+                            if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(FacebookUser.getInstance().getUid()) != 0) {
                                 if (u.getGender().compareTo("male") == 0) {
                                     mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(i)));
+                                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(all_user.size()-1)));
                                 } else {
                                     mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(i)));
-
+                                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(all_user.size()-1)));
                                 }
                                 Log.e("NB_USEr", "NB8USER : " + all_user.size());
                                 all_user.add(u);
-                                i++;
                             }
+                        init_infos_window();
                         }
                     @Override
                     public void onCancelled(FirebaseError firebaseError) {
@@ -235,22 +239,18 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
 
             @Override
             public void onKeyExited(String key) {
-
             }
 
             @Override
             public void onKeyMoved(String key, GeoLocation location) {
-
             }
 
             @Override
             public void onGeoQueryReady() {
-
             }
 
             @Override
             public void onGeoQueryError(FirebaseError error) {
-
             }
         });
 

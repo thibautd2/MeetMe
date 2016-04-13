@@ -256,6 +256,7 @@ public class ProfileActivity extends ActionBarActivity{
                 }
         ).executeAsync();
     }
+
     /*********************************************************************
      *
      *                  LIKES HANDLING // WITH PASSION

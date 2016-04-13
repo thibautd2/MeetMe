@@ -32,15 +32,17 @@ public class ProfilsListActiity extends ActionBarActivity{
     ArrayList<User> users;
     ProfilsAdapter adapter;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profils_list);
         users = new ArrayList<>();
+        getall_user();
         bindViews();
         populate();
-        getall_user();
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_profile, menu);
@@ -79,7 +81,7 @@ public class ProfilsListActiity extends ActionBarActivity{
 
     public void populate()
     {
-        adapter = new ProfilsAdapter(UserList.getInstance(), this);
+        adapter = new ProfilsAdapter(users, this);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
         mRecyclerView.setAdapter(adapter);

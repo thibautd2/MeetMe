@@ -102,10 +102,9 @@ public class FacebookHandler
 
                                 for (int i = 0; i < array.length(); i++)
                                     fullLikes.getJSONArray("data").put(response.getJSONObject().getJSONArray("data").get(i));
-
                             }
 
-                            if (!response.getJSONObject().getJSONObject("paging").isNull("next"))
+                            if (response.getJSONObject().getJSONArray("data").length()!=0 && !response.getJSONObject().getJSONObject("paging").isNull("next"))
                                 getUserLikes(response.getJSONObject().getJSONObject("paging").getJSONObject("cursors").getString("after"));
                             else {
                                 likesReady = true;
@@ -152,7 +151,7 @@ public class FacebookHandler
                                     fullFriends.getJSONArray("data").put(response.getJSONObject().getJSONArray("data").get(i));
                             }
 
-                            if (!response.getJSONObject().getJSONObject("paging").isNull("next") && response.getJSONObject().getJSONObject("paging").has("cursors"))
+                            if (response.getJSONObject().getJSONArray("data").length()!=0 && !response.getJSONObject().getJSONObject("paging").isNull("next") && response.getJSONObject().getJSONObject("paging").has("cursors"))
                                 getUserFriends(response.getJSONObject().getJSONObject("paging").getJSONObject("cursors").getString("after"));
                             else {
                                 friendsReady = true;
@@ -197,7 +196,7 @@ public class FacebookHandler
                                     fullPictures.getJSONArray("data").put(response.getJSONObject().getJSONArray("data").get(i));
                             }
 
-                            if (!response.getJSONObject().getJSONObject("paging").isNull("next"))
+                            if (response.getJSONObject().getJSONArray("data").length()!=0 && !response.getJSONObject().getJSONObject("paging").isNull("next"))
                                 getUserProfilePics(response.getJSONObject().getJSONObject("paging").getJSONObject("cursors").getString("after"));
                             else {
                                 int nbPics = 0;

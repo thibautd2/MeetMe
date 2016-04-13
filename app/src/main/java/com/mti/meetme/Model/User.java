@@ -47,10 +47,6 @@ public class User implements Serializable {
     @com.google.gson.annotations.SerializedName("Longitude")
     private Double Longitude;
 
-    @com.google.gson.annotations.SerializedName("Position")
-    private Double[] Position;
-
-
     @com.google.gson.annotations.SerializedName("Email")
     private String Email;
 
@@ -113,7 +109,6 @@ public class User implements Serializable {
                         Integer.parseInt(Birthday.split("/")[0]), //MM
                         Integer.parseInt(Birthday.split("/")[1])); //DD
                 LocalDate now = new LocalDate();
-
                 return Years.yearsBetween(birthdate, now).getYears();
             }
             catch (NoClassDefFoundError e)
