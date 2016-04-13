@@ -114,9 +114,14 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_profile:
-                Intent intent = new Intent(getApplicationContext(), ProfilsListActiity.class);
+                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                return true;
+            case R.id.menu_list:
+                Intent intent2 = new Intent(getApplicationContext(), ProfilsListActiity.class);
+                intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent2);
                 return true;
             case R.id.menu_settings:
                 // Comportement du bouton "Paramètres"
@@ -218,14 +223,16 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 ref.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
+                            Log.w("SNAPSHOT", snapshot.toString());
                             User u = snapshot.getValue(User.class);
+
                             if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(FacebookUser.getInstance().getUid()) != 0) {
                                 if (u.getGender().compareTo("male") == 0) {
                                     mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(all_user.size()-1)));
+                                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(all_user.size())));
                                 } else {
                                     mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(all_user.size()-1)));
+                                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(all_user.size())));
                                 }
                                 Log.e("NB_USEr", "NB8USER : " + all_user.size());
                                 all_user.add(u);
@@ -352,7 +359,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
             public View getInfoWindow(Marker arg0) {
                 int id = Integer.parseInt(arg0.getSnippet());
                 Log.e("MARKER ID", "MARKER ID : "+ id);
-                User u =  all_user.get(id);
+                User u = all_user.get(id);
                 View v = getLayoutInflater().inflate(R.layout.info_window, null);
                 ImageView img = (ImageView) v.findViewById(R.id.user_image);
                 TextView name = (TextView) v.findViewById(R.id.user_name);
