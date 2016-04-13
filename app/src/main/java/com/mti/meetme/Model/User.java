@@ -1,20 +1,12 @@
 package com.mti.meetme.Model;
 
 
-import android.util.Log;
-
-import com.google.android.gms.maps.model.LatLng;
-
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.JodaTimePermission;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
 
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.util.ArrayList;
 
 /**
@@ -25,22 +17,6 @@ public class User implements Serializable {
 
     @com.google.gson.annotations.SerializedName("Gender")
     private String Gender;
-
-    public Double getLongitude() {
-        return Longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        Longitude = longitude;
-    }
-
-    public Double getLatitude() {
-        return Latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        Latitude = latitude;
-    }
 
     @com.google.gson.annotations.SerializedName("Latitude")
     private Double Latitude;
@@ -80,12 +56,18 @@ public class User implements Serializable {
     @com.google.gson.annotations.SerializedName("Pic5")
     private String Pic5;
 
+    @com.google.gson.annotations.SerializedName("Likes")
+    private String LikesString;
+
+    @com.google.gson.annotations.SerializedName("Friends")
+    private String FriendsString;
+
     private JSONObject Likes;
     private JSONObject Friends;
 
-    private ArrayList<String> LikesURL;
+    private ArrayList<String> likesId = null;
+    private ArrayList<String> friendsId = null;
 
-    public User() {}
 
     public User(String ageRange, String uid, String name, String birthday, String description, String email, String pic1, String gender) {
         Name = name;
@@ -96,9 +78,11 @@ public class User implements Serializable {
         Gender = gender;
         Email = email;
         AgeRange = ageRange;
-       Longitude = null;
+        Longitude = null;
         Latitude = null;
     }
+
+    public User() {}
 
     public int convertBirthdayToAge()
     {
@@ -116,18 +100,56 @@ public class User implements Serializable {
                 return 23;
             }*/
         return 23;
-        }
-
-//        Log.i("AGE", "Returning Range");
-//        return Integer.parseInt(AgeRange);
-//    }
-
-    public ArrayList<String> getLikesURL() {
-        return LikesURL;
     }
 
-    public void setLikesURL(ArrayList<String> likesURL) {
-        LikesURL = likesURL;
+    public String getLikesString() {
+        return LikesString;
+    }
+
+    public void setLikesString(String likesString) {
+        LikesString = likesString;
+    }
+
+    public String getFriendsString() {
+        return FriendsString;
+    }
+
+    public void setFriendsString(String friendsString) {
+        FriendsString = friendsString;
+    }
+
+    public ArrayList<String> getLikesID() {
+        return likesId;
+    }
+
+    public ArrayList<String> getFriendsID() {
+        return friendsId;
+    }
+
+    public void setLikesId(ArrayList<String> likesId)
+    {
+        this.likesId = likesId;
+    }
+
+    public void setFriendsId(ArrayList<String> friendsId)
+    {
+        this.friendsId = friendsId;
+    }
+
+    public Double getLatitude() {
+        return Latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        Latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return Longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        Longitude = longitude;
     }
 
     public JSONObject getFriends() { return Friends; }

@@ -4,20 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
+
+import com.firebase.client.Firebase;
+import com.mti.meetme.MapsActivity;
+import com.mti.meetme.Model.User;
+import com.mti.meetme.controller.FacebookUser;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
-import com.firebase.client.Firebase;
-import com.mti.meetme.MapsActivity;
-import com.mti.meetme.Model.User;
-import com.mti.meetme.ProfileActivity;
-import com.mti.meetme.SplashActivity;
-import com.mti.meetme.controller.FacebookUser;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,12 +35,40 @@ public class FacebookHandler
     private boolean likesReady;
     private boolean friendsReady;
     private boolean picturesReady;
+    private boolean isComparison;
+    private boolean firstTime;
 
     private User currentUser;
 
     public FacebookHandler(Context context)
     {
         callerContext = context;
+
+        likesReady = false;
+        picturesReady = false;
+        friendsReady = false;
+        isComparison = false;
+    }
+
+    public FacebookHandler(User user)
+    {
+        currentUser = user;
+
+        likesReady = false;
+        picturesReady = false;
+        friendsReady = false;
+        isComparison = true;
+        firstTime = false;
+    }
+
+    public User loadUserCommonData() throws InterruptedException, JSONException {
+        if (currentUser.getLikes() != null)
+            currentUser.setLikesId(getLikesInCommonId(currentUser.getLikes()));
+
+        if (currentUser.getFriends() != null)
+            currentUser.setFriendsId(getFriendsInCommonId(currentUser.getFriends()));
+
+        return currentUser;
     }
 
     public void loadFacebookDataForCurrentUser()
@@ -55,18 +79,16 @@ public class FacebookHandler
         fullFriends = null;
         fullPictures = null;
 
-        likesReady = false;
-        picturesReady = false;
-        friendsReady = false;
-
         getUserLikes("");
         getUserFriends("");
         getUserProfilePics("");
     }
 
-    private void switchToMaps()
-    {
+    private void switchToMaps() throws JSONException {
         FacebookUser.setFacebookUser(currentUser);
+
+        FacebookUser.getInstance().setFriendsString(fullFriends.toString());
+        FacebookUser.getInstance().setLikesString(fullLikes.toString());
 
         Firebase ref = Network.getAlluser;
         Firebase userRef = ref.child(currentUser.getUid());
@@ -74,6 +96,8 @@ public class FacebookHandler
 
         FacebookUser.getInstance().setFriends(fullFriends);
         FacebookUser.getInstance().setLikes(fullLikes);
+        FacebookUser.getInstance().setLikesId(getLikesId(fullLikes));
+        FacebookUser.getInstance().setFriendsId(getFriendsId(fullFriends));
 
         Intent intent = new Intent(callerContext, MapsActivity.class);
         callerContext.startActivity(intent);
@@ -89,7 +113,7 @@ public class FacebookHandler
     {
         GraphRequest request = new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
-                "/me/likes",
+                "/" + currentUser.getUid() + "/likes",
                 null,
                 HttpMethod.GET,
                 new GraphRequest.Callback() {
@@ -108,7 +132,7 @@ public class FacebookHandler
                                 getUserLikes(response.getJSONObject().getJSONObject("paging").getJSONObject("cursors").getString("after"));
                             else {
                                 likesReady = true;
-                                Log.w("Likes", "READY");
+
                                 if (likesReady && friendsReady && picturesReady)
                                     switchToMaps();
                             }
@@ -136,7 +160,7 @@ public class FacebookHandler
     {
         GraphRequest request = new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
-                "/me/friends",
+                "/" + currentUser.getUid() + "/friends",
                 null,
                 HttpMethod.GET,
                 new GraphRequest.Callback() {
@@ -155,7 +179,7 @@ public class FacebookHandler
                                 getUserFriends(response.getJSONObject().getJSONObject("paging").getJSONObject("cursors").getString("after"));
                             else {
                                 friendsReady = true;
-                                Log.w("Friends", "READY");
+
                                 if (likesReady && friendsReady && picturesReady)
                                     switchToMaps();
                             }
@@ -227,7 +251,7 @@ public class FacebookHandler
                                 }
 
                                 picturesReady = true;
-                                Log.w("Pictures", "READY");
+
                                 if (likesReady && friendsReady && picturesReady)
                                     switchToMaps();
                             }
@@ -255,30 +279,55 @@ public class FacebookHandler
             request.executeAsync();
         }
     }
+
+    public ArrayList<String> getFriendsId(JSONObject friends) throws JSONException {
+
+        if (friends != null)
+        {
+            JSONArray friendsArray = friends.getJSONArray("data");
+
+            ArrayList<String> friendsIdCurrent = new ArrayList<String>();
+
+
+            for (int i = 0; i < friendsArray.length(); i++) {
+                friendsIdCurrent.add(FacebookUser.getInstance().getFriends().getJSONArray("data").getJSONObject(i).getString("id"));
+            }
+
+
+            return friendsIdCurrent;
+        }
+
+        return null;
+    }
+
+    public ArrayList<String> getLikesId(JSONObject likes) throws JSONException {
+
+        if (likes != null)
+        {
+            JSONArray likesArray = likes.getJSONArray("data");
+
+            ArrayList<String> likesIdCurrent = new ArrayList<String>();
+
+            for (int i = 0; i < likesArray.length(); i++) {
+                likesIdCurrent.add(FacebookUser.getInstance().getLikes().getJSONArray("data").getJSONObject(i).getString("id"));
+            }
+
+            return likesIdCurrent;
+        }
+
+        return null;
+    }
+
     /*********************************************
      *
      *          OTHER USER'S DATA
      *
      ********************************************/
 
-    private void handleFriendsInCommon(User user) {
-        new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/" + user.getUid().split(":")[1] + "/friends",
-                null,
-                HttpMethod.GET,
-                new GraphRequest.Callback() {
-                    public void onCompleted(GraphResponse response)
-                    {
+    public ArrayList<String> getFriendsInCommonId(JSONObject friends) throws JSONException {
 
-                    }
-                }
-        ).executeAsync();
-    }
-
-    private ArrayList<String> getFriendsInCommonPictures(JSONObject friends) throws JSONException {
-
-        if(friends != null) {
+        if (friends != null)
+        {
             JSONArray friendsArray = friends.getJSONArray("data");
 
             ArrayList<String> friendsId = new ArrayList<String>();
@@ -293,7 +342,33 @@ public class FacebookHandler
             }
 
             friendsId.retainAll(friendsIdCurrent);
+
             return friendsId;
+        }
+
+        return null;
+    }
+
+    public ArrayList<String> getLikesInCommonId(JSONObject likes) throws JSONException {
+
+        if (likes != null)
+        {
+            JSONArray likesArray = likes.getJSONArray("data");
+
+            ArrayList<String> likesId = new ArrayList<String>();
+            ArrayList<String> likesIdCurrent = new ArrayList<String>();
+
+            for (int i = 0; i < likesArray.length(); i++) {
+                likesId.add(likesArray.getJSONObject(i).getString("id"));
+            }
+
+            for (int i = 0; i < FacebookUser.getInstance().getFriends().length(); i++) {
+                likesIdCurrent.add(FacebookUser.getInstance().getLikes().getJSONArray("data").getJSONObject(i).getString("id"));
+            }
+
+            likesId.retainAll(likesIdCurrent);
+
+            return likesId;
         }
 
         return null;

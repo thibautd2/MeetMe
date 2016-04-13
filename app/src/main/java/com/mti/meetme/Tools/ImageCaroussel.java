@@ -97,8 +97,6 @@ public class ImageCaroussel extends Fragment {
                 break;
 
         }
-        Log.e("currentBitem", String.valueOf(ProfileActivity.pager.getCurrentItem()));
-        Log.e("position", String.valueOf(position));
         switch (position)
         {
             case 0:
