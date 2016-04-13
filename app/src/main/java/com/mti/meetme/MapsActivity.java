@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.util.ArrayMap;
 import android.util.Log;
@@ -21,7 +23,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -76,6 +81,12 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     private Map<String,Marker> markers;
     private int rayon = 10000;
 
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+    private CharSequence mDrawerTitle;
+    private CharSequence mTitle;
+    private String[] mPlanetTitles;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         markers = new HashMap<String, Marker>();
@@ -87,6 +98,17 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         geoFire = new GeoFire(Network.geofire);
         all_user = new ArrayList<>();
         followMeLocationSource = new FollowMeLocationSource();
+
+        mPlanetTitles = getResources().getStringArray(R.array.option_map);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+
+        // set a custom shadow that overlays the main content when the drawer opens
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        // set up the drawer's list view with items and click listener
+        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+                R.layout.drawer_list_item, mPlanetTitles));
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
     }
 
     @Override
@@ -135,6 +157,29 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            selectItem(position);
+        }
+    }
+
+
+    private void selectItem(int position) {
+        // update the main content by replacing fragments
+       /* Fragment fragment = new MapsActivity.PlanetFragment();
+        Bundle args = new Bundle();
+        args.putInt(MapsActivity.PlanetFragment.ARG_PLANET_NUMBER, position);
+        fragment.setArguments(args);
+
+        FragmentManager fragmentManager = currentActivity.getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+*/
+        // update selected item and title, then close the drawer
+        mDrawerList.setItemChecked(position, true);
+        mDrawerLayout.closeDrawer(mDrawerList);
     }
 
     @Override
