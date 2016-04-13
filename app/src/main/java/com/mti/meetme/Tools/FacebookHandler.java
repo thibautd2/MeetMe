@@ -333,7 +333,7 @@ public class FacebookHandler
                 friendsId.add(friendsArray.getJSONObject(i).getString("id"));
             }
 
-            for (int i = 0; i < FacebookUser.getInstance().getFriends().length(); i++) {
+            for (int i = 0; i < FacebookUser.getInstance().getFriends().getJSONArray("data").length(); i++) {
                 friendsIdCurrent.add(FacebookUser.getInstance().getFriends().getJSONArray("data").getJSONObject(i).getString("id"));
             }
 
