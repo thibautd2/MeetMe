@@ -1,22 +1,16 @@
 package com.mti.meetme;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.menu.MenuView;
-import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
@@ -133,7 +127,7 @@ public class ProfileActivity extends ActionBarActivity{
         friendsTextView = (TextView) findViewById(R.id.friends_textview);
         likesLayout = (LinearLayout) findViewById(R.id.likes_layout);
         friendsLayout = (LinearLayout) findViewById(R.id.friends_layout);
-        pager = (ViewPager) findViewById(R.id.user_img);
+        pager = (ViewPager) findViewById(R.id.user_img_list);
     }
 
     /*********************************************************************
