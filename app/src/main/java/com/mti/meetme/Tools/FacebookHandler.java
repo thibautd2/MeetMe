@@ -62,6 +62,9 @@ public class FacebookHandler
     }
 
     public User loadUserCommonData() throws InterruptedException, JSONException {
+        currentUser.setLikes(new JSONObject(currentUser.getLikesString()));
+        currentUser.setFriends(new JSONObject(currentUser.getFriendsString()));
+
         if (currentUser.getLikes() != null)
             currentUser.setLikesId(getLikesInCommonId(currentUser.getLikes()));
 

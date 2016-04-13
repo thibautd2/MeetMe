@@ -10,12 +10,17 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -73,6 +78,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        markers = new HashMap<String, Marker>();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -114,9 +120,14 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_profile:
-                Intent intent = new Intent(getApplicationContext(), ProfilsListActiity.class);
+                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                return true;
+            case R.id.menu_list:
+                Intent intent2 = new Intent(getApplicationContext(), ProfilsListActiity.class);
+                intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent2);
                 return true;
             case R.id.menu_settings:
                 // Comportement du bouton "Paramètres"
@@ -215,28 +226,34 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
                 Firebase ref = Network.find_user(key);
+                final String fKey = key;
                 ref.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
                         User u = snapshot.getValue(User.class);
-                        final String  uid = FacebookUser.getInstance().getUid();
+                        final String uid = FacebookUser.getInstance().getUid();
                         if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(uid) != 0) {
-                                if (u.getGender().compareTo("male") == 0) {
-                                    mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(all_user.size())));
-                                } else {
-                                    mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(all_user.size())));
-                                }
-                                Log.e("NB_USEr", "NB8USER : " + all_user.size());
-                                for (int i = 0; i <  all_user.size(); i++) {
-                                if(all_user.get(i).getUid() == u.getUid())
+                            if (u.getGender().compareTo("male") == 0) {
+                                Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                        u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(all_user.size())));
+                                if (fKey != null && marker != null)
+                                    markers.put(fKey, marker);
+                            } else {
+                                Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                        u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(all_user.size())));
+                                if (fKey != null && marker != null)
+                                    markers.put(fKey, marker);
+                            }
+                            Log.e("NB_USEr", "NB8USER : " + all_user.size());
+                            for (int i = 0; i < all_user.size(); i++) {
+                                if (all_user.get(i).getUid().compareTo(u.getUid()) == 0)
                                     all_user.set(i, u);
                             }
-
-                            }
-                        init_infos_window();
+                            all_user.add(u);
                         }
+                        init_infos_window();
+                    }
+
                     @Override
                     public void onCancelled(FirebaseError firebaseError) {
 
@@ -247,10 +264,38 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
 
             @Override
             public void onKeyExited(String key) {
+                markers.remove(key);
+                for (int i = 0; i <  all_user.size(); i++) {
+                    if (all_user.get(i).getUid().compareTo(key) == 0)
+                        all_user.remove(i);
+                }
             }
 
             @Override
             public void onKeyMoved(String key, GeoLocation location) {
+                final Marker marker = markers.get(key);
+                final Handler handler = new Handler();
+                final long start = SystemClock.uptimeMillis();
+                final long DURATION_MS = 2000;
+                final Interpolator interpolator = new AccelerateDecelerateInterpolator();
+                final LatLng startPosition = marker.getPosition();
+                final double lat = location.latitude;
+                final double lng = location.longitude;
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        float elapsed = SystemClock.uptimeMillis() - start;
+                        float t = elapsed/DURATION_MS;
+                        float v = interpolator.getInterpolation(t);
+                        double currentLat = (lat - startPosition.latitude) * v + startPosition.latitude;
+                        double currentLng = (lng - startPosition.longitude) * v + startPosition.longitude;
+                        marker.setPosition(new LatLng(currentLat, currentLng));
+                        // if animation is not finished yet, repeat
+                        if (t < 1) {
+                            handler.postDelayed(this, 16);
+                        }
+                    }
+                });
             }
 
             @Override
@@ -262,53 +307,6 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
         });
 
-
-           /* Firebase ref = Network.getAlluser;
-            final String currentuser_id = FacebookUser.getInstance().getUid();
-            all_user.clear();
-            mMap.clear();*/
-        /*
-        ref.addValueEventListener(new
-
-            ValueEventListener() {
-                @Override
-                public void onDataChange (DataSnapshot snapshot){
-                    Log.e("MORTEL", "MORTEL");
-                    int i = 0;
-                    all_user.clear();
-                    mMap.clear();
-
-                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                        User u = postSnapshot.getValue(User.class);
-                        if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(currentuser_id) != 0)
-                        {
-                            if (u.getGender().compareTo("male") == 0) {
-                                mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                        u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(i)));
-
-                            }else {
-                                mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                        u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(i)));
-
-                            }
-                            Log.e("NB_USEr", "NB8USER : " + all_user.size());
-                            all_user.add(u);
-                            i++;
-                        }
-                    }
-                    UserList.setAll_users(all_user);
-                    init_infos_window();
-
-
-                }
-
-                @Override
-                public void onCancelled (FirebaseError firebaseError){
-                }
-            }
-
-            );
-            */
         }
 
     public void init_infos_window()
@@ -355,7 +353,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
             public View getInfoWindow(Marker arg0) {
                 int id = Integer.parseInt(arg0.getSnippet());
                 Log.e("MARKER ID", "MARKER ID : "+ id);
-                User u =  all_user.get(id);
+                User u = all_user.get(id);
                 View v = getLayoutInflater().inflate(R.layout.info_window, null);
                 ImageView img = (ImageView) v.findViewById(R.id.user_image);
                 TextView name = (TextView) v.findViewById(R.id.user_name);
