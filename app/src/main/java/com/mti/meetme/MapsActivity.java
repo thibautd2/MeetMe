@@ -81,6 +81,12 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     FollowMeLocationSource followMeLocationSource;
     private WeakHashMap<String,Marker> markers;
     private int rayon = 10000;
+    private enum Gender {
+        MAN,
+        WOMAN,
+        ALL
+    };
+    private Gender gender;
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -90,6 +96,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        gender = Gender.ALL;
         markers = new WeakHashMap<String, Marker>();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
@@ -99,6 +106,8 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         geoFire = new GeoFire(Network.geofire);
         all_user = new ArrayList<>();
         followMeLocationSource = new FollowMeLocationSource();
+
+
 
         optionTitle = getResources().getStringArray(R.array.option_map);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -116,7 +125,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     public void onResume() {
         super.onResume();
         followMeLocationSource.getBestAvailableProvider();
-        if(mMap!=null)
+        if (mMap != null)
         mMap.setMyLocationEnabled(true);
        // setUpMapIfNeeded();
 
@@ -189,6 +198,15 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 break;
             case "10 km" :
                 rayon = 10000;
+                break;
+            case "Femme" :
+                gender = Gender.WOMAN;
+                break;
+            case "Homme" :
+                gender = Gender.MAN;
+                break;
+            case "Les deux" :
+                gender = Gender.ALL;
                 break;
             default:
                 break;
@@ -303,12 +321,12 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                         User u = snapshot.getValue(User.class);
                         final String uid = FacebookUser.getInstance().getUid();
                         if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(uid) != 0) {
-                            if (u.getGender().compareTo("male") == 0) {
+                            if (gender != Gender.WOMAN && u.getGender().compareTo("male") == 0) {
                                 Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
                                         u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(all_user.size())));
                                 if (fKey != null && marker != null && markers.get(fKey) == null)
                                     markers.put(fKey, marker);
-                            } else {
+                            } else if (gender != Gender.MAN && u.getGender().compareTo("male") != 0) {
                                 Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
                                         u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(all_user.size())));
                                 if (fKey != null && marker != null && markers.get(fKey) == null)
