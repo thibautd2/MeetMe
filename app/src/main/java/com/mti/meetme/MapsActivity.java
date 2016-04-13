@@ -85,7 +85,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     private ListView mDrawerList;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-    private String[] mPlanetTitles;
+    private String[] optionTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +99,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         all_user = new ArrayList<>();
         followMeLocationSource = new FollowMeLocationSource();
 
-        mPlanetTitles = getResources().getStringArray(R.array.option_map);
+        optionTitle = getResources().getStringArray(R.array.option_map);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
@@ -107,7 +107,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         // set up the drawer's list view with items and click listener
         mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawer_list_item, mPlanetTitles));
+                R.layout.drawer_list_item, optionTitle));
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
     }
 
@@ -131,6 +131,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         if(mMap == null) {
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_maps, menu);
@@ -179,6 +180,23 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
 */
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);
+       // mDrawerList.setSelection(1);
+
+        switch (optionTitle[position]) {
+            case "1 km" :
+                rayon = 1000;
+                break;
+            case "4 km" :
+                rayon = 4000;
+                break;
+            case "10 km" :
+                rayon = 10000;
+                break;
+            default:
+                break;
+        }
+
+        updateMap();
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
@@ -199,12 +217,21 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
             mMap.setLocationSource(followMeLocationSource);
         }
         GetCurrentLocation();
-        getAllUSerPosition();
+        updateMap();
+    }
+
+    private void updateMap() {
+        mMap.clear();
+
+        all_user.clear();
+        markers.clear();
 
         searchCircle = mMap.addCircle(new CircleOptions().center(latLngCenter).radius(rayon));
         searchCircle.setFillColor(Color.argb(95, 255, 255, 255));
         searchCircle.setStrokeWidth(4);
         searchCircle.setStrokeColor(Color.argb(60, 0, 0, 0));
+
+        getAllUSerPosition();
     }
 
     private void GetCurrentLocation() {
@@ -264,13 +291,13 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     private void getAllUSerPosition()
     {
         GeoLocation geoLocation = new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
-        GeoQuery geoQuery = geoFire.queryAtLocation(geoLocation, 10);
+        GeoQuery geoQuery = geoFire.queryAtLocation(geoLocation, rayon / 1000);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
                 Firebase ref = Network.find_user(key);
                 final String fKey = key;
-                ref.addValueEventListener(new ValueEventListener() {
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
                         boolean userExist = false;
@@ -280,12 +307,12 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                             if (u.getGender().compareTo("male") == 0) {
                                 Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
                                         u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(all_user.size())));
-                                if (fKey != null && marker != null && markers.get(fKey)==null)
+                                if (fKey != null && marker != null && markers.get(fKey) == null)
                                     markers.put(fKey, marker);
                             } else {
                                 Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
                                         u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(all_user.size())));
-                                if (fKey != null && marker != null  && markers.get(fKey)==null)
+                                if (fKey != null && marker != null && markers.get(fKey) == null)
                                     markers.put(fKey, marker);
                             }
                             Log.e("NB_USEr", "NB8USER : " + all_user.size());
@@ -295,8 +322,8 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                                     all_user.set(i, u);
                                 }
                             }
-                            if(!userExist)
-                            all_user.add(u);
+                            if (!userExist)
+                                all_user.add(u);
                         }
                         init_infos_window();
                     }
