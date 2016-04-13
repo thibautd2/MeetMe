@@ -68,6 +68,7 @@ import java.util.Map;
 import java.util.TimerTask;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.WeakHashMap;
 
 public class MapsActivity extends ActionBarActivity implements OnMapReadyCallback{
 
@@ -78,7 +79,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     boolean dispo = true;
     GeoFire geoFire;
     FollowMeLocationSource followMeLocationSource;
-    private Map<String,Marker> markers;
+    private WeakHashMap<String,Marker> markers;
     private int rayon = 10000;
 
     private DrawerLayout mDrawerLayout;
@@ -89,7 +90,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        markers = new HashMap<String, Marker>();
+        markers = new WeakHashMap<String, Marker>();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -151,9 +152,6 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 Intent intent2 = new Intent(getApplicationContext(), ProfilsListActiity.class);
                 intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent2);
-                return true;
-            case R.id.menu_settings:
-                // Comportement du bouton "Paramètres"
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -274,6 +272,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         pos.put("latitude", String.valueOf(FacebookUser.getInstance().getLatitude()));
         pos.put("longitude", String.valueOf(FacebookUser.getInstance().getLongitude()));
         geoFire.setLocation(FacebookUser.getInstance().getUid(), new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()));
+
         ref.updateChildren(pos, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
