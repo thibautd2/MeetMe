@@ -428,7 +428,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
 
         private InfoWindowRefresher(Marker markerToRefresh) {
             this.markerToRefresh = markerToRefresh;
-            if (markerToRefresh != null) {
+            if (markerToRefresh != null && markerToRefresh.isInfoWindowShown()) {
                 markerToRefresh.hideInfoWindow();
                 markerToRefresh.showInfoWindow();
             }
@@ -436,7 +436,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
 
         @Override
         public void onError() {
-            if (markerToRefresh != null) {
+            if (markerToRefresh != null && markerToRefresh.isInfoWindowShown()) {
                 markerToRefresh.hideInfoWindow();
                 markerToRefresh.showInfoWindow();
             }
@@ -444,7 +444,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
 
         @Override
         public void onSuccess() {
-            if (markerToRefresh != null ) {
+            if (markerToRefresh != null && markerToRefresh.isInfoWindowShown() ) {
                 markerToRefresh.hideInfoWindow();
                 markerToRefresh.showInfoWindow();
             }
