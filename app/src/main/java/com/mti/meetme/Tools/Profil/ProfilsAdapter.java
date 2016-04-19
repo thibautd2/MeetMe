@@ -1,13 +1,9 @@
-package com.mti.meetme.Tools;
+package com.mti.meetme.Tools.Profil;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Typeface;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.ProfileActivity;
 import com.mti.meetme.R;

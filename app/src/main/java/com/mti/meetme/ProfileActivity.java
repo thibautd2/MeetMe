@@ -1,17 +1,13 @@
 package com.mti.meetme;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.view.menu.MenuView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,22 +18,16 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.geofire.GeoLocation;
 import com.mti.meetme.Model.User;
-import com.mti.meetme.Tools.CarousselPager;
+import com.mti.meetme.Tools.Profil.CarousselPager;
 import com.mti.meetme.Tools.FacebookHandler;
-import com.mti.meetme.Tools.Network;
+import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -107,6 +97,13 @@ public class ProfileActivity extends ActionBarActivity{
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
     }
 
     public void displayEditDescription()

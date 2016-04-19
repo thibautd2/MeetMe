@@ -3,7 +3,6 @@ package com.mti.meetme;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -15,10 +14,9 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.mti.meetme.Model.User;
-import com.mti.meetme.Tools.Network;
-import com.mti.meetme.Tools.ProfilsAdapter;
+import com.mti.meetme.Tools.Network.Network;
+import com.mti.meetme.Tools.Profil.ProfilsAdapter;
 import com.mti.meetme.controller.FacebookUser;
-import com.mti.meetme.controller.UserList;
 
 import java.util.ArrayList;
 
