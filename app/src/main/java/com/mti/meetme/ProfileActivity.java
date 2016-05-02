@@ -8,10 +8,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
@@ -31,7 +33,6 @@ import org.json.JSONException;
 import java.util.HashMap;
 import java.util.Map;
 import com.pubnub.api.*;
-import org.json.*;
 
 public class ProfileActivity extends ActionBarActivity{
 
@@ -53,6 +54,7 @@ public class ProfileActivity extends ActionBarActivity{
 
     private int idLikesCount = 0;
     private int idFriendsCount = 0;
+
     public Pubnub pubnub;
 
     @Override
@@ -61,8 +63,8 @@ public class ProfileActivity extends ActionBarActivity{
         setContentView(R.layout.activity_profile);
 
         user = (User) getIntent().getSerializableExtra("User");
-        pubnub = new Pubnub(getResources().getString(R.string.PublishKey), getResources().getString(R.string.PublishKey));
 
+        pubnub = new Pubnub(getResources().getString(R.string.PublishKey), getResources().getString(R.string.PublishKey));
 
         try {
             bindViews();
@@ -106,7 +108,13 @@ public class ProfileActivity extends ActionBarActivity{
                 //Fais tes bails ici thibaut
                 return true;
             case R.id.menu_message:
-                //Je ferai mes bails ici
+                Intent chatIntent = new Intent(getApplicationContext(), ChatActivity.class);
+
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("User", user);
+                chatIntent.putExtras(bundle);
+
+                startActivity(chatIntent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -167,12 +175,37 @@ public class ProfileActivity extends ActionBarActivity{
         pager.setAdapter(adapter);
         nameTextView.setText(currentUser.getName() + ",");
         ageTextView.setText("" + currentUser.convertBirthdayToAge());
-        likesTextView.setText(getString(R.string.likes_title));
-        friendsTextView.setText(getString(R.string.friends_title));
+
+        if (user == null)
+        {
+            likesTextView.setText(getString(R.string.likes_title));
+            friendsTextView.setText(getString(R.string.friends_title));
+        }
+        else
+        {
+            likesTextView.setText(getString(R.string.likes_common_title));
+            friendsTextView.setText(getString(R.string.friends_common_title));
+
+            if (currentUser.getLikesID().size() == 0)
+            {
+                likesTextView.setVisibility(View.GONE);
+                likesLayout.setVisibility(View.GONE);
+            }
+
+            if (currentUser.getFriendsID().size() == 0)
+            {
+                friendsTextView.setVisibility(View.GONE);
+                friendsLayout.setVisibility(View.GONE);
+            }
+        }
+
         descriptionTextView.setText(currentUser.getDescription());
 
-        getLikesPictures();
-        getFriendsPictures();
+        if (currentUser.getLikesID().size() > 0)
+            getLikesPictures();
+
+        if (currentUser.getFriendsID().size() > 0)
+            getFriendsPictures();
     }
 
 
@@ -249,8 +282,10 @@ public class ProfileActivity extends ActionBarActivity{
                         ImageView newItem = new ImageView(ProfileActivity.this);
                         String url = response.getJSONObject().getJSONObject("data").getString("url");
                         Picasso.with(ProfileActivity.this).load(url).transform(new RoundedPicasso()).into(newItem);
+
                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params.height = likesLayout.getHeight();
+
+                        params.height = friendsLayout.getHeight();
                         params.width = params.height;
                         params.setMargins(10, 0, 10, 0);
                         friendsLayout.addView(newItem, params);

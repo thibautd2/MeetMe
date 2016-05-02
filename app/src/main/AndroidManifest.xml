@@ -59,6 +59,11 @@
         <activity
             android:configChanges="orientation"
             android:screenOrientation="portrait"
+            android:name=".ChatActivity"
+            android:label="Chat"></activity>
+        <activity
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:name=".UserListActivity"
             android:label="Rencontres"></activity>
 
