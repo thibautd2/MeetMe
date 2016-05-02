@@ -53,7 +53,7 @@ public class ProfileActivity extends ActionBarActivity{
 
     private int idLikesCount = 0;
     private int idFriendsCount = 0;
-
+    public Pubnub pubnub;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +61,7 @@ public class ProfileActivity extends ActionBarActivity{
         setContentView(R.layout.activity_profile);
 
         user = (User) getIntent().getSerializableExtra("User");
-        Pubnub pubnub = new Pubnub("pub-c-b24d94ea-c6f3-4946-a59b-88956fc28e96", "sub-c-9ebef7de-107e-11e6-a6dc-02ee2ddab7fe");
+        pubnub = new Pubnub(getResources().getString(R.string.PublishKey), getResources().getString(R.string.PublishKey));
 
 
         try {
