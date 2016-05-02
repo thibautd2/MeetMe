@@ -52,5 +52,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.2.1'
     compile 'com.firebase:geofire:1.1.0+'
     compile 'com.pubnub:pubnub-android:3.7.8'
+    compile 'com.pubnub:pubnub-android:3.7.8'
     //'com.pubnub:pubnub-android-debug:3.7.+' For the debug version
 }

@@ -30,7 +30,8 @@ import org.json.JSONException;
 
 import java.util.HashMap;
 import java.util.Map;
-
+import com.pubnub.api.*;
+import org.json.*;
 
 public class ProfileActivity extends ActionBarActivity{
 
@@ -60,6 +61,8 @@ public class ProfileActivity extends ActionBarActivity{
         setContentView(R.layout.activity_profile);
 
         user = (User) getIntent().getSerializableExtra("User");
+        Pubnub pubnub = new Pubnub("pub-c-b24d94ea-c6f3-4946-a59b-88956fc28e96", "sub-c-9ebef7de-107e-11e6-a6dc-02ee2ddab7fe");
+
 
         try {
             bindViews();

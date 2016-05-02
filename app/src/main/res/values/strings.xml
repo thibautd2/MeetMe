@@ -20,6 +20,10 @@
     <string name="description_title">Description :</string>
     <string name="description_popup_title">Edit your description</string>
 
+    <!-- PubNub -->
+    <string name="PublishKey">pub-c-b24d94ea-c6f3-4946-a59b-88956fc28e96</string>
+    <string name="SubscribeKey">sub-c-9ebef7de-107e-11e6-a6dc-02ee2ddab7fe</string>
+
 
     <!-- MapsActivity -->
     <string name="no_permission_granted">Please grant location permission to MeetMe.</string>
