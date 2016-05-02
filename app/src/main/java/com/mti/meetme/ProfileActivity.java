@@ -78,6 +78,11 @@ public class ProfileActivity extends ActionBarActivity{
 
         if (user == null)
             menu.findItem(R.id.menu_edit).setVisible(true);
+        else
+        {
+            menu.findItem(R.id.menu_message).setVisible(true);
+            menu.findItem(R.id.menu_heart).setVisible(true);
+        }
 
         return true;
     }
@@ -93,6 +98,12 @@ public class ProfileActivity extends ActionBarActivity{
                 return true;
             case R.id.menu_edit:
                 displayEditDescription();
+                return true;
+            case R.id.menu_heart:
+                //Fais tes bails ici thibaut
+                return true;
+            case R.id.menu_message:
+                //Je ferai mes bails ici
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -118,10 +129,14 @@ public class ProfileActivity extends ActionBarActivity{
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton)
             {
+                FacebookUser.getInstance().setDescription(input.getText().toString());
+
                 Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
-                Map<String, Object> pos = new HashMap<String, Object>();
-                pos.put("description", input.getText().toString());
-                ref.updateChildren(pos, null);
+
+                Map<String, Object> desc = new HashMap<>();
+                desc.put("description", input.getText().toString());
+
+                ref.updateChildren(desc, null);
 
                 descriptionTextView.setText(input.getText().toString());
             }});
@@ -189,12 +204,16 @@ public class ProfileActivity extends ActionBarActivity{
                 new GraphRequest.Callback(){
                         public void onCompleted(GraphResponse response) {try {
                             ImageView newItem = new ImageView(ProfileActivity.this);
+
                             String url = response.getJSONObject().getJSONObject("data").getString("url");
                             Picasso.with(ProfileActivity.this).load(url).transform(new RoundedPicasso()).into(newItem);
+
                             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
                             params.height = likesLayout.getHeight();
                             params.width = params.height;
                             params.setMargins(10, 0, 10, 0);
+
                             likesLayout.addView(newItem, params);
                             idLikesCount++;
 

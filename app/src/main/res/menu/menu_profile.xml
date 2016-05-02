@@ -11,5 +11,17 @@
         android:title="desc"
         app:showAsAction="ifRoom"
         android:visible="false" />
+    <item
+        android:id="@+id/menu_message"
+        android:icon="@drawable/ic_message"
+        android:title="desc"
+        app:showAsAction="ifRoom"
+        android:visible="false" />
+    <item
+        android:id="@+id/menu_heart"
+        android:icon="@drawable/ic_heart"
+        android:title="desc"
+        app:showAsAction="ifRoom"
+        android:visible="false" />
 
 </menu>
