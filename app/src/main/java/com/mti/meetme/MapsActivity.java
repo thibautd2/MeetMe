@@ -1,6 +1,8 @@
 package com.mti.meetme;
 
 import android.app.Dialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,7 +17,9 @@ import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Menu;
@@ -25,8 +29,11 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,8 +58,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 //import com.microsoft.windowsazure.mobileservices.MobileServiceList;
+import com.mti.meetme.Interface.ContextDrawerAdapter;
+import com.mti.meetme.Tools.AndroidSeekBar;
 import com.mti.meetme.Tools.CarousselPager;
+import com.mti.meetme.Tools.DrawerListAdapter;
 import com.mti.meetme.Tools.FacebookHandler;
+import com.mti.meetme.Tools.MenuSlideItem;
 import com.mti.meetme.Tools.Network;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.Model.User;
@@ -70,7 +81,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.WeakHashMap;
 
-public class MapsActivity extends ActionBarActivity implements OnMapReadyCallback{
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, ContextDrawerAdapter {
 
     private GoogleMap mMap;
     private ArrayList<User> all_user;
@@ -82,17 +93,18 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     private WeakHashMap<String,Marker> markers;
     private int rayon = 10000;
     private enum Gender {
-        MAN,
-        WOMAN,
+        MEN,
+        WOMEN,
         ALL
     };
     private Gender gender;
 
+    ListView mDrawerList;
+    RelativeLayout mDrawerPane;
+  //  private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-    private CharSequence mDrawerTitle;
-    private CharSequence mTitle;
-    private String[] optionTitle;
+
+    ArrayList<MenuSlideItem> MenuSlideItems = new ArrayList<MenuSlideItem>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,18 +119,36 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         all_user = new ArrayList<>();
         followMeLocationSource = new FollowMeLocationSource();
 
+        final ActionBar ab = getSupportActionBar();
+        ab.setHomeAsUpIndicator(R.drawable.ic_drawer); // set a custom icon for the default home button
+        ab.setDisplayShowHomeEnabled(true); // show or hide the default home button
+        ab.setDisplayHomeAsUpEnabled(true);
+        ab.setDisplayShowCustomEnabled(true); // enable overriding the default toolbar layout
+        ab.setDisplayShowTitleEnabled(true);
+
+       // MenuSlideItems.add(new MenuSlideItem("Genre", R.drawable.gender, new MenuSlideItem.MySeekBar(0, 2, 1)));
+        MenuSlideItems.add(new MenuSlideItem("Distance", " km", R.drawable.radar, new MenuSlideItem.MySeekBar(0, 10, 5)));
+        MenuSlideItems.add(new MenuSlideItem("Preferences", R.drawable.ic_back, "Change your preferences"));
+        MenuSlideItems.add(new MenuSlideItem("Genre", R.drawable.gender, new MenuSlideItem.MyCheckBox("Men", true), new MenuSlideItem.MyCheckBox("Women", true), null, null));
 
 
-        optionTitle = getResources().getStringArray(R.array.option_map);
+        // DrawerLayout
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
-        // set a custom shadow that overlays the main content when the drawer opens
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        // set up the drawer's list view with items and click listener
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawer_list_item, optionTitle));
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+        // Populate the Navigtion Drawer with options
+        mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
+        mDrawerList = (ListView) findViewById(R.id.navList);
+        DrawerListAdapter adapter = new DrawerListAdapter(this, MenuSlideItems);
+        mDrawerList.setAdapter(adapter);
+
+        // Drawer Item click listeners
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectItemFromDrawer(position);
+            }
+        });
+
     }
 
     @Override
@@ -145,6 +175,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_maps, menu);
+
         super.onCreateOptionsMenu(menu);
         return true;
     }
@@ -162,58 +193,89 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent2);
                 return true;
+            case android.R.id.home:
+                if (mDrawerLayout.isDrawerOpen(mDrawerPane))
+                    mDrawerLayout.closeDrawer(mDrawerPane);
+                else
+                    mDrawerLayout.openDrawer(mDrawerPane);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
+/*
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             selectItem(position);
         }
     }
-
-
-    private void selectItem(int position) {
-        // update the main content by replacing fragments
-       /* Fragment fragment = new MapsActivity.PlanetFragment();
-        Bundle args = new Bundle();
-        args.putInt(MapsActivity.PlanetFragment.ARG_PLANET_NUMBER, position);
-        fragment.setArguments(args);
-
-        FragmentManager fragmentManager = currentActivity.getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 */
-        // update selected item and title, then close the drawer
-        mDrawerList.setItemChecked(position, true);
-       // mDrawerList.setSelection(1);
+    private void selectItemFromDrawer(int position) {
+  /*      Fragment fragment = new PreferencesFragment();
 
-        switch (optionTitle[position]) {
-            case "1 km" :
-                rayon = 1000;
-                break;
-            case "4 km" :
-                rayon = 4000;
-                break;
-            case "10 km" :
-                rayon = 10000;
-                break;
-            case "Femme" :
-                gender = Gender.WOMAN;
-                break;
-            case "Homme" :
-                gender = Gender.MAN;
-                break;
-            case "Les deux" :
-                gender = Gender.ALL;
-                break;
-            default:
-                break;
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.mainContent, fragment)
+                .commit();
+
+        mDrawerList.setItemChecked(position, true);
+        setTitle(MenuSlideItems.get(position).mTitle);
+
+        // Close the drawer
+*/
+
+        mDrawerLayout.closeDrawer(mDrawerPane);
+    }
+
+    @Override
+    public void menuDrawerSeekBarListener(SeekBar seekBar, TextView textView, String btnName) {
+        if (btnName.equals("Distance")) {
+            rayon = 1000 * seekBar.getProgress();
+            Log.e("mapsActivity", "distance changed");
+           // textView.setText(seekBar.getProgress() + " km");
         }
 
         updateMap();
-        mDrawerLayout.closeDrawer(mDrawerList);
+    }
+
+    @Override
+    public void menuDrawerMultyChoiceListener(CheckBox checkBox, String btnName, boolean ischecked) {
+        if (btnName.equals("Genre")) {
+            boolean men = true;
+            boolean women = true;
+            if (checkBox.getText().equals("Men") && ischecked)
+                men = true;
+            else if (checkBox.getText().equals("Men") && !ischecked && gender != Gender.MEN) {
+                men = false;
+            }
+            else if (checkBox.getText().equals("Men")) {
+                checkBox.setChecked(true);
+                women = false;
+            }
+            if (checkBox.getText().equals("Women") && ischecked)
+                women = true;
+            else if (checkBox.getText().equals("Women") && !ischecked && gender != Gender.WOMEN) {
+                women = false;
+            }
+            else if (checkBox.getText().equals("Women")) {
+                checkBox.setChecked(true);
+                men = false;
+            }
+
+            gender = getGender(men, women);
+           // Log.e("MapsActivity", "change gander: " + gender.toString());
+        }
+        updateMap();
+    }
+
+    private Gender getGender(boolean men, boolean women) {
+        if (men && women)
+            return Gender.ALL;
+        if (men)
+            return Gender.MEN;
+
+        return Gender.WOMEN;
     }
 
     @Override
@@ -321,18 +383,18 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                         User u = snapshot.getValue(User.class);
                         final String uid = FacebookUser.getInstance().getUid();
                         if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(uid) != 0) {
-                            if (gender != Gender.WOMAN && u.getGender().compareTo("male") == 0) {
+                            if (gender != Gender.WOMEN && u.getGender().compareTo("male") == 0) {
                                 Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
                                         u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(all_user.size())));
                                 if (fKey != null && marker != null && markers.get(fKey) == null)
                                     markers.put(fKey, marker);
-                            } else if (gender != Gender.MAN && u.getGender().compareTo("male") != 0) {
+                            } else if (gender != Gender.MEN && u.getGender().compareTo("male") != 0) {
                                 Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
                                         u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(all_user.size())));
                                 if (fKey != null && marker != null && markers.get(fKey) == null)
                                     markers.put(fKey, marker);
                             }
-                            Log.e("NB_USEr", "NB8USER : " + all_user.size());
+                       //     Log.e("NB_USEr", "NB8USER : " + all_user.size());
                             for (int i = 0; i < all_user.size(); i++) {
                                 if (all_user.get(i).getUid().compareTo(u.getUid()) == 0) {
                                     userExist = true;
@@ -356,7 +418,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
             @Override
             public void onKeyExited(String key) {
                 markers.remove(key);
-                for (int i = 0; i <  all_user.size(); i++) {
+                for (int i = 0; i < all_user.size(); i++) {
                     if (all_user.get(i).getUid().compareTo(key) == 0)
                         all_user.remove(i);
                 }
@@ -365,7 +427,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
             @Override
             public void onKeyMoved(String key, GeoLocation location) {
                 final Marker marker = markers.get(key);
-                if(marker!= null) {
+                if (marker != null) {
                     final Handler handler = new Handler();
                     final long start = SystemClock.uptimeMillis();
                     final long DURATION_MS = 2000;
