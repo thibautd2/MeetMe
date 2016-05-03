@@ -46,4 +46,7 @@
     <string name="action_websearch">Web search</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
 
+    <!-- ChatActivity-->
+    <string name="send">Envoyer</string>
+    <string name="input_hint">Entrez votre message...</string>
 </resources>
