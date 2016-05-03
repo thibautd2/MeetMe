@@ -35,6 +35,8 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.iid.InstanceID;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -49,17 +51,27 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.mti.meetme.Tools.Map.CalculateDistance;
 import com.mti.meetme.Tools.Map.FollowMeLocationSource;
 import com.mti.meetme.Tools.Network.Network;
+import com.mti.meetme.Tools.Notifs.GcmBroadcastReceiver;
+import com.mti.meetme.Tools.Notifs.GcmIntentService;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.RoundedPicasso;
+import com.pubnub.api.Pubnub;
+import com.pubnub.api.PubnubError;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.WeakHashMap;
+import com.pubnub.api.*;
+import org.json.*;
 
 public class MapsActivity extends ActionBarActivity implements OnMapReadyCallback{
 
@@ -78,15 +90,55 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         ALL
     };
     private Gender gender;
-
+    public static com.pubnub.api.Callback callback = new com.pubnub.api.Callback() {
+        @Override
+        public void successCallback(String channel, Object message) {
+            Log.i("", "Success on Channel " + "chanel" + " : " + message);
+        }
+        @Override
+        public void errorCallback(String channel, PubnubError error) {
+//            Log.i(TAG, "Error On Channel " + CHANNEL + " : " + error);
+        }
+    };
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private String[] optionTitle;
-
+    GcmIntentService notif;
+    Pubnub pubnub;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        ////**/*// PRACTICING NOTIFS //*/*/*/*
+       InstanceID instanceID = InstanceID.getInstance(this);
+        try {
+            String token = instanceID.getToken(getResources().getString(R.string.SenderID),
+                    GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+            GcmBroadcastReceiver broadcastReceiver = new GcmBroadcastReceiver();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        pubnub = new Pubnub(getResources().getString(R.string.PublishKey), getResources().getString(R.string.PublishKey));
+
+
+        try {
+            pubnub.subscribe("channel", callback
+            );
+        } catch (PubnubException e) {
+            System.out.println(e.toString());
+        }
+        JSONObject jso = null;
+        try {
+            jso = new JSONObject("{ 'aps' : {'alert' : 'You got your emails.'," + "'badge' : 9, 'sound' : 'bingbong.aiff'}," + " 'acme 1': 42}");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        pubnub.publish("channel", jso,
+               callback);
+
         gender = Gender.ALL;
         markers = new WeakHashMap<String, Marker>();
         super.onCreate(savedInstanceState);
@@ -118,6 +170,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         mMap.setMyLocationEnabled(true);
 
     }
+
 
 
     @Override
@@ -407,7 +460,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 distance.setText(dist +" m");
                 name.setText(u.getName());
                 age.setText(String.valueOf(u.convertBirthdayToAge()) +" ans");
-                Picasso.with(MapsActivity.this)
+                Picasso.with(getApplication())
                                 .load(u.getPic1())
                                 .transform(new RoundedPicasso())
                                 .into(img, new InfoWindowRefresher(arg0));
