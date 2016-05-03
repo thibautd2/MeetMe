@@ -1,46 +1,38 @@
 package com.mti.meetme;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.view.menu.MenuView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.inputmethod.InputMethodManager;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.geofire.GeoLocation;
 import com.mti.meetme.Model.User;
-import com.mti.meetme.Tools.CarousselPager;
+import com.mti.meetme.Tools.Profil.CarousselPager;
 import com.mti.meetme.Tools.FacebookHandler;
-import com.mti.meetme.Tools.Network;
+import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+import com.pubnub.api.*;
 
 public class ProfileActivity extends ActionBarActivity{
 
@@ -63,6 +55,7 @@ public class ProfileActivity extends ActionBarActivity{
     private int idLikesCount = 0;
     private int idFriendsCount = 0;
 
+    public Pubnub pubnub;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +63,8 @@ public class ProfileActivity extends ActionBarActivity{
         setContentView(R.layout.activity_profile);
 
         user = (User) getIntent().getSerializableExtra("User");
+
+        pubnub = new Pubnub(getResources().getString(R.string.PublishKey), getResources().getString(R.string.PublishKey));
 
         try {
             bindViews();
@@ -88,6 +83,11 @@ public class ProfileActivity extends ActionBarActivity{
 
         if (user == null)
             menu.findItem(R.id.menu_edit).setVisible(true);
+        else
+        {
+            menu.findItem(R.id.menu_message).setVisible(true);
+            menu.findItem(R.id.menu_heart).setVisible(true);
+        }
 
         return true;
     }
@@ -104,9 +104,28 @@ public class ProfileActivity extends ActionBarActivity{
             case R.id.menu_edit:
                 displayEditDescription();
                 return true;
+            case R.id.menu_heart:
+                //Fais tes bails ici thibaut
+                return true;
+            case R.id.menu_message:
+                Intent chatIntent = new Intent(getApplicationContext(), ChatActivity.class);
+
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("User", user);
+                chatIntent.putExtras(bundle);
+
+                startActivity(chatIntent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
     }
 
     public void displayEditDescription()
@@ -121,10 +140,14 @@ public class ProfileActivity extends ActionBarActivity{
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton)
             {
+                FacebookUser.getInstance().setDescription(input.getText().toString());
+
                 Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
-                Map<String, Object> pos = new HashMap<String, Object>();
-                pos.put("description", input.getText().toString());
-                ref.updateChildren(pos, null);
+
+                Map<String, Object> desc = new HashMap<>();
+                desc.put("description", input.getText().toString());
+
+                ref.updateChildren(desc, null);
 
                 descriptionTextView.setText(input.getText().toString());
             }});
@@ -152,12 +175,37 @@ public class ProfileActivity extends ActionBarActivity{
         pager.setAdapter(adapter);
         nameTextView.setText(currentUser.getName() + ",");
         ageTextView.setText("" + currentUser.convertBirthdayToAge());
-        likesTextView.setText(getString(R.string.likes_title));
-        friendsTextView.setText(getString(R.string.friends_title));
+
+        if (user == null)
+        {
+            likesTextView.setText(getString(R.string.likes_title));
+            friendsTextView.setText(getString(R.string.friends_title));
+        }
+        else
+        {
+            likesTextView.setText(getString(R.string.likes_common_title));
+            friendsTextView.setText(getString(R.string.friends_common_title));
+
+            if (currentUser.getLikesID().size() == 0)
+            {
+                likesTextView.setVisibility(View.GONE);
+                likesLayout.setVisibility(View.GONE);
+            }
+
+            if (currentUser.getFriendsID().size() == 0)
+            {
+                friendsTextView.setVisibility(View.GONE);
+                friendsLayout.setVisibility(View.GONE);
+            }
+        }
+
         descriptionTextView.setText(currentUser.getDescription());
 
-        getLikesPictures();
-        getFriendsPictures();
+        if (currentUser.getLikesID().size() > 0)
+            getLikesPictures();
+
+        if (currentUser.getFriendsID().size() > 0)
+            getFriendsPictures();
     }
 
 
@@ -192,14 +240,17 @@ public class ProfileActivity extends ActionBarActivity{
                 new GraphRequest.Callback(){
                         public void onCompleted(GraphResponse response) {try {
                             ImageView newItem = new ImageView(ProfileActivity.this);
-                            Picasso.with(ProfileActivity.this).load(response.getJSONObject().getJSONObject("data").getString("url")).transform(new RoundedPicasso()).into(newItem);
+
+                            String url = response.getJSONObject().getJSONObject("data").getString("url");
+                            Picasso.with(ProfileActivity.this).load(url).transform(new RoundedPicasso()).into(newItem);
 
                             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
                             params.height = likesLayout.getHeight();
                             params.width = params.height;
                             params.setMargins(10, 0, 10, 0);
-                            likesLayout.addView(newItem, params);
 
+                            likesLayout.addView(newItem, params);
                             idLikesCount++;
 
                             if (idLikesCount < currentUser.getLikesID().size()) {
@@ -229,10 +280,12 @@ public class ProfileActivity extends ActionBarActivity{
                 {
                     public void onCompleted(GraphResponse response) {try {
                         ImageView newItem = new ImageView(ProfileActivity.this);
-                        Picasso.with(ProfileActivity.this).load(response.getJSONObject().getJSONObject("data").getString("url")).transform(new RoundedPicasso()).into(newItem);
+                        String url = response.getJSONObject().getJSONObject("data").getString("url");
+                        Picasso.with(ProfileActivity.this).load(url).transform(new RoundedPicasso()).into(newItem);
 
                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params.height = likesLayout.getHeight();
+
+                        params.height = friendsLayout.getHeight();
                         params.width = params.height;
                         params.setMargins(10, 0, 10, 0);
                         friendsLayout.addView(newItem, params);

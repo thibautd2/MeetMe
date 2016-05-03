@@ -3,12 +3,13 @@ package com.mti.meetme.Tools;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 
 import com.firebase.client.Firebase;
+import com.mti.meetme.ChatActivity;
 import com.mti.meetme.MapsActivity;
 import com.mti.meetme.Model.User;
+import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.controller.FacebookUser;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;

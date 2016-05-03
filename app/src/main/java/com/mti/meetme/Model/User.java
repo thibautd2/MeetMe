@@ -1,5 +1,7 @@
 package com.mti.meetme.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
@@ -12,7 +14,7 @@ import java.util.ArrayList;
 /**
  * Created by thiba_000 on 26/02/2016.
  */
-public class User implements Serializable {
+public class User implements Serializable, Parcelable {
 
 
     @com.google.gson.annotations.SerializedName("Gender")
@@ -83,6 +85,62 @@ public class User implements Serializable {
     }
 
     public User() {}
+
+    protected User(Parcel in) {
+        Gender = in.readString();
+        Email = in.readString();
+        Birthday = in.readString();
+        Name = in.readString();
+        AgeRange = in.readString();
+        Description = in.readString();
+        Uid = in.readString();
+        Pic1 = in.readString();
+        Pic2 = in.readString();
+        Pic3 = in.readString();
+        Pic4 = in.readString();
+        Pic5 = in.readString();
+        LikesString = in.readString();
+        FriendsString = in.readString();
+        likesId = in.createStringArrayList();
+        friendsId = in.createStringArrayList();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(Gender);
+        dest.writeString(Email);
+        dest.writeString(Birthday);
+        dest.writeString(Name);
+        dest.writeString(AgeRange);
+        dest.writeString(Description);
+        dest.writeString(Uid);
+        dest.writeString(Pic1);
+        dest.writeString(Pic2);
+        dest.writeString(Pic3);
+        dest.writeString(Pic4);
+        dest.writeString(Pic5);
+        dest.writeString(LikesString);
+        dest.writeString(FriendsString);
+        dest.writeStringList(likesId);
+        dest.writeStringList(friendsId);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public int convertBirthdayToAge()
     {

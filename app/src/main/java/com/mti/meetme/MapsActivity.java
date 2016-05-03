@@ -7,9 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -47,8 +45,6 @@ import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.LocationSource;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -57,26 +53,20 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-//import com.microsoft.windowsazure.mobileservices.MobileServiceList;
 import com.mti.meetme.Interface.ContextDrawerAdapter;
-import com.mti.meetme.Tools.AndroidSeekBar;
-import com.mti.meetme.Tools.CarousselPager;
 import com.mti.meetme.Tools.DrawerListAdapter;
-import com.mti.meetme.Tools.FacebookHandler;
 import com.mti.meetme.Tools.MenuSlideItem;
-import com.mti.meetme.Tools.Network;
+import com.mti.meetme.Tools.Map.CalculateDistance;
+import com.mti.meetme.Tools.Map.FollowMeLocationSource;
+import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.RoundedPicasso;
-import com.mti.meetme.controller.UserList;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
-
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimerTask;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.WeakHashMap;
@@ -88,7 +78,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Circle searchCircle;
     LatLng latLngCenter;
     boolean dispo = true;
-    GeoFire geoFire;
+    public static GeoFire geoFire;
     FollowMeLocationSource followMeLocationSource;
     private WeakHashMap<String,Marker> markers;
     private int rayon = 10000;
@@ -111,14 +101,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         gender = Gender.ALL;
         markers = new WeakHashMap<String, Marker>();
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_maps);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         geoFire = new GeoFire(Network.geofire);
         all_user = new ArrayList<>();
-        followMeLocationSource = new FollowMeLocationSource();
-
+		
         final ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_drawer); // set a custom icon for the default home button
         ab.setDisplayShowHomeEnabled(true); // show or hide the default home button
@@ -131,8 +121,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         MenuSlideItems.add(new MenuSlideItem("Preferences", R.drawable.ic_back, "Change your preferences"));
         MenuSlideItems.add(new MenuSlideItem("Genre", R.drawable.gender, new MenuSlideItem.MyCheckBox("Men", true), new MenuSlideItem.MyCheckBox("Women", true), null, null));
 
+        followMeLocationSource = new FollowMeLocationSource(this);
+        //optionTitle = getResources().getStringArray(R.array.option_map);
 
-        // DrawerLayout
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         // Populate the Navigtion Drawer with options
@@ -157,20 +148,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         followMeLocationSource.getBestAvailableProvider();
         if (mMap != null)
         mMap.setMyLocationEnabled(true);
-       // setUpMapIfNeeded();
 
-        /* Enable the my-location layer (this causes our LocationSource to be automatically activated.)
-         * While enabled, the my-location layer continuously draws an indication of a user's
-         * current location and bearing, and displays UI controls that allow a user to interact
-         * with their location (for example, to enable or disable camera tracking of their location and bearing).*/
-       // mMap.setMyLocationEnabled(true);
     }
 
-    private void setUpMapIfNeeded() {
-
-        if(mMap == null) {
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -189,7 +169,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 startActivity(intent);
                 return true;
             case R.id.menu_list:
-                Intent intent2 = new Intent(getApplicationContext(), ProfilsListActiity.class);
+                Intent intent2 = new Intent(getApplicationContext(), UserListActivity.class);
                 intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent2);
                 return true;
@@ -203,27 +183,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return super.onOptionsItemSelected(item);
         }
     }
-/*
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            selectItem(position);
-        }
-    }
-*/
+
     private void selectItemFromDrawer(int position) {
-  /*      Fragment fragment = new PreferencesFragment();
-
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.mainContent, fragment)
-                .commit();
-
-        mDrawerList.setItemChecked(position, true);
-        setTitle(MenuSlideItems.get(position).mTitle);
-
-        // Close the drawer
-*/
 
         mDrawerLayout.closeDrawer(mDrawerPane);
     }
@@ -232,8 +193,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void menuDrawerSeekBarListener(SeekBar seekBar, TextView textView, String btnName) {
         if (btnName.equals("Distance")) {
             rayon = 1000 * seekBar.getProgress();
-            Log.e("mapsActivity", "distance changed");
-           // textView.setText(seekBar.getProgress() + " km");
         }
 
         updateMap();
@@ -300,23 +259,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void updateMap() {
         mMap.clear();
-
         all_user.clear();
         markers.clear();
-
         searchCircle = mMap.addCircle(new CircleOptions().center(latLngCenter).radius(rayon));
         searchCircle.setFillColor(Color.argb(95, 255, 255, 255));
         searchCircle.setStrokeWidth(4);
         searchCircle.setStrokeColor(Color.argb(60, 0, 0, 0));
-
         getAllUSerPosition();
     }
 
     private void GetCurrentLocation() {
-        //mMap.setMyLocationEnabled(true);
-      /*  double latitude = mMap.getMyLocation().getLatitude();
-        double longitude= mMap.getMyLocation().getLongitude();
-*/
         double[] d = getlocation();
         LatLng pos = new LatLng(d[0], d[1]);
         FacebookUser.getInstance().setLatitude(pos.latitude);
@@ -344,25 +296,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return gps;
     }
 
-    private void sendPosition() {
-        dispo = false;
+    public static void sendPosition() {
+
         Log.e("SEND NEW POSITION", "SEND NEW POSITION :" + FacebookUser.getInstance().getLatitude().toString() + " " + FacebookUser.getInstance().getLongitude().toString());
         Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
         Map<String, Object> pos = new HashMap<String, Object>();
         pos.put("latitude", String.valueOf(FacebookUser.getInstance().getLatitude()));
         pos.put("longitude", String.valueOf(FacebookUser.getInstance().getLongitude()));
         geoFire.setLocation(FacebookUser.getInstance().getUid(), new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()));
-
         ref.updateChildren(pos, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if (firebaseError != null) {
-                    {
-                        dispo = true;
-                    }
-                } else {
-                    dispo = true;
-                }
             }
         });
     }
@@ -370,7 +314,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void getAllUSerPosition()
     {
         GeoLocation geoLocation = new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
-        GeoQuery geoQuery = geoFire.queryAtLocation(geoLocation, rayon / 1000);
+        GeoQuery geoQuery = geoFire.queryAtLocation(geoLocation, rayon/1000);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
@@ -394,7 +338,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 if (fKey != null && marker != null && markers.get(fKey) == null)
                                     markers.put(fKey, marker);
                             }
-                       //     Log.e("NB_USEr", "NB8USER : " + all_user.size());
+
                             for (int i = 0; i < all_user.size(); i++) {
                                 if (all_user.get(i).getUid().compareTo(u.getUid()) == 0) {
                                     userExist = true;
@@ -409,10 +353,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     @Override
                     public void onCancelled(FirebaseError firebaseError) {
-
                     }
                 });
-
             }
 
             @Override
@@ -444,7 +386,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             double currentLat = (lat - startPosition.latitude) * v + startPosition.latitude;
                             double currentLng = (lng - startPosition.longitude) * v + startPosition.longitude;
                             marker.setPosition(new LatLng(currentLat, currentLng));
-                            // if animation is not finished yet, repeat
                             if (t < 1) {
                                 handler.postDelayed(this, 16);
                             }
@@ -478,9 +419,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 ImageView image = (ImageView) dialog.findViewById(R.id.user_img2);
 
                 Picasso.with(MapsActivity.this).load(user.getPic1()).fit().centerCrop().into(image);
-                TextView interessé = (TextView) dialog.findViewById(R.id.interessé);
-                TextView pasinteressé = (TextView) dialog.findViewById(R.id.pasinteressé);
-                interessé.setOnClickListener(new View.OnClickListener() {
+                TextView accept = (TextView) dialog.findViewById(R.id.interessé);
+                TextView cancel = (TextView) dialog.findViewById(R.id.pasinteressé);
+                accept.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
@@ -493,7 +434,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
 
-                pasinteressé.setOnClickListener(new View.OnClickListener() {
+                cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
@@ -514,7 +455,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 TextView name = (TextView) v.findViewById(R.id.user_name);
                 TextView age = (TextView) v.findViewById(R.id.user_age);
                 TextView distance = (TextView) v.findViewById(R.id.distance);
-                String dist = String.valueOf((int)getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(u.getLatitude(), u.getLongitude())));
+                String dist = String.valueOf((int) CalculateDistance.getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(u.getLatitude(), u.getLongitude())));
                 distance.setText(dist +" m");
                 name.setText(u.getName());
                 age.setText(String.valueOf(u.convertBirthdayToAge()) +" ans");
@@ -532,112 +473,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setInfoWindowAdapter(adapt);
     }
 
-    public static double getDistance(LatLng oldPos, LatLng newPos) {
-        double lat1 = oldPos.latitude;
-        double lng1 = oldPos.longitude;
-        double lat2 = newPos.latitude;
-        double lng2 = newPos.longitude;
-        double earthRadius = 3958.75;
-        double dLat = Math.toRadians(lat2-lat1);
-        double dLng = Math.toRadians(lng2-lng1);
-        double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(dLng/2) * Math.sin(dLng/2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        double dist = earthRadius * c;
-        int meterConversion = 1609;
-        return Double.valueOf(dist * meterConversion);
-    }
 
-    private class FollowMeLocationSource implements LocationSource, LocationListener {
-
-        private OnLocationChangedListener mListener;
-        private LocationManager locationManager;
-        private final Criteria criteria = new Criteria();
-        private String bestAvailableProvider;
-        private final int minTime = 20000;     // minimum time interval between location updates, in milliseconds
-        private final int minDistance = 1;    // minimum distance between location updates, in meters
-
-        private FollowMeLocationSource() {
-            // Get reference to Location Manager
-            locationManager = (LocationManager) getApplication().getSystemService(Context.LOCATION_SERVICE);
-            // Specify Location Provider criteria
-            criteria.setAccuracy(Criteria.ACCURACY_FINE);
-            criteria.setPowerRequirement(Criteria.POWER_LOW);
-            criteria.setAltitudeRequired(true);
-            criteria.setBearingRequired(true);
-            criteria.setSpeedRequired(true);
-            criteria.setCostAllowed(true);
-        }
-        private void getBestAvailableProvider() {
-            /* The preffered way of specifying the location provider (e.g. GPS, NETWORK) to use
-             * is to ask the Location Manager for the one that best satisfies our criteria.
-             * By passing the 'true' boolean we ask for the best available (enabled) provider. */
-            bestAvailableProvider = locationManager.getBestProvider(criteria, true);
-        }
-
-        /* Activates this provider. This provider will notify the supplied listener
-         * periodically, until you call deactivate().
-         * This method is automatically invoked by enabling my-location layer. */
-        @Override
-        public void activate(OnLocationChangedListener listener) {
-            // We need to keep a reference to my-location layer's listener so we can push forward
-            // location updates to it when we receive them from Location Manager.
-            mListener = listener;
-
-            // Request location updates from Location Manager
-            if (bestAvailableProvider != null) {
-                locationManager.requestLocationUpdates(bestAvailableProvider, minTime, minDistance, this);
-            } else {
-                // (Display a message/dialog) No Location Providers currently available.
-            }
-        }
-        /* Deactivates this provider.
-         * This method is automatically invoked by disabling my-location layer. */
-        @Override
-        public void deactivate() {
-            // Remove location updates from Location Manager
-            locationManager.removeUpdates(this);
-            mListener = null;
-        }
-
-        @Override
-        public void onLocationChanged(Location location) {
-            /* Push location updates to the registered listener..
-             * (this ensures that my-location layer will set the blue dot at the new/received location) */
-            if (mListener != null) {
-                mListener.onLocationChanged(location);
-            }
-            Log.e("VERRIFFF", "fezfe");
-            FacebookUser.getInstance().setLongitude(location.getLongitude());
-            FacebookUser.getInstance().setLatitude(location.getLatitude());
-            sendPosition();
-        }
-
-        @Override
-        public void onStatusChanged(String s, int i, Bundle bundle) {
-        }
-        @Override
-        public void onProviderEnabled(String s) {
-        }
-        @Override
-        public void onProviderDisabled(String s) {
-        }
-    }
 
     private class InfoWindowRefresher implements Callback {
         private Marker markerToRefresh;
 
         private InfoWindowRefresher(Marker markerToRefresh) {
             this.markerToRefresh = markerToRefresh;
+
         }
 
         @Override
         public void onError() {
-            Log.e(getClass().getSimpleName(), "Error loading thumbnail!");
         }
 
         @Override
         public void onSuccess() {
-            if (markerToRefresh != null && markerToRefresh.isInfoWindowShown()) {
+            if (markerToRefresh != null && markerToRefresh.isInfoWindowShown() ) {
                 markerToRefresh.hideInfoWindow();
                 markerToRefresh.showInfoWindow();
             }

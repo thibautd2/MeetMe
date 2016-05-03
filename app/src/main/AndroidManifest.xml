@@ -55,12 +55,19 @@
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps"/>
         <activity
             android:configChanges="orientation"
             android:screenOrientation="portrait"
-            android:name=".ProfilsListActiity"
-            android:label="Rencontres"></activity>
+            android:name=".ChatActivity"
+            android:windowSoftInputMode="stateAlwaysVisible"
+            android:label="Chat"/>
+
+        <activity
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:name=".UserListActivity"
+            android:label="Rencontres"/>
 
     </application>
 

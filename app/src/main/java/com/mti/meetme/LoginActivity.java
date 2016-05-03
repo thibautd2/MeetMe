@@ -5,11 +5,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,28 +18,22 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
-import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.firebase.client.AuthData;
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.FacebookHandler;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
-import com.mti.meetme.Tools.Network;
+import com.mti.meetme.Tools.Network.Network;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 
@@ -190,84 +180,4 @@ public class LoginActivity extends Activity implements FacebookCallback<LoginRes
         progress.setCancelable(false);
         progress.show();
     }
-
-    /*public void getUserLikes()
-    {
-        new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/me/likes",
-                null,
-                HttpMethod.GET,
-                new GraphRequest.Callback() {
-                    public void onCompleted(GraphResponse response) {
-                        FacebookUser.getInstance().setLikes(response.getJSONObject());
-
-                        Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(intent);
-                    }
-                }
-        ).executeAsync();
-    }
-
-    public void getUserFriends()
-    {
-        new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/me/friends",
-                null,
-                HttpMethod.GET,
-                new GraphRequest.Callback() {
-                    public void onCompleted(GraphResponse response) {
-                        FacebookUser.getInstance().setFriends(response.getJSONObject());
-                    }
-                }
-        ).executeAsync();
-    }
-
-    public void getUserProfilePics()
-    {
-        Bundle params = new Bundle();
-        params.putString("fields", "source,album");
-        String userphotos = fb_id +"/photos/uploaded";
-        new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                userphotos,
-                params,
-                HttpMethod.GET,
-                new GraphRequest.Callback() {
-                    public void onCompleted(GraphResponse response) {
-                        JSONObject json = response.getJSONObject();
-                        JSONArray jarray = null;
-                        try {
-                            int i  = 0;
-                            int nbr = 0;
-                            jarray = json.getJSONArray("data");
-                            while (i < jarray.length())// && nbr < 4)
-                             {
-                                JSONObject picture = null;
-                                picture = jarray.getJSONObject(i);
-                                String album_name = picture.getJSONObject("album").optString("name");
-                              //  if (album_name == "Profile Pictures") {
-                                    String url = picture.optString("source");
-                                    if (nbr == 0)
-                                        currentUser.setPic2(url);
-                                    if (nbr == 1)
-                                        currentUser.setPic3(url);
-                                    if (nbr == 2)
-                                        currentUser.setPic4(url);
-                                    if (nbr == 3)
-                                        currentUser.setPic5(url);
-                          //        nbr++;
-                                i++;
-                                }
-                            onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());
-                            }
-                        catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-        ).executeAsync();
-    }*/
 }
