@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 
 import com.firebase.client.Firebase;
+import com.mti.meetme.ChatActivity;
 import com.mti.meetme.MapsActivity;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.Network.Network;
