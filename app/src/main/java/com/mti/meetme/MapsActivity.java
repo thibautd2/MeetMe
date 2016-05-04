@@ -43,6 +43,8 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.iid.InstanceID;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -59,17 +61,27 @@ import com.mti.meetme.Tools.MenuSlideItem;
 import com.mti.meetme.Tools.Map.CalculateDistance;
 import com.mti.meetme.Tools.Map.FollowMeLocationSource;
 import com.mti.meetme.Tools.Network.Network;
+import com.mti.meetme.Tools.Notifs.GcmBroadcastReceiver;
+import com.mti.meetme.Tools.Notifs.GcmIntentService;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.RoundedPicasso;
+import com.pubnub.api.Pubnub;
+import com.pubnub.api.PubnubError;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.WeakHashMap;
+import com.pubnub.api.*;
+import org.json.*;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, ContextDrawerAdapter {
 
@@ -89,6 +101,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     };
     private Gender gender;
 
+
     ListView mDrawerList;
     RelativeLayout mDrawerPane;
   //  private ActionBarDrawerToggle mDrawerToggle;
@@ -98,6 +111,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        ////**/*// PRACTICING NOTIFS //*/*/*/*
+       InstanceID instanceID = InstanceID.getInstance(this);
+        try {
+            String token = instanceID.getToken(getResources().getString(R.string.SenderID),
+                    GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+            GcmBroadcastReceiver broadcastReceiver = new GcmBroadcastReceiver();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         gender = Gender.ALL;
         markers = new WeakHashMap<String, Marker>();
         super.onCreate(savedInstanceState);
@@ -149,6 +175,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setMyLocationEnabled(true);
 
     }
+
 
 
     @Override
@@ -459,7 +486,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 distance.setText(dist +" m");
                 name.setText(u.getName());
                 age.setText(String.valueOf(u.convertBirthdayToAge()) +" ans");
-                Picasso.with(MapsActivity.this)
+                Picasso.with(getApplication())
                                 .load(u.getPic1())
                                 .transform(new RoundedPicasso())
                                 .into(img, new InfoWindowRefresher(arg0));

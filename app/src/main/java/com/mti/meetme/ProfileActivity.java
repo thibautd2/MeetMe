@@ -240,7 +240,7 @@ public class ProfileActivity extends ActionBarActivity{
      *
      *********************************************************************/
 
-   private void getLikesPictures()
+    private void getLikesPictures()
     {
         Bundle params = new Bundle();
         params.putBoolean("redirect", false);
