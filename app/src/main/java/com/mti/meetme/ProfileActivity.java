@@ -103,6 +103,12 @@ public class ProfileActivity extends ActionBarActivity{
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 return true;
+            case R.id.menu_friends:
+                Intent intent2 = new Intent(getApplicationContext(), UserListActivity.class);
+                intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent2.putExtra("showFriends", true);
+                startActivity(intent2);
+                return true;
             case R.id.menu_edit:
                 displayEditDescription();
                 return true;

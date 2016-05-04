@@ -170,6 +170,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             case R.id.menu_list:
                 Intent intent2 = new Intent(getApplicationContext(), UserListActivity.class);
                 intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent2.putExtra("showFriends", false);
                 startActivity(intent2);
                 return true;
             case android.R.id.home:

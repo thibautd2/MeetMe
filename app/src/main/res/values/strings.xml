@@ -29,15 +29,7 @@
     <string name="no_permission_granted">Please grant location permission to MeetMe.</string>
     <string name="toast_exit">Stay with us !</string>
 
-    <!-- OptionMap Slide -->
-    <string-array name="option_map">
-        <item>1 km</item>
-        <item>4 km</item>
-        <item>10 km</item>
-        <item>Femme</item>
-        <item>Homme</item>
-        <item>Les deux</item>
-    </string-array>
+
     <string name="drawer_open">Ouverture option map</string>
     <string name="drawer_close">Fermeture option map</string>
     <string name="action_websearch">Web search</string>
