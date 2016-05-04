@@ -81,8 +81,10 @@ public class ProfileActivity extends ActionBarActivity{
         getMenuInflater().inflate(R.menu.menu_profile, menu);
         super.onCreateOptionsMenu(menu);
 
-        if (user == null)
+        if (user == null) {
             menu.findItem(R.id.menu_edit).setVisible(true);
+            menu.findItem(R.id.menu_deco).setVisible(true);
+        }
         else
         {
             menu.findItem(R.id.menu_message).setVisible(true);
@@ -115,6 +117,11 @@ public class ProfileActivity extends ActionBarActivity{
                 chatIntent.putExtras(bundle);
 
                 startActivity(chatIntent);
+                return true;
+            case R.id.menu_deco:
+                Network.bdd_connexion.unauth();
+                Intent decoIntent = new Intent(this, LoginActivity.class);
+                startActivity(decoIntent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -36,8 +36,8 @@
         android:layout_height="wrap_content"
         android:text="New CheckBox"
         android:id="@+id/checkBox"
-        android:textColor="#F8F8FF"
         android:layout_below="@+id/title"
+        android:textColor="@color/colorDrawerItem"
         android:layout_alignStart="@+id/title" />
 
     <CheckBox
