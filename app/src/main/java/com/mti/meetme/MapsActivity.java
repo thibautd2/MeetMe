@@ -118,7 +118,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
        // MenuSlideItems.add(new MenuSlideItem("Genre", R.drawable.gender, new MenuSlideItem.MySeekBar(0, 2, 1)));
         MenuSlideItems.add(new MenuSlideItem("Distance", " km", R.drawable.radar, new MenuSlideItem.MySeekBar(0, 10, 5)));
-        MenuSlideItems.add(new MenuSlideItem("Preferences", R.drawable.ic_back, "Change your preferences"));
+     //   MenuSlideItems.add(new MenuSlideItem("Preferences", R.drawable.ic_back, "Change your preferences"));
         MenuSlideItems.add(new MenuSlideItem("Genre", R.drawable.gender, new MenuSlideItem.MyCheckBox("Men", true), new MenuSlideItem.MyCheckBox("Women", true), null, null));
 
         followMeLocationSource = new FollowMeLocationSource(this);
@@ -139,7 +139,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 selectItemFromDrawer(position);
             }
         });
-
     }
 
     @Override

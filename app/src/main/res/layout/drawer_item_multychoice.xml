@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:gravity="center_vertical"
-        android:textColor="#000"
+        android:textColor="@color/colorDrawerItem"
         android:text="Line 1"
         android:textStyle="bold"
         android:layout_alignParentTop="true"
@@ -36,6 +36,7 @@
         android:layout_height="wrap_content"
         android:text="New CheckBox"
         android:id="@+id/checkBox"
+        android:textColor="#F8F8FF"
         android:layout_below="@+id/title"
         android:layout_alignStart="@+id/title" />
 
@@ -43,6 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New CheckBox"
+        android:textColor="@color/colorDrawerItem"
         android:id="@+id/checkBox2"
         android:layout_alignTop="@+id/checkBox"
         android:layout_toEndOf="@+id/checkBox" />
@@ -51,6 +53,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New CheckBox"
+        android:textColor="@color/colorDrawerItem"
         android:id="@+id/checkBox3"
         android:layout_below="@+id/checkBox"
         android:layout_toEndOf="@+id/icon" />
@@ -59,6 +62,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New CheckBox"
+        android:textColor="@color/colorDrawerItem"
         android:id="@+id/checkBox4"
         android:layout_below="@+id/checkBox2"
         android:layout_alignStart="@+id/checkBox2" />
