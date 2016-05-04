@@ -44,7 +44,7 @@ public class UserListActivity extends AppCompatActivity {
         populate();
 
         if (friendList) {
-            this.findViewById(R.id.addBtn).setVisibility(View.VISIBLE);
+            //this.findViewById(R.id.addBtn).setVisibility(View.VISIBLE);
             this.getSupportActionBar().setTitle("Mes ami(e)s");
         }
     }

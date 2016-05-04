@@ -19,7 +19,7 @@
             android:background="#ffffff"
             android:scrollbars="vertical"/>
 
-        <ImageButton
+   <!--     <ImageButton
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:id="@+id/addBtn"
@@ -29,7 +29,7 @@
             android:background="@null"
             android:visibility="invisible"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true" /> -->
 
         android:visibility="invisible"/>
     </RelativeLayout>
