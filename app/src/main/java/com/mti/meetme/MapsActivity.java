@@ -1,6 +1,8 @@
 package com.mti.meetme;
 
 import android.app.Dialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,7 +15,10 @@ import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,8 +27,11 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,7 +55,9 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-//import com.microsoft.windowsazure.mobileservices.MobileServiceList;
+import com.mti.meetme.Interface.ContextDrawerAdapter;
+import com.mti.meetme.Tools.DrawerListAdapter;
+import com.mti.meetme.Tools.MenuSlideItem;
 import com.mti.meetme.Tools.Map.CalculateDistance;
 import com.mti.meetme.Tools.Map.FollowMeLocationSource;
 import com.mti.meetme.Tools.Network.Network;
@@ -73,7 +83,7 @@ import java.util.WeakHashMap;
 import com.pubnub.api.*;
 import org.json.*;
 
-public class MapsActivity extends ActionBarActivity implements OnMapReadyCallback{
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, ContextDrawerAdapter {
 
     private GoogleMap mMap;
     private ArrayList<User> all_user;
@@ -85,28 +95,20 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     private WeakHashMap<String,Marker> markers;
     private int rayon = 10000;
     private enum Gender {
-        MAN,
-        WOMAN,
+        MEN,
+        WOMEN,
         ALL
     };
     private Gender gender;
-    public static com.pubnub.api.Callback callback = new com.pubnub.api.Callback() {
-        @Override
-        public void successCallback(String channel, Object message) {
-            Log.i("", "Success on Channel " + "chanel" + " : " + message);
-        }
-        @Override
-        public void errorCallback(String channel, PubnubError error) {
-//            Log.i(TAG, "Error On Channel " + CHANNEL + " : " + error);
-        }
-    };
+
+
+    ListView mDrawerList;
+    RelativeLayout mDrawerPane;
+  //  private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-    private CharSequence mDrawerTitle;
-    private CharSequence mTitle;
-    private String[] optionTitle;
-    GcmIntentService notif;
-    Pubnub pubnub;
+
+    ArrayList<MenuSlideItem> MenuSlideItems = new ArrayList<MenuSlideItem>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -120,24 +122,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         } catch (IOException e) {
             e.printStackTrace();
         }
-        pubnub = new Pubnub(getResources().getString(R.string.PublishKey), getResources().getString(R.string.PublishKey));
 
-
-        try {
-            pubnub.subscribe("channel", callback
-            );
-        } catch (PubnubException e) {
-            System.out.println(e.toString());
-        }
-        JSONObject jso = null;
-        try {
-            jso = new JSONObject("{ 'aps' : {'alert' : 'You got your emails.'," + "'badge' : 9, 'sound' : 'bingbong.aiff'}," + " 'acme 1': 42}");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        pubnub.publish("channel", jso,
-               callback);
 
         gender = Gender.ALL;
         markers = new WeakHashMap<String, Marker>();
@@ -149,17 +134,37 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         geoFire = new GeoFire(Network.geofire);
         all_user = new ArrayList<>();
-        followMeLocationSource = new FollowMeLocationSource(this);
-        optionTitle = getResources().getStringArray(R.array.option_map);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+		
+        final ActionBar ab = getSupportActionBar();
+        ab.setHomeAsUpIndicator(R.drawable.ic_drawer); // set a custom icon for the default home button
+        ab.setDisplayShowHomeEnabled(true); // show or hide the default home button
+        ab.setDisplayHomeAsUpEnabled(true);
+        ab.setDisplayShowCustomEnabled(true); // enable overriding the default toolbar layout
+        ab.setDisplayShowTitleEnabled(true);
 
-        // set a custom shadow that overlays the main content when the drawer opens
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        // set up the drawer's list view with items and click listener
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawer_list_item, optionTitle));
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+       // MenuSlideItems.add(new MenuSlideItem("Genre", R.drawable.gender, new MenuSlideItem.MySeekBar(0, 2, 1)));
+        MenuSlideItems.add(new MenuSlideItem("Distance", " km", R.drawable.radar, new MenuSlideItem.MySeekBar(0, 10, 5)));
+     //   MenuSlideItems.add(new MenuSlideItem("Preferences", R.drawable.ic_back, "Change your preferences"));
+        MenuSlideItems.add(new MenuSlideItem("Genre", R.drawable.gender, new MenuSlideItem.MyCheckBox("Men", true), new MenuSlideItem.MyCheckBox("Women", true), null, null));
+
+        followMeLocationSource = new FollowMeLocationSource(this);
+        //optionTitle = getResources().getStringArray(R.array.option_map);
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        // Populate the Navigtion Drawer with options
+        mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
+        mDrawerList = (ListView) findViewById(R.id.navList);
+        DrawerListAdapter adapter = new DrawerListAdapter(this, MenuSlideItems);
+        mDrawerList.setAdapter(adapter);
+
+        // Drawer Item click listeners
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectItemFromDrawer(position);
+            }
+        });
     }
 
     @Override
@@ -176,6 +181,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_maps, menu);
+
         super.onCreateOptionsMenu(menu);
         return true;
     }
@@ -193,51 +199,68 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                 intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent2);
                 return true;
+            case android.R.id.home:
+                if (mDrawerLayout.isDrawerOpen(mDrawerPane))
+                    mDrawerLayout.closeDrawer(mDrawerPane);
+                else
+                    mDrawerLayout.openDrawer(mDrawerPane);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    private void selectItemFromDrawer(int position) {
+
+        mDrawerLayout.closeDrawer(mDrawerPane);
+    }
+
     @Override
-    public void onBackPressed()
-    {
-        Toast.makeText(this, getString(R.string.toast_exit), Toast.LENGTH_SHORT).show();
-    }
-
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            selectItem(position);
-        }
-    }
-
-    private void selectItem(int position) {
-        mDrawerList.setItemChecked(position, true);
-        switch (optionTitle[position]) {
-            case "1 km" :
-                rayon = 1000;
-                break;
-            case "4 km" :
-                rayon = 4000;
-                break;
-            case "10 km" :
-                rayon = 10000;
-                break;
-            case "Femme" :
-                gender = Gender.WOMAN;
-                break;
-            case "Homme" :
-                gender = Gender.MAN;
-                break;
-            case "Les deux" :
-                gender = Gender.ALL;
-                break;
-            default:
-                break;
+    public void menuDrawerSeekBarListener(SeekBar seekBar, TextView textView, String btnName) {
+        if (btnName.equals("Distance")) {
+            rayon = 1000 * seekBar.getProgress();
         }
 
         updateMap();
-        mDrawerLayout.closeDrawer(mDrawerList);
+    }
+
+    @Override
+    public void menuDrawerMultyChoiceListener(CheckBox checkBox, String btnName, boolean ischecked) {
+        if (btnName.equals("Genre")) {
+            boolean men = true;
+            boolean women = true;
+            if (checkBox.getText().equals("Men") && ischecked)
+                men = true;
+            else if (checkBox.getText().equals("Men") && !ischecked && gender != Gender.MEN) {
+                men = false;
+            }
+            else if (checkBox.getText().equals("Men")) {
+                checkBox.setChecked(true);
+                women = false;
+            }
+            if (checkBox.getText().equals("Women") && ischecked)
+                women = true;
+            else if (checkBox.getText().equals("Women") && !ischecked && gender != Gender.WOMEN) {
+                women = false;
+            }
+            else if (checkBox.getText().equals("Women")) {
+                checkBox.setChecked(true);
+                men = false;
+            }
+
+            gender = getGender(men, women);
+           // Log.e("MapsActivity", "change gander: " + gender.toString());
+        }
+        updateMap();
+    }
+
+    private Gender getGender(boolean men, boolean women) {
+        if (men && women)
+            return Gender.ALL;
+        if (men)
+            return Gender.MEN;
+
+        return Gender.WOMEN;
     }
 
     @Override
@@ -330,17 +353,18 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                         User u = snapshot.getValue(User.class);
                         final String uid = FacebookUser.getInstance().getUid();
                         if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(uid) != 0) {
-                            if (gender != Gender.WOMAN && u.getGender().compareTo("male") == 0) {
+                            if (gender != Gender.WOMEN && u.getGender().compareTo("male") == 0) {
                                 Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
                                         u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(all_user.size())));
                                 if (fKey != null && marker != null && markers.get(fKey) == null)
                                     markers.put(fKey, marker);
-                            } else if (gender != Gender.MAN && u.getGender().compareTo("male") != 0) {
+                            } else if (gender != Gender.MEN && u.getGender().compareTo("male") != 0) {
                                 Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
                                         u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(all_user.size())));
                                 if (fKey != null && marker != null && markers.get(fKey) == null)
                                     markers.put(fKey, marker);
                             }
+
                             for (int i = 0; i < all_user.size(); i++) {
                                 if (all_user.get(i).getUid().compareTo(u.getUid()) == 0) {
                                     userExist = true;
@@ -395,6 +419,7 @@ public class MapsActivity extends ActionBarActivity implements OnMapReadyCallbac
                     });
                 }
             }
+
             @Override
             public void onGeoQueryReady() {
             }
