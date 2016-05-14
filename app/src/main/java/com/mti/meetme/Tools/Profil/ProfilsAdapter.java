@@ -27,37 +27,28 @@ import java.util.ArrayList;
 public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHolder>
 {
 
-    private ArrayList<User> users;
-    private Activity acti;
-    private boolean friendList;
-    View v;
+    protected ArrayList<User> users;
+    protected  Activity acti;
+    protected View v;
 
-    public ProfilsAdapter(ArrayList<User> users, Activity acti, boolean friendList)
+    public ProfilsAdapter(ArrayList<User> users, Activity acti)
     {
         this.acti = acti;
         this.users = users;
-        this.friendList = friendList;
         v = null;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ViewHolder vh = null;
-       // final int pos = getItemCount();
+        // final int pos = getItemCount();
 
-        if (friendList) {
-            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.friends_list_item, parent, false);
-            vh = new ViewHolder(v);
+        v = LayoutInflater.from(parent.getContext()).inflate(R.layout.users_list_item, parent, false);
+        vh = new ViewHolder(v);
+        vh.user_age = (TextView) v.findViewById(R.id.list_user_age);
 
-
-        }
-        else {
-            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.users_list_item, parent, false);
-            vh = new ViewHolder(v);
-            vh.user_age = (TextView)v.findViewById(R.id.list_user_age);
-        }
-        vh.user_image = (ImageView)v.findViewById(R.id.user_img_list);
-        vh.user_name = (TextView)v.findViewById(R.id.user_name_list);
+        vh.user_image = (ImageView) v.findViewById(R.id.user_img_list);
+        vh.user_name = (TextView) v.findViewById(R.id.user_name_list);
         vh.relativeLayout = (RelativeLayout) v.findViewById(R.id.list_user_relative);
         return vh;
     }
@@ -69,45 +60,7 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
             if (u != null) {
                 Picasso.with(acti).load(u.getPic1()).fit().centerCrop().into(holder.user_image);
                 holder.user_name.setText(u.getName());
-
-                if (!friendList) {
-                    holder.user_age.setText("" + u.convertBirthdayToAge() + " ans");
-
-                    holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(acti, ProfileActivity.class);
-                            Bundle b = new Bundle();
-                            b.putSerializable("User", u);
-                            intent.putExtras(b);
-                            acti.startActivity(intent);
-                        }
-                    });
-                }
             }
-
-        if (friendList) {
-            getImageButton(R.id.msgBtn).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.e("UserListActy", "msgButton clicked");
-                        Intent chatIntent = new Intent(acti.getApplicationContext(), ChatActivity.class);
-
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("User", u);
-                        chatIntent.putExtras(bundle);
-
-                        acti.startActivity(chatIntent);
-                    }
-                });
-
-            getImageButton(R.id.findBtn).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.e("UserListActy", "msgButton clicked");
-                }
-            });
-        }
     }
 
     @Override
@@ -119,10 +72,10 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        ImageView user_image;
-        TextView user_name;
-        TextView user_age;
-        RelativeLayout relativeLayout;
+        public ImageView user_image;
+        public TextView user_name;
+        public TextView user_age;
+        public RelativeLayout relativeLayout;
         public ViewHolder(View itemView) {
             super(itemView);
         }

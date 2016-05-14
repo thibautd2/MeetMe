@@ -30,23 +30,16 @@ public class UserListActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     ArrayList<User> users;
     ProfilsAdapter adapter;
-    Boolean friendList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profils_list);
-        friendList = getIntent().getBooleanExtra("showFriends", false);
 
         users = new ArrayList<>();
         getall_user();
         bindViews();
         populate();
-
-        if (friendList) {
-            //this.findViewById(R.id.addBtn).setVisibility(View.VISIBLE);
-            this.getSupportActionBar().setTitle("Mes ami(e)s");
-        }
     }
 
     @Override
@@ -65,9 +58,8 @@ public class UserListActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.menu_friends:
-                Intent intent2 = new Intent(getApplicationContext(), UserListActivity.class);
+                Intent intent2 = new Intent(getApplicationContext(), FriendsListActivity.class);
                 intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent2.putExtra("showFriends", !friendList);
                 startActivity(intent2);
                 return true;
             default:
@@ -83,7 +75,7 @@ public class UserListActivity extends AppCompatActivity {
 
     public void populate()
     {
-        adapter = new ProfilsAdapter(users, this, friendList);
+        adapter = new ProfilsAdapter(users, this);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
         mRecyclerView.setAdapter(adapter);
