@@ -59,7 +59,18 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
 
             if (u != null) {
                 Picasso.with(acti).load(u.getPic1()).fit().centerCrop().into(holder.user_image);
+                holder.user_age.setText("" + u.convertBirthdayToAge() + " ans");
                 holder.user_name.setText(u.getName());
+                holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(acti, ProfileActivity.class);
+                        Bundle b = new Bundle();
+                        b.putSerializable("User", u);
+                        intent.putExtras(b);
+                        acti.startActivity(intent);
+                    }
+                });
             }
     }
 

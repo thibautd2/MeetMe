@@ -51,7 +51,6 @@ public class FriendsListAdapter extends ProfilsAdapter
             if (u != null) {
                 Picasso.with(acti).load(u.getPic1()).fit().centerCrop().into(holder.user_image);
                 holder.user_name.setText(u.getName());
-
                 holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
