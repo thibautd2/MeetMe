@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -85,6 +86,7 @@ public class ProfileActivity extends AppCompatActivity{
         if (user == null) {
             menu.findItem(R.id.menu_edit).setVisible(true);
             menu.findItem(R.id.menu_deco).setVisible(true);
+            menu.findItem(R.id.add_friends_btn).setVisible(false);
         }
         else
         {
@@ -315,5 +317,18 @@ public class ProfileActivity extends AppCompatActivity{
 
                 }
         ).executeAsync();
+    }
+
+    private void addFriendButtonActivation() {
+        ImageButton imageButton = (ImageButton) findViewById(R.id.add_friends_btn);
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                
+            }
+
+        });
     }
 }
