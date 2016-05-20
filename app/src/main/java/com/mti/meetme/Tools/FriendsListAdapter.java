@@ -13,11 +13,17 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.mti.meetme.ChatActivity;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.ProfileActivity;
 import com.mti.meetme.R;
+import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.Profil.ProfilsAdapter;
+import com.mti.meetme.controller.FacebookUser;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -84,4 +90,6 @@ public class FriendsListAdapter extends ProfilsAdapter
                 }
             });
     }
+
+
 }

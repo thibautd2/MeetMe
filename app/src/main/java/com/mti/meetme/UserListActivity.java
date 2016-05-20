@@ -6,9 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -20,6 +22,8 @@ import com.mti.meetme.Tools.Profil.ProfilsAdapter;
 import com.mti.meetme.controller.FacebookUser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by thiba_000 on 12/04/2016.
@@ -31,16 +35,33 @@ public class UserListActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     ArrayList<User> users;
     ProfilsAdapter adapter;
+    ItemTouchHelper.SimpleCallback simpleItemTouchCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profils_list);
 
+        simpleItemTouchCallback = getNewItemTocuh();
+
         users = new ArrayList<>();
         getall_user();
         bindViews();
         populate();
+    }
+
+    protected ItemTouchHelper.SimpleCallback getNewItemTocuh() {
+        return new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                adapter.remove(viewHolder.getAdapterPosition());
+            }
+        };
     }
 
     @Override
@@ -93,7 +114,7 @@ public class UserListActivity extends AppCompatActivity {
               users.clear();
               for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                   User u = postSnapshot.getValue(User.class);
-                  if(u != null && u.getUid().compareTo(FacebookUser.getInstance().getUid())!=0)
+                  if(u != null && u.getUid() != null && u.getUid().compareTo(FacebookUser.getInstance().getUid())!=0)
                   users.add(u);
               }
               adapter.notifyDataSetChanged();
@@ -104,15 +125,5 @@ public class UserListActivity extends AppCompatActivity {
       });
     }
 
-    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-        @Override
-        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-            return false;
-        }
 
-        @Override
-        public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-            adapter.remove(viewHolder.getAdapterPosition());
-        }
-    };
 }

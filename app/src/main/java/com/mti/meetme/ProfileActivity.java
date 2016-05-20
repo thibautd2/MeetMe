@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,7 +22,10 @@ import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.Profil.CarousselPager;
 import com.mti.meetme.Tools.FacebookHandler;
@@ -221,7 +225,11 @@ public class ProfileActivity extends AppCompatActivity{
         if (currentUser.getFriendsID().size() > 0)
             getFriendsPictures();
 
-        addFriendButtonActivation();
+
+        if (user == null || FacebookUser.getInstance().haveThisFriend(currentUser.getUid()))
+            findViewById(R.id.add_friends_btn).setVisibility(View.INVISIBLE);
+        else
+            addFriendButtonActivation();
     }
 
 
@@ -236,8 +244,6 @@ public class ProfileActivity extends AppCompatActivity{
         pager = (ViewPager) findViewById(R.id.user_img_list);
         descriptionTextView = (TextView) findViewById(R.id.description_text);
 
-        //if (user != null)
-         //   ((ImageButton)findViewById(R.id.add_friends_btn)).setVisibility(View.INVISIBLE);
 
     }
 
@@ -291,14 +297,40 @@ public class ProfileActivity extends AppCompatActivity{
         Bundle params = new Bundle();
         params.putBoolean("redirect", false);
 
+        if (currentUser.receiveMeetMeFriendsTab() == null)
+            return;
+
+        for (String id: currentUser.receiveMeetMeFriendsTab()) {
+            Firebase ref = Network.find_user(id);
+            ref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    ImageView newItem = new ImageView(ProfileActivity.this);
+                    User u = dataSnapshot.getValue(User.class);
+                    Picasso.with(ProfileActivity.this).load(u.getPic1()).transform(new RoundedPicasso()).into(newItem);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    params.height = friendsLayout.getHeight();
+                    params.width = params.height;
+                    params.setMargins(10, 0, 10, 0);
+                    friendsLayout.addView(newItem, params);
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
+        }
+        /*
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
-                "/" + currentUser.getFriendsID().get(idFriendsCount) + "/picture",
+                "/" + currentUser.receiveMeetMeFriendsTab().get(idFriendsCount) + "/picture",
                 params,
                 HttpMethod.GET,
                 new GraphRequest.Callback()
                 {
-                    public void onCompleted(GraphResponse response) {try {
+                    public void onCompleted(GraphResponse response) {
+                        try {
                         ImageView newItem = new ImageView(ProfileActivity.this);
                         String url = response.getJSONObject().getJSONObject("data").getString("url");
                         if(url != null) {
@@ -310,16 +342,16 @@ public class ProfileActivity extends AppCompatActivity{
                             friendsLayout.addView(newItem, params);
                             idFriendsCount++;
                         }
-                        if (idFriendsCount < currentUser.getFriendsID().size()) {
+                        if (idFriendsCount < currentUser.receiveMeetMeFriendsTab().size()) {
                             getFriendsPictures();
                         }
-                    } catch (JSONException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     }
                 }
         ).executeAsync();
-    }
+    */}
 
     private void addFriendButtonActivation() {
         ImageButton imageButton = (ImageButton) findViewById(R.id.add_friends_btn);
@@ -328,22 +360,27 @@ public class ProfileActivity extends AppCompatActivity{
 
             @Override
             public void onClick(View arg0) {
+                addFriend(FacebookUser.getInstance(), currentUser);
+                addFriend(currentUser, FacebookUser.getInstance());
 
-                String str = FacebookUser.getInstance().getMeetMeFriends();
+                findViewById(R.id.add_friends_btn).setVisibility(View.INVISIBLE);
+            }
+
+            private void addFriend(User user_a, User user_b) {
+                String str = user_a.getMeetMeFriends();
                 if (str == null)
                     str = "";
-                str += currentUser.getUid() + ";";
+                str += user_b.getUid() + ";";
 
-                FacebookUser.getInstance().setMeetMeFriends(str);
+                user_a.setMeetMeFriends(str);
 
-                Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
+                Firebase ref = Network.find_user(user_a.getUid());
 
                 Map<String, Object> desc = new HashMap<>();
                 desc.put("meetMeFriends", str);
 
                 ref.updateChildren(desc, null);
             }
-
         });
     }
 }
