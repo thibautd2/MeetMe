@@ -46,7 +46,7 @@ public class LoginActivity extends Activity implements FacebookCallback<LoginRes
     CallbackManager callbackManager;
     String fb_token, fb_name, fb_img, fb_email, fb_birthday, fb_age_range, fb_gender, fb_id;
     LoginButton loginButton;
-    Button map;
+
     //UI elements
     ImageView img_user;
     ProgressDialog progress;
@@ -93,16 +93,12 @@ public class LoginActivity extends Activity implements FacebookCallback<LoginRes
     //UI Handling
     private void bindViews()
     {
-        loginButton = (LoginButton) findViewById(R.id.login_button);
         title = (TextView) findViewById(R.id.ActionBarLoginTitle);
         loginButton = (LoginButton) findViewById(R.id.login_button);
     }
 
     private void populateViews()
     {
-//        title.setText(getResources().getText(R.string.app_name));
-        img_user = (ImageView)findViewById(R.id.imageView);
-        Picasso.with(getApplication()).load(R.drawable.chut).fit().centerCrop().transform(new RoundedPicasso()).into(img_user);
     }
 
     @Override
@@ -138,9 +134,6 @@ public class LoginActivity extends Activity implements FacebookCallback<LoginRes
         fb_id = object.optString("id");
         currentUser = new User(fb_age_range, null, fb_name, fb_birthday, "Trololo", fb_email, fb_img, fb_gender, TodayDesire.Desire.Everything);
 
-        if (progress != null)
-            progress.dismiss();
-
         onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());
     }
 
@@ -170,7 +163,7 @@ public class LoginActivity extends Activity implements FacebookCallback<LoginRes
 
     @Override
     public void onAuthenticationError(FirebaseError firebaseError) {
-        if(progress!=null)
+        if(progress != null)
             progress.dismiss();
     }
 

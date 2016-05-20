@@ -4,6 +4,7 @@
     <string name="download">Downloading stuff...</string>
     <!-- LoginActivity -->
     <string name="app_name">MeetMe</string>
+    <string name="welcome_login">Bienvenue sur MeetMe !</string>
     <string name="progress_status_connect">Connecting...</string>
     <string name="progress_status_retrieving">Retrieving Facebook data...</string>
 

@@ -71,6 +71,9 @@ public class User implements Serializable, Parcelable {
     @com.google.gson.annotations.SerializedName("Friends")
     private String FriendsString;
 
+    @com.google.gson.annotations.SerializedName("MeetMeFriends")
+    private String MeetMeFriends;
+
     private JSONObject Likes;
     private JSONObject Friends;
 
@@ -90,9 +93,8 @@ public class User implements Serializable, Parcelable {
         Longitude = null;
         Latitude = null;
         Envie = desire.toString();
+        MeetMeFriends = "";
     }
-
-
 
 
     public User() {}
@@ -114,6 +116,7 @@ public class User implements Serializable, Parcelable {
         FriendsString = in.readString();
         likesId = in.createStringArrayList();
         friendsId = in.createStringArrayList();
+        MeetMeFriends = in.readString();
         Envie = in.readString();
     }
 
@@ -135,6 +138,7 @@ public class User implements Serializable, Parcelable {
         dest.writeString(FriendsString);
         dest.writeStringList(likesId);
         dest.writeStringList(friendsId);
+        dest.writeString(MeetMeFriends);
         dest.writeString(Envie);
     }
 
@@ -173,6 +177,13 @@ public class User implements Serializable, Parcelable {
         return 23;
     }
 
+    public String getMeetMeFriends() {
+        return MeetMeFriends;
+    }
+
+    public void setMeetMeFriends(String meetMeFriends) {
+        MeetMeFriends = meetMeFriends;
+    }
 
     public String getEnvie(){return Envie;}
     public void setEnvie(String envie){Envie = envie;}

@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -219,6 +220,8 @@ public class ProfileActivity extends AppCompatActivity{
 
         if (currentUser.getFriendsID().size() > 0)
             getFriendsPictures();
+
+        addFriendButtonActivation();
     }
 
 
@@ -232,6 +235,10 @@ public class ProfileActivity extends AppCompatActivity{
         friendsLayout = (LinearLayout) findViewById(R.id.friends_layout);
         pager = (ViewPager) findViewById(R.id.user_img_list);
         descriptionTextView = (TextView) findViewById(R.id.description_text);
+
+        //if (user != null)
+         //   ((ImageButton)findViewById(R.id.add_friends_btn)).setVisibility(View.INVISIBLE);
+
     }
 
     /*********************************************************************
@@ -312,5 +319,31 @@ public class ProfileActivity extends AppCompatActivity{
                     }
                 }
         ).executeAsync();
+    }
+
+    private void addFriendButtonActivation() {
+        ImageButton imageButton = (ImageButton) findViewById(R.id.add_friends_btn);
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+                String str = FacebookUser.getInstance().getMeetMeFriends();
+                if (str == null)
+                    str = "";
+                str += currentUser.getUid() + ";";
+
+                FacebookUser.getInstance().setMeetMeFriends(str);
+
+                Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
+
+                Map<String, Object> desc = new HashMap<>();
+                desc.put("meetMeFriends", str);
+
+                ref.updateChildren(desc, null);
+            }
+
+        });
     }
 }

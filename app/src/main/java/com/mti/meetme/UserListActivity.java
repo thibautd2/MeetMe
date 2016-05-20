@@ -93,7 +93,7 @@ public class UserListActivity extends AppCompatActivity {
               users.clear();
               for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                   User u = postSnapshot.getValue(User.class);
-                  if(u.getUid().compareTo(FacebookUser.getInstance().getUid())!=0)
+                  if(u != null && u.getUid().compareTo(FacebookUser.getInstance().getUid())!=0)
                   users.add(u);
               }
               adapter.notifyDataSetChanged();
