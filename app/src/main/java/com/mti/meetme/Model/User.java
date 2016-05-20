@@ -3,6 +3,8 @@ package com.mti.meetme.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.mti.meetme.controller.TodayDesire;
+
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
 
@@ -22,6 +24,7 @@ public class User implements Serializable, Parcelable {
 
     @com.google.gson.annotations.SerializedName("Latitude")
     private Double Latitude;
+
     @com.google.gson.annotations.SerializedName("Longitude")
     private Double Longitude;
 
@@ -61,6 +64,10 @@ public class User implements Serializable, Parcelable {
     @com.google.gson.annotations.SerializedName("Likes")
     private String LikesString;
 
+    @com.google.gson.annotations.SerializedName("Envie")
+    private String Envie;
+
+
     @com.google.gson.annotations.SerializedName("Friends")
     private String FriendsString;
 
@@ -71,7 +78,7 @@ public class User implements Serializable, Parcelable {
     private ArrayList<String> friendsId = null;
 
 
-    public User(String ageRange, String uid, String name, String birthday, String description, String email, String pic1, String gender) {
+    public User(String ageRange, String uid, String name, String birthday, String description, String email, String pic1, String gender, TodayDesire.Desire desire) {
         Name = name;
         Birthday = birthday;
         Description = description;
@@ -82,7 +89,11 @@ public class User implements Serializable, Parcelable {
         AgeRange = ageRange;
         Longitude = null;
         Latitude = null;
+        Envie = desire.toString();
     }
+
+
+
 
     public User() {}
 
@@ -103,6 +114,7 @@ public class User implements Serializable, Parcelable {
         FriendsString = in.readString();
         likesId = in.createStringArrayList();
         friendsId = in.createStringArrayList();
+        Envie = in.readString();
     }
 
     @Override
@@ -123,6 +135,7 @@ public class User implements Serializable, Parcelable {
         dest.writeString(FriendsString);
         dest.writeStringList(likesId);
         dest.writeStringList(friendsId);
+        dest.writeString(Envie);
     }
 
     @Override
@@ -159,6 +172,10 @@ public class User implements Serializable, Parcelable {
             }*/
         return 23;
     }
+
+
+    public String getEnvie(){return Envie;}
+    public void setEnvie(String envie){Envie = envie;}
 
     public String getLikesString() {
         return LikesString;

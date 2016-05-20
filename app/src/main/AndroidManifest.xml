@@ -84,7 +84,9 @@
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"/>
+            android:label="@string/title_activity_maps"
+            android:launchMode="singleInstance"/>
+
         <activity
             android:configChanges="orientation"
             android:screenOrientation="portrait"

@@ -294,17 +294,15 @@ public class ProfileActivity extends AppCompatActivity{
                     public void onCompleted(GraphResponse response) {try {
                         ImageView newItem = new ImageView(ProfileActivity.this);
                         String url = response.getJSONObject().getJSONObject("data").getString("url");
-                        Picasso.with(ProfileActivity.this).load(url).transform(new RoundedPicasso()).into(newItem);
-
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-                        params.height = friendsLayout.getHeight();
-                        params.width = params.height;
-                        params.setMargins(10, 0, 10, 0);
-                        friendsLayout.addView(newItem, params);
-
-                        idFriendsCount++;
-
+                        if(url != null) {
+                            Picasso.with(ProfileActivity.this).load(url).transform(new RoundedPicasso()).into(newItem);
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                            params.height = friendsLayout.getHeight();
+                            params.width = params.height;
+                            params.setMargins(10, 0, 10, 0);
+                            friendsLayout.addView(newItem, params);
+                            idFriendsCount++;
+                        }
                         if (idFriendsCount < currentUser.getFriendsID().size()) {
                             getFriendsPictures();
                         }
@@ -312,7 +310,6 @@ public class ProfileActivity extends AppCompatActivity{
                         e.printStackTrace();
                     }
                     }
-
                 }
         ).executeAsync();
     }
