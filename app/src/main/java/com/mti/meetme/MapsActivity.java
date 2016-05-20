@@ -291,7 +291,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         searchCircle = mMap.addCircle(new CircleOptions().center(latLngCenter).radius(rayon));
         searchCircle.setFillColor(Color.argb(95, 255, 255, 255));
         searchCircle.setStrokeWidth(4);
-        searchCircle.setStrokeColor(Color.argb(60, 0, 0, 0));
+        searchCircle.setStrokeColor(Color.argb(100,0, 221, 255));
         getAllUSerPosition();
     }
 
