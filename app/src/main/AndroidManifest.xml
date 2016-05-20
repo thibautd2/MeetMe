@@ -97,6 +97,11 @@
             android:name=".UserListActivity"
             android:label="Rencontres"/>
 
+        <activity
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:name=".FriendsListActivity"
+            android:label="Mes ami(e)s"/>
     </application>
 
 </manifest>

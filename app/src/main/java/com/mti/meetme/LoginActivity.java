@@ -29,6 +29,7 @@ import com.mti.meetme.Tools.FacebookHandler;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.Tools.Network.Network;
+import com.mti.meetme.controller.TodayDesire;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -135,7 +136,7 @@ public class LoginActivity extends Activity implements FacebookCallback<LoginRes
         fb_birthday = object.optString("birthday");
         fb_gender = object.optString("gender");
         fb_id = object.optString("id");
-        currentUser = new User(fb_age_range, null, fb_name, fb_birthday, "Trololo", fb_email, fb_img, fb_gender);
+        currentUser = new User(fb_age_range, null, fb_name, fb_birthday, "Trololo", fb_email, fb_img, fb_gender, TodayDesire.Desire.Everything);
 
         if (progress != null)
             progress.dismiss();

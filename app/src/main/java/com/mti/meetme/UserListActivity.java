@@ -2,12 +2,13 @@ package com.mti.meetme;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -24,18 +25,18 @@ import java.util.ArrayList;
  * Created by thiba_000 on 12/04/2016.
  */
 
-public class UserListActivity extends ActionBarActivity{
+public class UserListActivity extends AppCompatActivity {
 
     LinearLayoutManager mLinearLayoutManager;
     RecyclerView mRecyclerView;
     ArrayList<User> users;
     ProfilsAdapter adapter;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profils_list);
+
         users = new ArrayList<>();
         getall_user();
         bindViews();
@@ -56,6 +57,11 @@ public class UserListActivity extends ActionBarActivity{
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                return true;
+            case R.id.menu_friends:
+                Intent intent2 = new Intent(getApplicationContext(), FriendsListActivity.class);
+                intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent2);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

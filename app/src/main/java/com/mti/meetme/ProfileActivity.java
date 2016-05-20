@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,7 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 import com.pubnub.api.*;
 
-public class ProfileActivity extends ActionBarActivity{
+public class ProfileActivity extends AppCompatActivity{
 
     private LinearLayout likesLayout;
     private LinearLayout friendsLayout;
@@ -102,6 +103,11 @@ public class ProfileActivity extends ActionBarActivity{
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
+                return true;
+            case R.id.menu_friends:
+                Intent intent2 = new Intent(getApplicationContext(), FriendsListActivity.class);
+                intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent2);
                 return true;
             case R.id.menu_edit:
                 displayEditDescription();
