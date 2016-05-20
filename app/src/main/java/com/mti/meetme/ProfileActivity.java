@@ -86,7 +86,6 @@ public class ProfileActivity extends AppCompatActivity{
         if (user == null) {
             menu.findItem(R.id.menu_edit).setVisible(true);
             menu.findItem(R.id.menu_deco).setVisible(true);
-            menu.findItem(R.id.add_friends_btn).setVisible(false);
         }
         else
         {
@@ -221,6 +220,8 @@ public class ProfileActivity extends AppCompatActivity{
 
         if (currentUser.getFriendsID().size() > 0)
             getFriendsPictures();
+
+        addFriendButtonActivation();
     }
 
 
@@ -234,6 +235,10 @@ public class ProfileActivity extends AppCompatActivity{
         friendsLayout = (LinearLayout) findViewById(R.id.friends_layout);
         pager = (ViewPager) findViewById(R.id.user_img_list);
         descriptionTextView = (TextView) findViewById(R.id.description_text);
+
+        //if (user != null)
+         //   ((ImageButton)findViewById(R.id.add_friends_btn)).setVisibility(View.INVISIBLE);
+
     }
 
     /*********************************************************************
@@ -296,17 +301,15 @@ public class ProfileActivity extends AppCompatActivity{
                     public void onCompleted(GraphResponse response) {try {
                         ImageView newItem = new ImageView(ProfileActivity.this);
                         String url = response.getJSONObject().getJSONObject("data").getString("url");
-                        Picasso.with(ProfileActivity.this).load(url).transform(new RoundedPicasso()).into(newItem);
-
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-                        params.height = friendsLayout.getHeight();
-                        params.width = params.height;
-                        params.setMargins(10, 0, 10, 0);
-                        friendsLayout.addView(newItem, params);
-
-                        idFriendsCount++;
-
+                        if(url != null) {
+                            Picasso.with(ProfileActivity.this).load(url).transform(new RoundedPicasso()).into(newItem);
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                            params.height = friendsLayout.getHeight();
+                            params.width = params.height;
+                            params.setMargins(10, 0, 10, 0);
+                            friendsLayout.addView(newItem, params);
+                            idFriendsCount++;
+                        }
                         if (idFriendsCount < currentUser.getFriendsID().size()) {
                             getFriendsPictures();
                         }
@@ -314,7 +317,6 @@ public class ProfileActivity extends AppCompatActivity{
                         e.printStackTrace();
                     }
                     }
-
                 }
         ).executeAsync();
     }
@@ -326,7 +328,20 @@ public class ProfileActivity extends AppCompatActivity{
 
             @Override
             public void onClick(View arg0) {
-                
+
+                String str = FacebookUser.getInstance().getMeetMeFriends();
+                if (str == null)
+                    str = "";
+                str += currentUser.getUid() + ";";
+
+                FacebookUser.getInstance().setMeetMeFriends(str);
+
+                Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
+
+                Map<String, Object> desc = new HashMap<>();
+                desc.put("meetMeFriends", str);
+
+                ref.updateChildren(desc, null);
             }
 
         });

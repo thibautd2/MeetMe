@@ -41,8 +41,6 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ViewHolder vh = null;
-        // final int pos = getItemCount();
-
         v = LayoutInflater.from(parent.getContext()).inflate(R.layout.users_list_item, parent, false);
         vh = new ViewHolder(v);
         vh.user_age = (TextView) v.findViewById(R.id.list_user_age);

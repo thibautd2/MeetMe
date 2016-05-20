@@ -24,6 +24,7 @@ import java.util.ArrayList;
 /**
  * Created by thiba_000 on 12/04/2016.
  */
+
 public class UserListActivity extends AppCompatActivity {
 
     LinearLayoutManager mLinearLayoutManager;
@@ -54,7 +55,7 @@ public class UserListActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menu_maps:
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 return true;
             case R.id.menu_friends:
@@ -91,9 +92,8 @@ public class UserListActivity extends AppCompatActivity {
           public void onDataChange(DataSnapshot snapshot) {
               users.clear();
               for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-
                   User u = postSnapshot.getValue(User.class);
-                  if(u.getUid().compareTo(FacebookUser.getInstance().getUid())!=0)
+                  if(u != null && u.getUid().compareTo(FacebookUser.getInstance().getUid())!=0)
                   users.add(u);
               }
               adapter.notifyDataSetChanged();
