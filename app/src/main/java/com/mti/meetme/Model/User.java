@@ -191,7 +191,7 @@ public class User implements Serializable, Parcelable {
     }
 
     public Boolean haveThisFriend(String id) {
-        if (MeetMeFriends.equals(""))
+        if (MeetMeFriends == null || MeetMeFriends.equals(""))
             return false;
 
         for (String s: receiveMeetMeFriendsTab()) {
@@ -205,7 +205,7 @@ public class User implements Serializable, Parcelable {
     public ArrayList<String> receiveMeetMeFriendsTab() {
         ArrayList friendsTab = new ArrayList();
 
-        if (MeetMeFriends.equals(""))
+        if (MeetMeFriends == null || MeetMeFriends.equals(""))
             return null;
 
         String str[] = MeetMeFriends.split(";");

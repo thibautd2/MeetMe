@@ -344,7 +344,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         FacebookUser.getInstance().setLatitude(pos.latitude);
         FacebookUser.getInstance().setLongitude(pos.longitude);
         latLngCenter = pos;
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(pos.latitude, pos.longitude), 17));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(pos.latitude, pos.longitude), 13));
         sendPosition();
     }
 

@@ -20,7 +20,7 @@
             android:id="@+id/textView4"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp" />
+            android:layout_marginBottom="10dp" />
 
         <ScrollView
             android:layout_width="fill_parent"
@@ -37,14 +37,14 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="3dp"
+                    android:layout_marginBottom="1.5dp"
                     android:id="@+id/party">
 
                     <ImageView
                         android:layout_width="fill_parent"
                         android:layout_height="90dp"
                         android:id="@+id/imageView5"
-                        android:background="@drawable/partyfine" />
+                        android:background="@drawable/soiree2fine" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -54,7 +54,6 @@
                         android:id="@+id/T_party"
                         android:textColor="#ffffff"
                         android:textSize="20dp"
-                        android:textStyle="bold"
                         android:layout_centerVertical="true"
                         android:layout_centerHorizontal="true" />
                 </RelativeLayout>
@@ -62,7 +61,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="3dp"
+                    android:layout_marginBottom="1dp"
                     android:id="@+id/drink">
 
                     <ImageView
@@ -80,14 +79,13 @@
                         android:layout_centerVertical="true"
                         android:layout_centerHorizontal="true"
                         android:textColor="#ffffff"
-                        android:textStyle="bold"
                         android:textSize="20dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="3dp"
+                    android:layout_marginBottom="1dp"
                     android:id="@+id/meet">
 
                     <ImageView
@@ -105,7 +103,6 @@
                         android:layout_centerVertical="true"
                         android:layout_centerHorizontal="true"
                         android:textColor="#ffffff"
-                        android:textStyle="bold"
                         android:textSize="20dp" />
 
                 </RelativeLayout>
@@ -113,7 +110,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="3dp"
+                    android:layout_marginBottom="1dp"
                     android:id="@+id/sport">
 
                     <ImageView
@@ -131,14 +128,13 @@
                         android:layout_centerVertical="true"
                         android:layout_centerHorizontal="true"
                         android:textColor="#ffffff"
-                        android:textStyle="bold"
                         android:textSize="20dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="3dp"
+                    android:layout_marginBottom="1dp"
                     android:id="@+id/play">
 
                     <ImageView
@@ -156,14 +152,13 @@
                         android:layout_centerVertical="true"
                         android:layout_centerHorizontal="true"
                         android:textColor="#ffffff"
-                        android:textStyle="bold"
                         android:textSize="20dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="3dp"
+                    android:layout_marginBottom="1dp"
                     android:id="@+id/all">
 
                     <ImageView
@@ -181,7 +176,6 @@
                         android:layout_centerVertical="true"
                         android:layout_centerHorizontal="true"
                         android:textColor="#ffffff"
-                        android:textStyle="bold"
                         android:textSize="20dp" />
                 </RelativeLayout>
 
