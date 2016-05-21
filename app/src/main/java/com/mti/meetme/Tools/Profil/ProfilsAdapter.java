@@ -2,6 +2,7 @@ package com.mti.meetme.Tools.Profil;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -41,10 +42,10 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ViewHolder vh = null;
-        v = LayoutInflater.from(parent.getContext()).inflate(R.layout.users_list_item, parent, false);
+        v = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_cardview, parent, false);
         vh = new ViewHolder(v);
         vh.user_age = (TextView) v.findViewById(R.id.list_user_age);
-
+        vh.user_envie = (TextView) v.findViewById(R.id.user_envie_list);
         vh.user_image = (ImageView) v.findViewById(R.id.user_img_list);
         vh.user_name = (TextView) v.findViewById(R.id.user_name_list);
         vh.relativeLayout = (RelativeLayout) v.findViewById(R.id.list_user_relative);
@@ -54,11 +55,11 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final User u = users.get(position);
-
             if (u != null) {
                 Picasso.with(acti).load(u.getPic1()).fit().centerCrop().into(holder.user_image);
                 holder.user_age.setText("" + u.convertBirthdayToAge() + " ans");
                 holder.user_name.setText(u.getName());
+                holder.user_envie.setText(u.getEnvie());
                 holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -84,6 +85,7 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
         public ImageView user_image;
         public TextView user_name;
         public TextView user_age;
+        public TextView user_envie;
         public RelativeLayout relativeLayout;
         public ViewHolder(View itemView) {
             super(itemView);

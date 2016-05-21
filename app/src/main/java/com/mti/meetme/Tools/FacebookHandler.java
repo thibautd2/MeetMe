@@ -183,7 +183,6 @@ public class FacebookHandler
                                 getUserFriends(response.getJSONObject().getJSONObject("paging").getJSONObject("cursors").getString("after"));
                             else {
                                 friendsReady = true;
-
                                 if (likesReady && friendsReady && picturesReady)
                                     switchToMaps();
                             }

@@ -3,6 +3,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -45,7 +46,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Cherche à faire des rencontres"
-            android:id="@+id/textView2"
+            android:id="@+id/user_envie_list"
             android:layout_centerVertical="true"
             android:layout_alignStart="@+id/user_name_list"
             android:layout_alignEnd="@+id/list_user_age" />
