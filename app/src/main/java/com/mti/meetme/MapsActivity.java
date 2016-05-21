@@ -67,6 +67,7 @@ import com.mti.meetme.Tools.Notifs.GcmIntentService;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.RoundedPicasso;
+import com.mti.meetme.controller.TodayDesire;
 import com.pubnub.api.Pubnub;
 import com.pubnub.api.PubnubError;
 import com.squareup.picasso.Callback;
@@ -89,7 +90,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private ArrayList<User> all_user;
     private Circle searchCircle;
-    LatLng latLngCenter;
+    static LatLng latLngCenter;
     boolean dispo = true;
     public static GeoFire geoFire;
     FollowMeLocationSource followMeLocationSource;
@@ -159,10 +160,55 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         final Dialog dialog = new Dialog(MapsActivity.this);
+        dialog.setTitle("Envie du jour !");
         dialog.setContentView(R.layout.envie_du_jour);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        RelativeLayout party = (RelativeLayout) dialog.findViewById(R.id.party);
+        RelativeLayout drink = (RelativeLayout) dialog.findViewById(R.id.drink);
+        RelativeLayout meet = (RelativeLayout) dialog.findViewById(R.id.meet);
+        RelativeLayout sport = (RelativeLayout) dialog.findViewById(R.id.sport);
+        RelativeLayout play = (RelativeLayout) dialog.findViewById(R.id.play);
+        RelativeLayout all = (RelativeLayout) dialog.findViewById(R.id.all);
+
+        View.OnClickListener update_desire = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            update_TodayDesire(v, dialog);
+            }
+        };
+
+        party.setOnClickListener(update_desire);
+        drink.setOnClickListener(update_desire);
+        meet.setOnClickListener(update_desire);
+        sport.setOnClickListener(update_desire);
+        play.setOnClickListener(update_desire);
+        all.setOnClickListener(update_desire);
+
         dialog.show();
+        dialog.setCancelable(false);
     }
+
+    public void update_TodayDesire(View v, Dialog dialog)
+    {
+        Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
+        String currentDesire ="";
+        if(v.getId()== R.id.party)
+            currentDesire = TodayDesire.Desire.party.toString();
+        if(v.getId()== R.id.drink)
+            currentDesire = TodayDesire.Desire.Drink.toString();
+        if(v.getId()== R.id.meet)
+            currentDesire = TodayDesire.Desire.Date.toString();
+        if(v.getId()== R.id.sport)
+            currentDesire = TodayDesire.Desire.Sport.toString();
+        if(v.getId()== R.id.all)
+            currentDesire = TodayDesire.Desire.Everything.toString();
+
+        Map<String, Object> envie = new HashMap<String, Object>();
+        envie.put("envie", currentDesire);
+        ref.updateChildren(envie);
+        dialog.dismiss();
+    }
+
+
 
     @Override
     public void onResume() {
@@ -288,7 +334,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         searchCircle = mMap.addCircle(new CircleOptions().center(latLngCenter).radius(rayon));
         searchCircle.setFillColor(Color.argb(95, 255, 255, 255));
         searchCircle.setStrokeWidth(4);
-        searchCircle.setStrokeColor(Color.argb(100,0, 221, 255));
+        searchCircle.setStrokeColor(Color.argb(100, 0, 221, 255));
         getAllUSerPosition();
     }
 
@@ -321,18 +367,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public static void sendPosition() {
-
         Log.e("SEND NEW POSITION", "SEND NEW POSITION :" + FacebookUser.getInstance().getLatitude().toString() + " " + FacebookUser.getInstance().getLongitude().toString());
         Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
         Map<String, Object> pos = new HashMap<String, Object>();
         pos.put("latitude", String.valueOf(FacebookUser.getInstance().getLatitude()));
         pos.put("longitude", String.valueOf(FacebookUser.getInstance().getLongitude()));
         geoFire.setLocation(FacebookUser.getInstance().getUid(), new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()));
+        latLngCenter = new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
         ref.updateChildren(pos, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
             }
         });
+    }
+
+
+    public void update_circle()
+    {
+        LatLng pos = new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
+        searchCircle = mMap.addCircle(new CircleOptions().center(pos).radius(rayon));
+        searchCircle.setFillColor(Color.argb(95, 255, 255, 255));
+        searchCircle.setStrokeWidth(4);
+        searchCircle.setStrokeColor(Color.argb(100, 0, 221, 255));
     }
 
     private void getAllUSerPosition()

@@ -14,7 +14,6 @@ public class TodayDesire {
         party ("Soirée"),
         play ("Jouer");
 
-
         private String desire = "";
         Desire(String name){
             this.desire = name;
