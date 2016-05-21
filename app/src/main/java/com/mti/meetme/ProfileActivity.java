@@ -222,7 +222,7 @@ public class ProfileActivity extends AppCompatActivity{
         if (currentUser.getLikesID().size() > 0)
             getLikesPictures();
 
-        if (currentUser.getFriendsID().size() > 0)
+        if (currentUser.getMeetMeFriends() != null)
             getFriendsPictures();
 
 
@@ -270,10 +270,7 @@ public class ProfileActivity extends AppCompatActivity{
                             String url = response.getJSONObject().getJSONObject("data").getString("url");
                             Picasso.with(ProfileActivity.this).load(url).transform(new RoundedPicasso()).into(newItem);
 
-                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-                            params.height = likesLayout.getHeight();
-                            params.width = params.height;
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int)getResources().getDimension(R.dimen.profile_activity_icone), (int)getResources().getDimension(R.dimen.profile_activity_icone));
                             params.setMargins(10, 0, 10, 0);
 
                             likesLayout.addView(newItem, params);
@@ -294,30 +291,35 @@ public class ProfileActivity extends AppCompatActivity{
 
     private void getFriendsPictures()
     {
-        Bundle params = new Bundle();
-        params.putBoolean("redirect", false);
-
+     //   Bundle params = new Bundle();
+     //   params.putBoolean("redirect", false);
         if (currentUser.receiveMeetMeFriendsTab() == null)
             return;
 
-        for (String id: currentUser.receiveMeetMeFriendsTab()) {
+        Log.e("profileActy", "getFriendsPictures, nb friends: " + currentUser.receiveMeetMeFriendsTab().size());
+
+        friendsLayout.removeAllViews();
+
+        for (String id : currentUser.receiveMeetMeFriendsTab()) {
             Firebase ref = Network.find_user(id);
             ref.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.e("profileActy", "onDataChange");
                     ImageView newItem = new ImageView(ProfileActivity.this);
                     User u = dataSnapshot.getValue(User.class);
-                    Picasso.with(ProfileActivity.this).load(u.getPic1()).transform(new RoundedPicasso()).into(newItem);
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                    params.height = friendsLayout.getHeight();
-                    params.width = params.height;
+
+
+                    Log.e("profileActy", "onDataChange: " +  (int)getResources().getDimension(R.dimen.profile_activity_icone));
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int)getResources().getDimension(R.dimen.profile_activity_icone), (int)getResources().getDimension(R.dimen.profile_activity_icone));
                     params.setMargins(10, 0, 10, 0);
                     friendsLayout.addView(newItem, params);
+                    Picasso.with(ProfileActivity.this).load(u.getPic1()).placeholder(R.drawable.anonyme).transform(new RoundedPicasso()).into(newItem);
                 }
 
                 @Override
                 public void onCancelled(FirebaseError firebaseError) {
-
+                    Log.e("profileActy", "onCancelled");
                 }
             });
         }
@@ -364,6 +366,8 @@ public class ProfileActivity extends AppCompatActivity{
                 addFriend(currentUser, FacebookUser.getInstance());
 
                 findViewById(R.id.add_friends_btn).setVisibility(View.INVISIBLE);
+                //todo should clear the list before
+                getFriendsPictures();
             }
 
             private void addFriend(User user_a, User user_b) {

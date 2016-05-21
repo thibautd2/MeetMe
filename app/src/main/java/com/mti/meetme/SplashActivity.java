@@ -3,6 +3,7 @@ package com.mti.meetme;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.facebook.AccessToken;
 import com.facebook.FacebookSdk;
