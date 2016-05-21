@@ -2,6 +2,7 @@ package com.mti.meetme.Model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.mti.meetme.controller.TodayDesire;
 
@@ -93,7 +94,7 @@ public class User implements Serializable, Parcelable {
         Longitude = null;
         Latitude = null;
         Envie = desire.toString();
-        MeetMeFriends = "";
+       // MeetMeFriends = "";
     }
 
 
@@ -175,6 +176,44 @@ public class User implements Serializable, Parcelable {
                 return 23;
             }*/
         return 23;
+    }
+
+    public void removeAMeetMeFriend(String id) {
+        ArrayList<String> list = receiveMeetMeFriendsTab();
+        String str = "";
+
+        for (String s: list) {
+            if (!s.equals(id))
+                str += s + ";";
+        }
+
+        MeetMeFriends = str;
+    }
+
+    public Boolean haveThisFriend(String id) {
+        if (MeetMeFriends.equals(""))
+            return false;
+
+        for (String s: receiveMeetMeFriendsTab()) {
+            if (s.equals(id))
+                return true;
+        }
+
+        return false;
+    }
+
+    public ArrayList<String> receiveMeetMeFriendsTab() {
+        ArrayList friendsTab = new ArrayList();
+
+        if (MeetMeFriends.equals(""))
+            return null;
+
+        String str[] = MeetMeFriends.split(";");
+
+        for (String s: str)
+            friendsTab.add(s);
+
+        return friendsTab;
     }
 
     public String getMeetMeFriends() {
