@@ -56,10 +56,17 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
     public void onBindViewHolder(ViewHolder holder, int position) {
         final User u = users.get(position);
             if (u != null) {
-                Picasso.with(acti).load(u.getPic1()).fit().centerCrop().into(holder.user_image);
+
                 holder.user_age.setText("" + u.convertBirthdayToAge() + " ans");
                 holder.user_name.setText(u.getName());
                 holder.user_envie.setText(u.getEnvie());
+
+
+                if (u.getGender().compareTo("male")==0) {
+                    holder.user_image.getLayoutParams().height = 260;
+                    holder.relativeLayout.getLayoutParams().height = 300;
+                }
+                Picasso.with(acti).load(u.getPic1()).fit().centerCrop().into(holder.user_image);
                 holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

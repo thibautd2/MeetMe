@@ -3,6 +3,7 @@ package com.mti.meetme;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -91,7 +92,8 @@ public class UserListActivity extends AppCompatActivity {
 
     public void bindViews()
     {
-        mLinearLayoutManager = new LinearLayoutManager(getApplicationContext());
+
+        mLinearLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
         mRecyclerView = (RecyclerView) findViewById(R.id.list_item);
     }
 
