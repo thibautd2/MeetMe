@@ -69,6 +69,7 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
 
     @Override
     public void onDataChange(DataSnapshot snapshot) {
+        if (snapshot != null)
         currentUser = snapshot.getValue(User.class);
 
         if (currentUser != null && launcher == false) {

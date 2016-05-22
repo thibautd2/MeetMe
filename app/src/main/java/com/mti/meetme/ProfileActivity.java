@@ -156,8 +156,7 @@ public class ProfileActivity extends AppCompatActivity{
         alert.setView(input);
 
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton)
-            {
+            public void onClick(DialogInterface dialog, int whichButton) {
                 FacebookUser.getInstance().setDescription(input.getText().toString());
 
                 Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
@@ -168,7 +167,8 @@ public class ProfileActivity extends AppCompatActivity{
                 ref.updateChildren(desc, null);
 
                 descriptionTextView.setText(input.getText().toString());
-            }});
+            }
+        });
 
 
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -266,8 +266,10 @@ public class ProfileActivity extends AppCompatActivity{
                 new GraphRequest.Callback(){
                         public void onCompleted(GraphResponse response) {try {
                             ImageView newItem = new ImageView(ProfileActivity.this);
-
-                            String url = response.getJSONObject().getJSONObject("data").getString("url");
+                            String url = "";
+                            if(response != null) {
+                                 url = response.getJSONObject().getJSONObject("data").getString("url");
+                            }
                             Picasso.with(ProfileActivity.this).load(url).transform(new RoundedPicasso()).into(newItem);
 
                             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int)getResources().getDimension(R.dimen.profile_activity_icone), (int)getResources().getDimension(R.dimen.profile_activity_icone));

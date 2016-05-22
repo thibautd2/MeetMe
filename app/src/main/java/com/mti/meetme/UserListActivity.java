@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
@@ -93,7 +94,7 @@ public class UserListActivity extends AppCompatActivity {
     public void bindViews()
     {
 
-        mLinearLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
+        //mLinearLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
         mRecyclerView = (RecyclerView) findViewById(R.id.list_item);
     }
 
@@ -101,7 +102,8 @@ public class UserListActivity extends AppCompatActivity {
     {
         adapter = new ProfilsAdapter(users, this);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        mRecyclerView.setLayoutManager(mLinearLayoutManager);
+        StaggeredGridLayoutManager gaggeredGridLayoutManager = new StaggeredGridLayoutManager(2, 1);
+        mRecyclerView.setLayoutManager(gaggeredGridLayoutManager);
         mRecyclerView.setAdapter(adapter);
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
         adapter.notifyDataSetChanged();
