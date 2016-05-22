@@ -205,10 +205,10 @@ public class User implements Serializable, Parcelable {
     public ArrayList<String> receiveMeetMeFriendsTab() {
         ArrayList friendsTab = new ArrayList();
 
-        if (MeetMeFriends == null || MeetMeFriends.equals(""))
+        if (getMeetMeFriends() == null || getMeetMeFriends().equals(""))
             return null;
 
-        String str[] = MeetMeFriends.split(";");
+        String str[] = getMeetMeFriends().split(";");
 
         for (String s: str)
             friendsTab.add(s);

@@ -54,5 +54,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-gcm:+'
     compile 'com.android.support:cardview-v7:23.0.+'
 
+
     //'com.pubnub:pubnub-android-debug:3.7.+' For the debug version
 }
