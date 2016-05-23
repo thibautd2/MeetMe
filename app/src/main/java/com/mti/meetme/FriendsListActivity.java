@@ -19,6 +19,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.mti.meetme.Model.User;
+import com.mti.meetme.Tools.FacebookHandler;
 import com.mti.meetme.Tools.FriendsListAdapter;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.NewFriendsListAdapter;
@@ -42,6 +43,19 @@ public class FriendsListActivity extends AppCompatActivity {
     FriendsListAdapter adapter;
     NewFriendsListAdapter adapterNFriend;
 
+   /* @Override
+    protected void onResume() {
+        super.onResume();
+       /* friends = new ArrayList<>();
+        newfriends = new ArrayList<>();
+
+        getfriends();
+        Log.e("friendlistacty", "onResue friends size:" + friends.size());
+        getNewfriends();
+        bindViews();
+        populate();
+    }*/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +71,7 @@ public class FriendsListActivity extends AppCompatActivity {
         bindViews();
         populate();
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -92,7 +107,9 @@ public class FriendsListActivity extends AppCompatActivity {
 
     public void populate()
     {
+
         //friendList
+        Log.e("friendlisactivity", "friends size: " + friends.size());
         adapter = new FriendsListAdapter(friends, this);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(adapter.getSimpleItemTouchCallback());
         LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -113,59 +130,79 @@ public class FriendsListActivity extends AppCompatActivity {
 
     public void getfriends()
     {
-        Firebase ref = Network.getAlluser;
+        Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                User u = snapshot.getValue(User.class);
+                FacebookUser.setFacebookUser(u);
                 friends.clear();
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    User u = postSnapshot.getValue(User.class);
-                    if(u != null && u.getUid() != null && u.getUid().compareTo(FacebookUser.getInstance().getUid())!=0 && FacebookUser.getInstance().haveThisFriend(u.getUid()))
-                        friends.add(u);
+
+                for (String id : u.getMeetMeFriends().split(";"))
+                {
+                    if (id.equals(""))
+                        continue;
+
+                    final Firebase refFriends = Network.find_user(id);
+                    refFriends.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            friends.add(dataSnapshot.getValue(User.class));
+                            //adapter.update(friends);
+                            adapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+
+                        }
+                    });
                 }
-                adapter.notifyDataSetChanged();
+
             }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-            }
 
-            private void removeFriend(User user_a, User user_b) {
-                ArrayList<String> list = user_a.receiveMeetMeFriendsTab();
-                String str = "";
-
-                if (list != null) {
-                    for (String s : list)
-                        if (!s.equals(user_b.getUid()))
-                            str += s + ";";
-
-                    user_a.setMeetMeFriends(str);
-                    Firebase ref = Network.find_user(user_a.getUid());
-                    Map<String, Object> desc = new HashMap<>();
-                    desc.put("meetMeFriends", str);
-                    ref.updateChildren(desc, null);
-                }
             }
         });
     }
 
-
     public void getNewfriends()
     {
-        Firebase ref = Network.getAlluser;
+        Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                User u = snapshot.getValue(User.class);
+                FacebookUser.setFacebookUser(u);
                 newfriends.clear();
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    User u = postSnapshot.getValue(User.class);
-                    if(u != null && u.getUid() != null && u.getUid().compareTo(FacebookUser.getInstance().getUid())!=0 && (FacebookUser.getInstance().haveThisFriendRequestReceived(u.getUid())))
-                        newfriends.add(u);
+
+                for (String id : u.getFriendRequestReceived().split(";"))
+                {
+                    if (id.equals(""))
+                        continue;
+
+                    final Firebase refFriends = Network.find_user(id);
+                    refFriends.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            newfriends.add(dataSnapshot.getValue(User.class));
+                            adapterNFriend.notifyDataSetChanged();
+
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+
+                        }
+                    });
                 }
-                adapterNFriend.notifyDataSetChanged();
             }
+
             @Override
             public void onCancelled(FirebaseError firebaseError) {
+
             }
         });
     }

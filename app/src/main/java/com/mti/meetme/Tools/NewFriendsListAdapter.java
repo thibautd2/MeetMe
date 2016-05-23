@@ -26,6 +26,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.SynchronousQueue;
 
 /**
  * Created by Alex on 12/05/2016.
@@ -101,6 +102,10 @@ public class NewFriendsListAdapter extends  RecyclerView.Adapter<NewFriendsListA
         return vh;
     }
 
+    public void update(ArrayList<User> users) {
+        this.users = users;
+    }
+
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final User u = users.get(position);
@@ -125,12 +130,13 @@ public class NewFriendsListAdapter extends  RecyclerView.Adapter<NewFriendsListA
                 @Override
                 public void onClick(View v) {
                     Log.e("UFriendsListActy", "msgButton clicked");
+
                     addFriend(FacebookUser.getInstance(), u);
                     addFriend(u, FacebookUser.getInstance());
-
                     FacebookUser.getInstance().removeFriendRequestReceived(u.getUid());
                     u.removeFriendRequestSend(FacebookUser.getInstance().getUid());
-
+                    
+                    notifyDataSetChanged();
                     //remove(holder.getAdapterPosition());
                     remove(position);
                 }

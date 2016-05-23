@@ -49,6 +49,10 @@ public class FriendsListAdapter extends  RecyclerView.Adapter<FriendsListAdapter
         simpleItemTouchCallback = getNewItemTocuh();
     }
 
+    public void update(ArrayList<User> users) {
+        this.users = users;
+    }
+
     protected ItemTouchHelper.SimpleCallback getNewItemTocuh() {
         return new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -61,6 +65,7 @@ public class FriendsListAdapter extends  RecyclerView.Adapter<FriendsListAdapter
                 Log.e("friendlistadapter", "onSwiped");
 //                Toast.makeText(getApplicationContext(), users.get(viewHolder.getAdapterPosition()).getName() + " deleted from your friendlist", Toast.LENGTH_SHORT);
 
+                Log.e("friendlistadapter", "size users: " + users.size());
                 removeFriend(FacebookUser.getInstance(), users.get(viewHolder.getAdapterPosition()));
                 removeFriend(users.get(viewHolder.getAdapterPosition()), FacebookUser.getInstance());
 
