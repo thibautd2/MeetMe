@@ -45,7 +45,6 @@ public class ProfileActivity extends AppCompatActivity{
     private LinearLayout likesLayout;
     private LinearLayout friendsLayout;
     private ViewPager pager;
-
     private TextView  nameTextView;
     private TextView  ageTextView;
     private TextView  likesTextView;
@@ -69,7 +68,6 @@ public class ProfileActivity extends AppCompatActivity{
         setContentView(R.layout.activity_profile);
 
         user = (User) getIntent().getSerializableExtra("User");
-
         pubnub = new Pubnub(getResources().getString(R.string.PublishKey), getResources().getString(R.string.PublishKey));
 
         try {
@@ -156,8 +154,7 @@ public class ProfileActivity extends AppCompatActivity{
         alert.setView(input);
 
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton)
-            {
+            public void onClick(DialogInterface dialog, int whichButton) {
                 FacebookUser.getInstance().setDescription(input.getText().toString());
 
                 Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
@@ -168,15 +165,14 @@ public class ProfileActivity extends AppCompatActivity{
                 ref.updateChildren(desc, null);
 
                 descriptionTextView.setText(input.getText().toString());
-            }});
+            }
+        });
 
 
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-
             }
         });
-
         alert.show();
     }
 
@@ -267,8 +263,10 @@ public class ProfileActivity extends AppCompatActivity{
                 new GraphRequest.Callback(){
                         public void onCompleted(GraphResponse response) {try {
                             ImageView newItem = new ImageView(ProfileActivity.this);
-
-                            String url = response.getJSONObject().getJSONObject("data").getString("url");
+                            String url = "";
+                            if(response != null) {
+                                 url = response.getJSONObject().getJSONObject("data").getString("url");
+                            }
                             Picasso.with(ProfileActivity.this).load(url).transform(new RoundedPicasso()).into(newItem);
 
                             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int)getResources().getDimension(R.dimen.profile_activity_icone), (int)getResources().getDimension(R.dimen.profile_activity_icone));
@@ -298,7 +296,6 @@ public class ProfileActivity extends AppCompatActivity{
             return;
 
         friendsLayout.removeAllViews();
-
         for (String id : currentUser.receiveMeetMeFriendsTab()) {
             Firebase ref = Network.find_user(id);
             ref.addValueEventListener(new ValueEventListener() {
@@ -321,6 +318,7 @@ public class ProfileActivity extends AppCompatActivity{
                 }
             });
         }
+
         /*
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
@@ -367,18 +365,13 @@ public class ProfileActivity extends AppCompatActivity{
                 findViewById(R.id.add_friends_btn).setVisibility(View.INVISIBLE);
                 getFriendsPictures();
             }
-
             private void addFriend(User user_a, User user_b) {
                 String str = user_a.getMeetMeFriends();
                 str += user_b.getUid() + ";";
-
                 user_a.setMeetMeFriends(str);
-
                 Firebase ref = Network.find_user(user_a.getUid());
-
                 Map<String, Object> desc = new HashMap<>();
                 desc.put("meetMeFriends", str);
-
                 ref.updateChildren(desc, null);
             }
 

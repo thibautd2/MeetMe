@@ -61,6 +61,7 @@ public class LoginActivity extends Activity implements FacebookCallback<LoginRes
         super.onCreate(savedInstanceState);
         //Firebase + Facebook initialization
         FacebookSdk.sdkInitialize(this);
+        Firebase.setAndroidContext(this);
         callbackManager = CallbackManager.Factory.create();
         ref = Network.bdd_connexion;
 

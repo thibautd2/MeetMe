@@ -78,6 +78,8 @@ public class User implements Serializable, Parcelable {
 
     @com.google.gson.annotations.SerializedName("MeetMeFriends")
     private String MeetMeFriends;
+    @com.google.gson.annotations.SerializedName("friendRequestReceived")
+    private String friendRequestReceived;
 
     @com.google.gson.annotations.SerializedName("newFriends")
     private String AskingFriends;
@@ -107,7 +109,7 @@ public class User implements Serializable, Parcelable {
         Longitude = null;
         Latitude = null;
         Envie = desire.toString();
-       // MeetMeFriends = "";
+        friendRequestReceived = "";
     }
 
 
@@ -132,8 +134,8 @@ public class User implements Serializable, Parcelable {
         friendsId = in.createStringArrayList();
         MeetMeFriends = in.readString();
         Envie = in.readString();
-        FriendRequestReceived = in.readString();
         FriendRequestSend = in.readString();
+        friendRequestReceived = in.readString();
     }
 
     @Override
@@ -314,7 +316,7 @@ public class User implements Serializable, Parcelable {
 
         String str[] = getFriendRequestSend().split(";");
 
-        for (String s: str)
+        for (String s : str)
             friendsTab.add(s);
 
         return friendsTab;

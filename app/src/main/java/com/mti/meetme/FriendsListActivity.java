@@ -125,8 +125,26 @@ public class FriendsListActivity extends AppCompatActivity {
                 }
                 adapter.notifyDataSetChanged();
             }
+
             @Override
             public void onCancelled(FirebaseError firebaseError) {
+            }
+
+            private void removeFriend(User user_a, User user_b) {
+                ArrayList<String> list = user_a.receiveMeetMeFriendsTab();
+                String str = "";
+
+                if (list != null) {
+                    for (String s : list)
+                        if (!s.equals(user_b.getUid()))
+                            str += s + ";";
+
+                    user_a.setMeetMeFriends(str);
+                    Firebase ref = Network.find_user(user_a.getUid());
+                    Map<String, Object> desc = new HashMap<>();
+                    desc.put("meetMeFriends", str);
+                    ref.updateChildren(desc, null);
+                }
             }
         });
     }

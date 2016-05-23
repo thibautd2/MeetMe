@@ -63,15 +63,16 @@ public class FacebookHandler
     }
 
     public User loadUserCommonData() throws InterruptedException, JSONException {
-        currentUser.setLikes(new JSONObject(currentUser.getLikesString()));
-        currentUser.setFriends(new JSONObject(currentUser.getFriendsString()));
+        if(currentUser != null) {
+            currentUser.setLikes(new JSONObject(currentUser.getLikesString()));
+            currentUser.setFriends(new JSONObject(currentUser.getFriendsString()));
 
-        if (currentUser.getLikes() != null)
-            currentUser.setLikesId(getLikesInCommonId(currentUser.getLikes()));
+            if (currentUser.getLikes() != null)
+                currentUser.setLikesId(getLikesInCommonId(currentUser.getLikes()));
 
-        if (currentUser.getFriends() != null)
-            currentUser.setFriendsId(getFriendsInCommonId(currentUser.getFriends()));
-
+            if (currentUser.getFriends() != null)
+                currentUser.setFriendsId(getFriendsInCommonId(currentUser.getFriends()));
+        }
         return currentUser;
     }
 
@@ -127,7 +128,6 @@ public class FacebookHandler
                                 fullLikes = response.getJSONObject();
                             else {
                                 JSONArray array = response.getJSONObject().getJSONArray("data");
-
                                 for (int i = 0; i < array.length(); i++)
                                     fullLikes.getJSONArray("data").put(response.getJSONObject().getJSONArray("data").get(i));
                             }
@@ -136,7 +136,6 @@ public class FacebookHandler
                                 getUserLikes(response.getJSONObject().getJSONObject("paging").getJSONObject("cursors").getString("after"));
                             else {
                                 likesReady = true;
-
                                 if (likesReady && friendsReady && picturesReady)
                                     switchToMaps();
                             }
@@ -233,7 +232,6 @@ public class FacebookHandler
                                 {
                                     JSONObject picture = array.getJSONObject(i);
                                     String album_name = picture.getJSONObject("album").optString("name");
-
                                     if (album_name.compareTo("Profile Pictures") == 0) {
                                         String url = picture.optString("source");
 
@@ -247,8 +245,6 @@ public class FacebookHandler
                                             currentUser.setPic4(url);
                                         else if (nbPics == 4)
                                             currentUser.setPic5(url);
-
-
                                         nbPics++;
                                     }
                                 }
@@ -297,20 +293,15 @@ public class FacebookHandler
     }
 
     public ArrayList<String> getLikesId(JSONObject likes) throws JSONException {
-
         if (likes != null)
         {
             JSONArray likesArray = likes.getJSONArray("data");
-
             ArrayList<String> likesIdCurrent = new ArrayList<String>();
-
             for (int i = 0; i < likesArray.length(); i++) {
                 likesIdCurrent.add(FacebookUser.getInstance().getLikes().getJSONArray("data").getJSONObject(i).getString("id"));
             }
-
             return likesIdCurrent;
         }
-
         return null;
     }
 
@@ -325,23 +316,17 @@ public class FacebookHandler
         if (friends != null)
         {
             JSONArray friendsArray = friends.getJSONArray("data");
-
             ArrayList<String> friendsId = new ArrayList<String>();
             ArrayList<String> friendsIdCurrent = new ArrayList<String>();
-
             for (int i = 0; i < friendsArray.length(); i++) {
                 friendsId.add(friendsArray.getJSONObject(i).getString("id"));
             }
-
             for (int i = 0; i < FacebookUser.getInstance().getFriends().getJSONArray("data").length(); i++) {
                 friendsIdCurrent.add(FacebookUser.getInstance().getFriends().getJSONArray("data").getJSONObject(i).getString("id"));
             }
-
             friendsId.retainAll(friendsIdCurrent);
-
             return friendsId;
         }
-
         return null;
     }
 
@@ -363,10 +348,8 @@ public class FacebookHandler
             }
 
             likesId.retainAll(likesIdCurrent);
-
             return likesId;
         }
-
         return null;
     }
 }
