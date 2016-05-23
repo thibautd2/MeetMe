@@ -29,8 +29,10 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
 {
 
     protected ArrayList<User> users;
-    protected  Activity acti;
+    protected Activity acti;
     protected View v;
+    protected int originalLayoutHeight;
+    protected int originalImageHeight;
 
     public ProfilsAdapter(ArrayList<User> users, Activity acti)
     {
@@ -49,6 +51,8 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
         vh.user_image = (ImageView) v.findViewById(R.id.user_img_list);
         vh.user_name = (TextView) v.findViewById(R.id.user_name_list);
         vh.relativeLayout = (RelativeLayout) v.findViewById(R.id.list_user_relative);
+        originalLayoutHeight = vh.relativeLayout.getLayoutParams().height;
+        originalImageHeight = vh.user_image.getLayoutParams().height;
         return vh;
     }
 
@@ -63,8 +67,8 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
 
 
                 if (u.getGender().compareTo("male")==0) {
-                    holder.user_image.getLayoutParams().height = 260;
-                    holder.relativeLayout.getLayoutParams().height = 300;
+                    holder.user_image.getLayoutParams().height = originalImageHeight -70;
+                    holder.relativeLayout.getLayoutParams().height = originalLayoutHeight -70;
                 }
                 Picasso.with(acti).load(u.getPic1()).fit().centerCrop().into(holder.user_image);
                 holder.relativeLayout.setOnClickListener(new View.OnClickListener() {

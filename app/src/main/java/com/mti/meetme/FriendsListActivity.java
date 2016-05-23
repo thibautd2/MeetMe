@@ -73,7 +73,6 @@ public class FriendsListActivity extends UserListActivity {
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 Toast.makeText(getApplicationContext(), users.get(viewHolder.getAdapterPosition()).getName() + " deleted from your friendlist", Toast.LENGTH_SHORT);
-
                 removeFriend(FacebookUser.getInstance(), users.get(viewHolder.getAdapterPosition()));
                 removeFriend(users.get(viewHolder.getAdapterPosition()), FacebookUser.getInstance());
 
@@ -90,12 +89,9 @@ public class FriendsListActivity extends UserListActivity {
                             str += s + ";";
 
                     user_a.setMeetMeFriends(str);
-
                     Firebase ref = Network.find_user(user_a.getUid());
-
                     Map<String, Object> desc = new HashMap<>();
                     desc.put("meetMeFriends", str);
-
                     ref.updateChildren(desc, null);
                 }
             }
