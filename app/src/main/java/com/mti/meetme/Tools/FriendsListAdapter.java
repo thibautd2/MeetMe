@@ -70,6 +70,8 @@ public class FriendsListAdapter extends  RecyclerView.Adapter<FriendsListAdapter
                 removeFriend(users.get(viewHolder.getAdapterPosition()), FacebookUser.getInstance());
 
                 remove(viewHolder.getAdapterPosition());
+                if (users.size() == 0)
+                    ((TextView) acti.findViewById(R.id.friendsTxt)).setVisibility(View.GONE);
             }
 
             private void removeFriend(User user_a, User user_b) {
@@ -112,7 +114,7 @@ public class FriendsListAdapter extends  RecyclerView.Adapter<FriendsListAdapter
         final User u = users.get(position);
 
             if (u != null) {
-                Picasso.with(acti).load(u.getPic1()).fit().centerCrop().into(holder.user_image);
+                Picasso.with(acti).load(u.getPic1()).fit().centerCrop().transform(new RoundedPicasso()).into(holder.user_image);
                 holder.user_name.setText(u.getName());
                 holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -140,12 +142,12 @@ public class FriendsListAdapter extends  RecyclerView.Adapter<FriendsListAdapter
                     }
                 });
 
-            getImageButton(R.id.findBtn).setOnClickListener(new View.OnClickListener() {
+           /* getImageButton(R.id.findBtn).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Log.e("UserListActy", "msgButton clicked");
                 }
-            });
+            });*/
     }
 
     @Override

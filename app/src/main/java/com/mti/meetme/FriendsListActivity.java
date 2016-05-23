@@ -2,6 +2,7 @@ package com.mti.meetme;
 
 import android.content.Intent;
 import android.graphics.LinearGradient;
+import android.hardware.camera2.params.Face;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -11,7 +12,9 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
@@ -55,6 +58,7 @@ public class FriendsListActivity extends AppCompatActivity {
         bindViews();
         populate();
     }*/
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,8 +109,7 @@ public class FriendsListActivity extends AppCompatActivity {
         mRecyclerViewNFriend = (RecyclerView) findViewById(R.id.list_item);
     }
 
-    public void populate()
-    {
+    public void populate() {
 
         //friendList
         Log.e("friendlisactivity", "friends size: " + friends.size());
@@ -126,25 +129,37 @@ public class FriendsListActivity extends AppCompatActivity {
         mRecyclerViewNFriend.setAdapter(adapterNFriend);
         itemTouchHelper2.attachToRecyclerView(mRecyclerViewNFriend);
         adapterNFriend.notifyDataSetChanged();
+
+        if (FacebookUser.getInstance().getFriendRequestReceived().equals("")) {
+            ((TextView) findViewById(R.id.demande)).setVisibility(View.GONE);
+            ((TextView) findViewById(R.id.friendsTxt)).setVisibility(View.GONE);
+        }
+        else {
+            ((TextView) findViewById(R.id.demande)).setVisibility(View.VISIBLE);
+            if (FacebookUser.getInstance().getMeetMeFriends().equals(""))
+                ((TextView) findViewById(R.id.friendsTxt)).setVisibility(View.GONE);
+            else
+                ((TextView) findViewById(R.id.friendsTxt)).setVisibility(View.VISIBLE);
+        }
+
+
     }
 
     public void getfriends()
     {
-        Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
+        Firebase ref = Network.find_MeetmeFriends(FacebookUser.getInstance().getUid());
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                User u = snapshot.getValue(User.class);
-                FacebookUser.setFacebookUser(u);
+                String s = snapshot.getValue(String.class);
                 friends.clear();
 
-                for (String id : u.getMeetMeFriends().split(";"))
-                {
+                for (String id : s.split(";")) {
                     if (id.equals(""))
                         continue;
 
                     final Firebase refFriends = Network.find_user(id);
-                    refFriends.addValueEventListener(new ValueEventListener() {
+                    refFriends.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             friends.add(dataSnapshot.getValue(User.class));
@@ -158,7 +173,6 @@ public class FriendsListActivity extends AppCompatActivity {
                         }
                     });
                 }
-
             }
 
             @Override
@@ -170,26 +184,30 @@ public class FriendsListActivity extends AppCompatActivity {
 
     public void getNewfriends()
     {
-        Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
+        Firebase ref = Network.find_FriendRequestReceived(FacebookUser.getInstance().getUid());
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                User u = snapshot.getValue(User.class);
-                FacebookUser.setFacebookUser(u);
+                String s = snapshot.getValue(String.class);
+                FacebookUser.getInstance().setFriendRequestReceived(s);
+
                 newfriends.clear();
 
-                for (String id : u.getFriendRequestReceived().split(";"))
-                {
+                for (String id : s.split(";")) {
                     if (id.equals(""))
                         continue;
 
                     final Firebase refFriends = Network.find_user(id);
-                    refFriends.addValueEventListener(new ValueEventListener() {
+                    refFriends.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             newfriends.add(dataSnapshot.getValue(User.class));
                             adapterNFriend.notifyDataSetChanged();
 
+
+                            ((TextView) findViewById(R.id.demande)).setVisibility(View.VISIBLE);
+                            if (friends.size() != 0)
+                                ((TextView) findViewById(R.id.friendsTxt)).setVisibility(View.VISIBLE);
                         }
 
                         @Override

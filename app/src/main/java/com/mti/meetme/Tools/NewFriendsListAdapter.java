@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.firebase.client.Firebase;
 import com.mti.meetme.ChatActivity;
+import com.mti.meetme.FriendsListActivity;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.ProfileActivity;
 import com.mti.meetme.R;
@@ -55,15 +56,20 @@ public class NewFriendsListAdapter extends  RecyclerView.Adapter<NewFriendsListA
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                Log.e("Newfriendlistadapter", "onSwiped");
+                Log.e("Newfriendlistadapter", "onSwiped, pos: " + viewHolder.getAdapterPosition() + ", " + viewHolder.getOldPosition());
 //                Toast.makeText(getApplicationContext(), users.get(viewHolder.getAdapterPosition()).getName() + " deleted from your friendlist", Toast.LENGTH_SHORT);
 
-           //     removeFriend(FacebookUser.getInstance(), users.get(viewHolder.getAdapterPosition()));
-            //    removeFriend(users.get(viewHolder.getAdapterPosition()), FacebookUser.getInstance());
-                FacebookUser.getInstance().removeFriendRequestSend(users.get(viewHolder.getAdapterPosition()).getUid());
-                users.get(viewHolder.getAdapterPosition()).removeFriendRequestReceived(FacebookUser.getInstance().getUid());
+                FacebookUser.getInstance().removeFriendRequestReceived(users.get(viewHolder.getAdapterPosition()).getUid());
+                users.get(viewHolder.getAdapterPosition()).removeFriendRequestSend(FacebookUser.getInstance().getUid());
 
                 remove(viewHolder.getAdapterPosition());
+
+                if (users.size() == 0) {
+                    ((TextView) acti.findViewById(R.id.demande)).setVisibility(View.GONE);
+                    ((TextView) acti.findViewById(R.id.friendsTxt)).setVisibility(View.GONE);
+                }
+                else
+                    ((TextView) acti.findViewById(R.id.demande)).setVisibility(View.VISIBLE);
             }
 
             private void removeFriend(User user_a, User user_b) {
@@ -111,7 +117,7 @@ public class NewFriendsListAdapter extends  RecyclerView.Adapter<NewFriendsListA
         final User u = users.get(position);
 
             if (u != null) {
-                Picasso.with(acti).load(u.getPic1()).fit().centerCrop().into(holder.user_image);
+                Picasso.with(acti).load(u.getPic1()).fit().centerCrop().transform(new RoundedPicasso()).into(holder.user_image);
                 holder.user_name.setText(u.getName());
                 holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -129,16 +135,20 @@ public class NewFriendsListAdapter extends  RecyclerView.Adapter<NewFriendsListA
             getImageButton(R.id.acceptBtn).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.e("UFriendsListActy", "msgButton clicked");
-
                     addFriend(FacebookUser.getInstance(), u);
                     addFriend(u, FacebookUser.getInstance());
                     FacebookUser.getInstance().removeFriendRequestReceived(u.getUid());
                     u.removeFriendRequestSend(FacebookUser.getInstance().getUid());
-                    
-                    notifyDataSetChanged();
+
                     //remove(holder.getAdapterPosition());
                     remove(position);
+
+                    if (users.size() == 0) {
+                        ((TextView) acti.findViewById(R.id.demande)).setVisibility(View.GONE);
+                        ((TextView) acti.findViewById(R.id.friendsTxt)).setVisibility(View.GONE);
+                    }
+                    else
+                        ((TextView) acti.findViewById(R.id.demande)).setVisibility(View.VISIBLE);
                 }
             });
 
@@ -149,6 +159,16 @@ public class NewFriendsListAdapter extends  RecyclerView.Adapter<NewFriendsListA
                     Log.e("UserListActy", "Refuse friends");
                     FacebookUser.getInstance().removeFriendRequestReceived(users.get(position).getUid());
                     users.get(position).removeFriendRequestSend(FacebookUser.getInstance().getUid());
+
+                    remove(position);
+
+                    if (users.size() == 0) {
+                        ((TextView) acti.findViewById(R.id.demande)).setVisibility(View.GONE);
+                        ((TextView) acti.findViewById(R.id.friendsTxt)).setVisibility(View.GONE);
+                    }
+                    else
+                        ((TextView) acti.findViewById(R.id.demande)).setVisibility(View.VISIBLE);
+
                 }
             });
     }

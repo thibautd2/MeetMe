@@ -17,5 +17,11 @@ public class Network {
     {
         return new Firebase(connexion_to_user+"/"+Uid);
     }
+    public static Firebase find_MeetmeFriends(String Uid) {
+        return new Firebase(connexion_to_user+"/"+Uid + "/" + "meetMeFriends");
+    }
 
+    public static Firebase find_FriendRequestReceived(String Uid) {
+        return new Firebase(connexion_to_user+"/"+Uid + "/" + "friendRequestReceived");
+    }
 }

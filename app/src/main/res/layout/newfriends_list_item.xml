@@ -6,16 +6,14 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:id="@+id/list_user_relative"
         android:background="@drawable/choice_bg"
-        android:layout_marginTop="5dp"
-        android:padding="8dp">
+        android:layout_marginTop="5dp">
 
         <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="8dp"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_marginLeft="0dp"
             android:id="@+id/user_img_list"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true" />
@@ -26,40 +24,39 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="BOGoSS"
             android:id="@+id/user_name_list"
-            android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/user_img_list"
-            android:layout_marginTop="8dp"
             android:layout_marginLeft="8dp"
             android:textStyle="bold"
-            android:background="@null"/>
-
-        <ImageButton
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:id="@+id/acceptBtn"
-            android:src="@drawable/accept"
-            android:layout_gravity="right|center_vertical"
-            android:onClick="onClick"
             android:background="@null"
-            android:layout_alignTop="@+id/refuseBtn"
-            android:layout_toStartOf="@+id/refuseBtn"
-            />
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/user_img_list"
+            android:layout_marginStart="30dp" />
 
         <ImageButton
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:id="@+id/refuseBtn"
-            android:src="@drawable/refuse"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:id="@+id/acceptBtn"
             android:layout_gravity="right|center_vertical"
-            android:layout_alignTop="@+id/user_name_list"
-            android:layout_alignParentEnd="true"
             android:onClick="onClick"
-            android:background="@null"/>
+            android:background="@drawable/accept"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="17dp" />
+
+        <ImageButton
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:id="@+id/refuseBtn"
+            android:layout_gravity="right|center_vertical"
+            android:onClick="onClick"
+            android:background="@drawable/refuse"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/acceptBtn"
+            android:layout_marginEnd="15dp" />
     </RelativeLayout>
 
     <ImageView
         android:layout_width="fill_parent"
-        android:layout_height="1dp"
+        android:layout_height="0.5dp"
         android:id="@+id/imageView3"
         android:background="#515151"
         android:layout_marginTop="5dp"
