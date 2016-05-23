@@ -14,16 +14,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.mti.meetme.ChatActivity;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.ProfileActivity;
 import com.mti.meetme.R;
 import com.mti.meetme.Tools.Network.Network;
-import com.mti.meetme.Tools.Profil.ProfilsAdapter;
 import com.mti.meetme.controller.FacebookUser;
 import com.squareup.picasso.Picasso;
 
@@ -34,14 +30,14 @@ import java.util.Map;
 /**
  * Created by Alex on 12/05/2016.
  */
-public class FriendsListAdapter extends  RecyclerView.Adapter<FriendsListAdapter.ViewHolder>
+public class NewFriendsListAdapter extends  RecyclerView.Adapter<NewFriendsListAdapter.ViewHolder>
 {
     protected ArrayList<User> users;
     protected Activity acti;
     protected View v;
     ItemTouchHelper.SimpleCallback simpleItemTouchCallback;
 
-    public FriendsListAdapter(ArrayList<User> users, Activity acti)
+    public NewFriendsListAdapter(ArrayList<User> users, Activity acti)
     {
         this.acti = acti;
         this.users = users;
@@ -58,11 +54,13 @@ public class FriendsListAdapter extends  RecyclerView.Adapter<FriendsListAdapter
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                Log.e("friendlistadapter", "onSwiped");
+                Log.e("Newfriendlistadapter", "onSwiped");
 //                Toast.makeText(getApplicationContext(), users.get(viewHolder.getAdapterPosition()).getName() + " deleted from your friendlist", Toast.LENGTH_SHORT);
 
-                removeFriend(FacebookUser.getInstance(), users.get(viewHolder.getAdapterPosition()));
-                removeFriend(users.get(viewHolder.getAdapterPosition()), FacebookUser.getInstance());
+           //     removeFriend(FacebookUser.getInstance(), users.get(viewHolder.getAdapterPosition()));
+            //    removeFriend(users.get(viewHolder.getAdapterPosition()), FacebookUser.getInstance());
+                FacebookUser.getInstance().removeFriendRequestSend(users.get(viewHolder.getAdapterPosition()).getUid());
+                users.get(viewHolder.getAdapterPosition()).removeFriendRequestReceived(FacebookUser.getInstance().getUid());
 
                 remove(viewHolder.getAdapterPosition());
             }
@@ -93,17 +91,18 @@ public class FriendsListAdapter extends  RecyclerView.Adapter<FriendsListAdapter
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ViewHolder vh = null;
 
-        v = LayoutInflater.from(parent.getContext()).inflate(R.layout.friends_list_item, parent, false);
+        v = LayoutInflater.from(parent.getContext()).inflate(R.layout.newfriends_list_item, parent, false);
         vh = new ViewHolder(v);
 
         vh.user_image = (ImageView)v.findViewById(R.id.user_img_list);
         vh.user_name = (TextView)v.findViewById(R.id.user_name_list);
         vh.relativeLayout = (RelativeLayout) v.findViewById(R.id.list_user_relative);
+
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         final User u = users.get(position);
 
             if (u != null) {
@@ -121,26 +120,45 @@ public class FriendsListAdapter extends  RecyclerView.Adapter<FriendsListAdapter
                 });
             }
 
-            getImageButton(R.id.msgBtn).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.e("UFriendsListActy", "msgButton clicked");
-                        Intent chatIntent = new Intent(acti.getApplicationContext(), ChatActivity.class);
-
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("User", u);
-                        chatIntent.putExtras(bundle);
-
-                        acti.startActivity(chatIntent);
-                    }
-                });
-
-            getImageButton(R.id.findBtn).setOnClickListener(new View.OnClickListener() {
+        //todo should test it with 2 differnet user co
+            getImageButton(R.id.acceptBtn).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.e("UserListActy", "msgButton clicked");
+                    Log.e("UFriendsListActy", "msgButton clicked");
+                    addFriend(FacebookUser.getInstance(), u);
+                    addFriend(u, FacebookUser.getInstance());
+
+                    FacebookUser.getInstance().removeFriendRequestReceived(u.getUid());
+                    u.removeFriendRequestSend(FacebookUser.getInstance().getUid());
+
+                    //remove(holder.getAdapterPosition());
+                    remove(position);
                 }
             });
+
+        //todo should test it with 2 differnet user co
+        getImageButton(R.id.refuseBtn).setOnClickListener(new View.OnClickListener() { //should be a slide also
+                @Override
+                public void onClick(View v) {
+                    Log.e("UserListActy", "Refuse friends");
+                    FacebookUser.getInstance().removeFriendRequestReceived(users.get(position).getUid());
+                    users.get(position).removeFriendRequestSend(FacebookUser.getInstance().getUid());
+                }
+            });
+    }
+
+    private void addFriend(User user_a, User user_b) {
+        String str = user_a.getMeetMeFriends();
+        str += user_b.getUid() + ";";
+
+        user_a.setMeetMeFriends(str);
+
+        Firebase ref = Network.find_user(user_a.getUid());
+
+        Map<String, Object> desc = new HashMap<>();
+        desc.put("meetMeFriends", str);
+
+        ref.updateChildren(desc, null);
     }
 
     @Override

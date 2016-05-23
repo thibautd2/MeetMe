@@ -4,6 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.firebase.client.Firebase;
+import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.controller.TodayDesire;
 
 import org.joda.time.LocalDate;
@@ -13,6 +15,8 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by thiba_000 on 26/02/2016.
@@ -75,6 +79,15 @@ public class User implements Serializable, Parcelable {
     @com.google.gson.annotations.SerializedName("MeetMeFriends")
     private String MeetMeFriends;
 
+    @com.google.gson.annotations.SerializedName("newFriends")
+    private String AskingFriends;
+
+    @com.google.gson.annotations.SerializedName("FriendRequestReceived")
+    private String FriendRequestReceived;
+
+    @com.google.gson.annotations.SerializedName("FriendRequestSend")
+    private String FriendRequestSend;
+
     private JSONObject Likes;
     private JSONObject Friends;
 
@@ -119,6 +132,8 @@ public class User implements Serializable, Parcelable {
         friendsId = in.createStringArrayList();
         MeetMeFriends = in.readString();
         Envie = in.readString();
+        FriendRequestReceived = in.readString();
+        FriendRequestSend = in.readString();
     }
 
     @Override
@@ -141,6 +156,8 @@ public class User implements Serializable, Parcelable {
         dest.writeStringList(friendsId);
         dest.writeString(MeetMeFriends);
         dest.writeString(Envie);
+        dest.writeString(FriendRequestReceived);
+        dest.writeString(FriendRequestSend);
     }
 
     @Override
@@ -190,6 +207,40 @@ public class User implements Serializable, Parcelable {
         MeetMeFriends = str;
     }
 
+    public void removeFriendRequestReceived(String id) {
+        ArrayList<String> list = receiveFriendsRequestReceived();
+        String str = "";
+
+        if (list != null)
+            for (String s: list)
+                if (!s.equals(id))
+                    str += s + ";";
+
+        FriendRequestReceived = str;
+
+        Firebase ref = Network.find_user(getUid());
+        Map<String, Object> desc = new HashMap<>();
+        desc.put("friendRequestReceived", str);
+        ref.updateChildren(desc, null);
+    }
+
+    public void removeFriendRequestSend(String id) {
+        ArrayList<String> list = receiveFriendsRequestSend();
+        String str = "";
+
+        if (list != null)
+            for (String s: list)
+                if (!s.equals(id))
+                    str += s + ";";
+
+        FriendRequestSend = str;
+
+        Firebase ref = Network.find_user(getUid());
+        Map<String, Object> desc = new HashMap<>();
+        desc.put("friendRequestSend", str);
+        ref.updateChildren(desc, null);
+    }
+
     public Boolean haveThisFriend(String id) {
         if (MeetMeFriends == null || MeetMeFriends.equals(""))
             return false;
@@ -201,6 +252,31 @@ public class User implements Serializable, Parcelable {
 
         return false;
     }
+
+    public Boolean haveThisFriendRequestReceived(String id) {
+        if (FriendRequestReceived == null || FriendRequestReceived.equals(""))
+            return false;
+
+        for (String s: receiveFriendsRequestReceived()) {
+            if (s.equals(id))
+                return true;
+        }
+
+        return false;
+    }
+
+    public Boolean haveThisFriendRequestSend(String id) {
+        if (FriendRequestSend == null || FriendRequestSend.equals(""))
+            return false;
+
+        for (String s: receiveFriendsRequestSend()) {
+            if (s.equals(id))
+                return true;
+        }
+
+        return false;
+    }
+
 
     public ArrayList<String> receiveMeetMeFriendsTab() {
         ArrayList friendsTab = new ArrayList();
@@ -216,7 +292,37 @@ public class User implements Serializable, Parcelable {
         return friendsTab;
     }
 
+    public ArrayList<String> receiveFriendsRequestReceived() {
+        ArrayList friendsTab = new ArrayList();
+
+        if (getFriendRequestReceived() == null || getFriendRequestReceived().equals(""))
+            return null;
+
+        String str[] = getFriendRequestReceived().split(";");
+
+        for (String s: str)
+            friendsTab.add(s);
+
+        return friendsTab;
+    }
+
+    public ArrayList<String> receiveFriendsRequestSend() {
+        ArrayList friendsTab = new ArrayList();
+
+        if (getFriendRequestSend() == null || getFriendRequestSend().equals(""))
+            return null;
+
+        String str[] = getFriendRequestSend().split(";");
+
+        for (String s: str)
+            friendsTab.add(s);
+
+        return friendsTab;
+    }
+
     public String getMeetMeFriends() {
+        if (MeetMeFriends == null)
+            return "";
         return MeetMeFriends;
     }
 
@@ -378,5 +484,25 @@ public class User implements Serializable, Parcelable {
 
     public void setPic5(String pic5) {
         Pic5 = pic5;
+    }
+
+    public String getFriendRequestReceived() {
+        if (FriendRequestReceived == null)
+            return "";
+        return FriendRequestReceived;
+    }
+
+    public void setFriendRequestReceived(String friendRequestReceived) {
+        FriendRequestReceived = friendRequestReceived;
+    }
+
+    public String getFriendRequestSend() {
+        if (FriendRequestSend == null)
+            return "";
+        return FriendRequestSend;
+    }
+
+    public void setFriendRequestSend(String friendRequestsend) {
+        FriendRequestSend = friendRequestsend;
     }
 }

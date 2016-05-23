@@ -226,7 +226,8 @@ public class ProfileActivity extends AppCompatActivity{
             getFriendsPictures();
 
 
-        if (user == null || FacebookUser.getInstance().haveThisFriend(currentUser.getUid()))
+        //todo acceptbtn friend if havethisfriendrequestreceived
+        if (user == null || FacebookUser.getInstance().haveThisFriend(currentUser.getUid()) || FacebookUser.getInstance().haveThisFriendRequestSend(currentUser.getUid()))
             findViewById(R.id.add_friends_btn).setVisibility(View.INVISIBLE);
         else
             addFriendButtonActivation();
@@ -296,8 +297,6 @@ public class ProfileActivity extends AppCompatActivity{
         if (currentUser.receiveMeetMeFriendsTab() == null)
             return;
 
-        Log.e("profileActy", "getFriendsPictures, nb friends: " + currentUser.receiveMeetMeFriendsTab().size());
-
         friendsLayout.removeAllViews();
 
         for (String id : currentUser.receiveMeetMeFriendsTab()) {
@@ -305,16 +304,15 @@ public class ProfileActivity extends AppCompatActivity{
             ref.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    Log.e("profileActy", "onDataChange");
                     ImageView newItem = new ImageView(ProfileActivity.this);
                     User u = dataSnapshot.getValue(User.class);
 
-
-                    Log.e("profileActy", "onDataChange: " +  (int)getResources().getDimension(R.dimen.profile_activity_icone));
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int)getResources().getDimension(R.dimen.profile_activity_icone), (int)getResources().getDimension(R.dimen.profile_activity_icone));
-                    params.setMargins(10, 0, 10, 0);
-                    friendsLayout.addView(newItem, params);
-                    Picasso.with(ProfileActivity.this).load(u.getPic1()).placeholder(R.drawable.anonyme).transform(new RoundedPicasso()).into(newItem);
+                    if (FacebookUser.getInstance().haveThisFriend(u.getUid())) {
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) getResources().getDimension(R.dimen.profile_activity_icone), (int) getResources().getDimension(R.dimen.profile_activity_icone));
+                        params.setMargins(10, 0, 10, 0);
+                        friendsLayout.addView(newItem, params);
+                        Picasso.with(ProfileActivity.this).load(u.getPic1()).placeholder(R.drawable.anonyme).transform(new RoundedPicasso()).into(newItem);
+                    }
                 }
 
                 @Override
@@ -362,18 +360,16 @@ public class ProfileActivity extends AppCompatActivity{
 
             @Override
             public void onClick(View arg0) {
-                addFriend(FacebookUser.getInstance(), currentUser);
-                addFriend(currentUser, FacebookUser.getInstance());
+                friendRequest(FacebookUser.getInstance(), currentUser);
+              //  addFriend(FacebookUser.getInstance(), currentUser);
+               // addFriend(currentUser, FacebookUser.getInstance());
 
                 findViewById(R.id.add_friends_btn).setVisibility(View.INVISIBLE);
-                //todo should clear the list before
                 getFriendsPictures();
             }
 
             private void addFriend(User user_a, User user_b) {
                 String str = user_a.getMeetMeFriends();
-                if (str == null)
-                    str = "";
                 str += user_b.getUid() + ";";
 
                 user_a.setMeetMeFriends(str);
@@ -384,6 +380,24 @@ public class ProfileActivity extends AppCompatActivity{
                 desc.put("meetMeFriends", str);
 
                 ref.updateChildren(desc, null);
+            }
+
+            private void friendRequest (User user_a, User user_b) {
+                String str = user_b.getFriendRequestReceived() + user_a.getUid() + ";";
+                String str2 = user_a.getFriendRequestSend() + user_b.getUid() + ";";
+
+                user_b.setFriendRequestReceived(str);
+                user_a.setFriendRequestSend(str2);
+
+                Firebase ref = Network.find_user(user_a.getUid());
+                Map<String, Object> desc = new HashMap<>();
+                desc.put("friendRequestSend", str2);
+                ref.updateChildren(desc, null);
+
+                Firebase ref2 = Network.find_user(user_b.getUid());
+                Map<String, Object> desc2 = new HashMap<>();
+                desc2.put("friendRequestReceived", str);
+                ref2.updateChildren(desc2, null);
             }
         });
     }

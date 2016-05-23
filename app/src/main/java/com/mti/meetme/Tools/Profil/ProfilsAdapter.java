@@ -82,7 +82,7 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        if(users!=null)
+        if(users != null)
             return users.size();
         else
             return  0;

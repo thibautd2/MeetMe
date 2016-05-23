@@ -1,0 +1,14 @@
+All:
+update de l'user dans sa classe (ex addFriend,..)
+
+
+
+Alex:
+ajout amis fb auto
+lists plus sexy
+titres aux liste
+liste de demande d'amis envoyé
+etat de la demande sur le profile de la personne
+suppression de la demande lors de l'acceptation ou du refus (si cela ne marche pas deja)
+tests
+voir les todo in code
