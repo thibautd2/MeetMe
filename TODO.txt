@@ -8,5 +8,7 @@ ajout amis fb auto
 etat de la demande sur le profile de la personne
 nb de demane dans actionbar
 nb de message dans friendlist sur btn msg
+bouton msg sur les profils amis
+bouton localisation d'amis
 voir les todo in code
 

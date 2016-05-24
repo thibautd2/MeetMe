@@ -190,24 +190,19 @@ public class ProfileActivity extends AppCompatActivity{
         nameTextView.setText(currentUser.getName() + ",");
         ageTextView.setText("" + currentUser.convertBirthdayToAge());
 
-        if (user == null)
-        {
+        if (user == null) {
             likesTextView.setText(getString(R.string.likes_title));
             friendsTextView.setText(getString(R.string.friends_title));
-        }
-        else
-        {
+        } else {
             likesTextView.setText(getString(R.string.likes_common_title));
             friendsTextView.setText(getString(R.string.friends_common_title));
 
-            if (currentUser.getLikesID().size() == 0)
-            {
+            if (currentUser.getLikesID().size() == 0) {
                 likesTextView.setVisibility(View.GONE);
                 likesLayout.setVisibility(View.GONE);
             }
 
-            if (currentUser.getFriendsID().size() == 0)
-            {
+            if (currentUser.getFriendsID().size() == 0) {
                 friendsTextView.setVisibility(View.GONE);
                 friendsLayout.setVisibility(View.GONE);
             }
@@ -221,14 +216,48 @@ public class ProfileActivity extends AppCompatActivity{
         if (currentUser.getMeetMeFriends() != null)
             getFriendsPictures();
 
-
-        //todo acceptbtn friend if havethisfriendrequestreceived
-        if (user == null || FacebookUser.getInstance().haveThisFriend(currentUser.getUid()) || FacebookUser.getInstance().haveThisFriendRequestSend(currentUser.getUid()))
-            findViewById(R.id.add_friends_btn).setVisibility(View.INVISIBLE);
-        else
-            addFriendButtonActivation();
+        setFriendBtn();
     }
 
+    public void setFriendBtn() {
+        Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                User u = snapshot.getValue(User.class);
+
+                if (u.getUid().equals(currentUser.getUid()))
+                    findViewById(R.id.add_friends_btn).setVisibility(View.INVISIBLE);
+                else if (u.haveThisFriend(currentUser.getUid()))
+                    findViewById(R.id.add_friends_btn).setBackground(getResources().getDrawable(R.drawable.valide));
+                else if (u.haveThisFriendRequestReceived(currentUser.getUid())) {
+                    findViewById(R.id.add_friends_btn).setBackground(getResources().getDrawable(R.drawable.demande));
+                    acceptInvitationBtn();
+                } else if (u.haveThisFriendRequestSend(currentUser.getUid()))
+                    findViewById(R.id.add_friends_btn).setBackground(getResources().getDrawable(R.drawable.intero));
+                else
+                    sendInvitationBtn();
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+        /*
+        if (user == null)
+            findViewById(R.id.add_friends_btn).setVisibility(View.INVISIBLE);
+        else if (FacebookUser.getInstance().haveThisFriend(currentUser.getUid()))
+            findViewById(R.id.add_friends_btn).setBackground(getResources().getDrawable(R.drawable.valide));
+        else if (FacebookUser.getInstance().haveThisFriendRequestSend(currentUser.getUid()))
+            findViewById(R.id.add_friends_btn).setBackground(getResources().getDrawable(R.drawable.intero));
+        else if (FacebookUser.getInstance().haveThisFriendRequestReceived(currentUser.getUid())) {
+            findViewById(R.id.add_friends_btn).setBackground(getResources().getDrawable(R.drawable.demande));
+            acceptInvitationBtn();
+        }
+        else
+            sendInvitationBtn();*/
+    }
 
     private void bindViews()
     {
@@ -351,7 +380,7 @@ public class ProfileActivity extends AppCompatActivity{
         ).executeAsync();
     */}
 
-    private void addFriendButtonActivation() {
+    private void sendInvitationBtn() {
         ImageButton imageButton = (ImageButton) findViewById(R.id.add_friends_btn);
 
         imageButton.setOnClickListener(new View.OnClickListener() {
@@ -359,24 +388,13 @@ public class ProfileActivity extends AppCompatActivity{
             @Override
             public void onClick(View arg0) {
                 friendRequest(FacebookUser.getInstance(), currentUser);
-              //  addFriend(FacebookUser.getInstance(), currentUser);
-               // addFriend(currentUser, FacebookUser.getInstance());
-
-                Toast.makeText(getApplicationContext(), "Nouveel demande d'amis envoyé à " + currentUser.getName(), Toast.LENGTH_LONG).show();
-                findViewById(R.id.add_friends_btn).setVisibility(View.INVISIBLE);
+                Toast.makeText(getApplicationContext(), "Nouvelle demande d'amis envoyé à " + currentUser.getName(), Toast.LENGTH_LONG).show();
+               // findViewById(R.id.add_friends_btn).setVisibility(View.INVISIBLE);
                 getFriendsPictures();
-            }
-            private void addFriend(User user_a, User user_b) {
-                String str = user_a.getMeetMeFriends();
-                str += user_b.getUid() + ";";
-                user_a.setMeetMeFriends(str);
-                Firebase ref = Network.find_user(user_a.getUid());
-                Map<String, Object> desc = new HashMap<>();
-                desc.put("meetMeFriends", str);
-                ref.updateChildren(desc, null);
+               // setFriendBtn();
             }
 
-            private void friendRequest (User user_a, User user_b) {
+            private void friendRequest(User user_a, User user_b) {
                 String str = user_b.getFriendRequestReceived() + user_a.getUid() + ";";
                 String str2 = user_a.getFriendRequestSend() + user_b.getUid() + ";";
 
@@ -392,6 +410,36 @@ public class ProfileActivity extends AppCompatActivity{
                 Map<String, Object> desc2 = new HashMap<>();
                 desc2.put("friendRequestReceived", str);
                 ref2.updateChildren(desc2, null);
+            }
+        });
+    }
+
+    private void acceptInvitationBtn() {
+        ImageButton imageButton = (ImageButton) findViewById(R.id.add_friends_btn);
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                addFriend(FacebookUser.getInstance(), currentUser);
+                addFriend(currentUser, FacebookUser.getInstance());
+
+                FacebookUser.getInstance().removeFriendRequestReceived(currentUser.getUid());
+                currentUser.removeFriendRequestSend(FacebookUser.getInstance().getUid());
+
+                Toast.makeText(getApplicationContext(), "Nouvel amis ajouté", Toast.LENGTH_LONG).show();
+                //findViewById(R.id.add_friends_btn).setVisibility(View.INVISIBLE);
+                getFriendsPictures();
+                //setFriendBtn();
+            }
+            private void addFriend(User user_a, User user_b) {
+                String str = user_a.getMeetMeFriends();
+                str += user_b.getUid() + ";";
+                user_a.setMeetMeFriends(str);
+                Firebase ref = Network.find_user(user_a.getUid());
+                Map<String, Object> desc = new HashMap<>();
+                desc.put("meetMeFriends", str);
+                ref.updateChildren(desc, null);
             }
         });
     }
