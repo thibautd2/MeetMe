@@ -46,20 +46,6 @@ public class FriendsListActivity extends AppCompatActivity {
     FriendsListAdapter adapter;
     NewFriendsListAdapter adapterNFriend;
 
-   /* @Override
-    protected void onResume() {
-        super.onResume();
-       /* friends = new ArrayList<>();
-        newfriends = new ArrayList<>();
-
-        getfriends();
-        Log.e("friendlistacty", "onResue friends size:" + friends.size());
-        getNewfriends();
-        bindViews();
-        populate();
-    }*/
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +65,7 @@ public class FriendsListActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_profile, menu);
+        getMenuInflater().inflate(R.menu.menu_friend, menu);
         super.onCreateOptionsMenu(menu);
         return true;
     }

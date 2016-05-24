@@ -143,7 +143,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         ab.setDisplayShowTitleEnabled(true);
 
 
-        MenuSlideItems.add(new MenuSlideItem("Distance", " km", R.drawable.radar, new MenuSlideItem.MySeekBar(0, 10, 5)));
+        MenuSlideItems.add(new MenuSlideItem("Distance", " km", R.drawable.radar, new MenuSlideItem.MySeekBar(0, 10, 10)));
         MenuSlideItems.add(new MenuSlideItem("Genre", R.drawable.gender, new MenuSlideItem.MyCheckBox("Men", true), new MenuSlideItem.MyCheckBox("Women", true), null, null));
 
         followMeLocationSource = new FollowMeLocationSource(this);
@@ -242,6 +242,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent2.putExtra("showFriends", false);
                 startActivity(intent2);
+                return true;
+            case R.id.menu_friends:
+                Intent intent3 = new Intent(getApplicationContext(), FriendsListActivity.class);
+                intent3.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent3);
                 return true;
             case android.R.id.home:
                 if (mDrawerLayout.isDrawerOpen(mDrawerPane))

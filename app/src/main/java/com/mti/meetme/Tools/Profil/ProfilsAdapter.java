@@ -14,10 +14,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.mti.meetme.ChatActivity;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.ProfileActivity;
 import com.mti.meetme.R;
+import com.mti.meetme.Tools.Map.CalculateDistance;
+import com.mti.meetme.controller.FacebookUser;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -50,6 +53,7 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
         vh.user_envie = (TextView) v.findViewById(R.id.user_envie_list);
         vh.user_image = (ImageView) v.findViewById(R.id.user_img_list);
         vh.user_name = (TextView) v.findViewById(R.id.user_name_list);
+        vh.user_dist = (TextView) v.findViewById(R.id.card_distance);
         vh.relativeLayout = (RelativeLayout) v.findViewById(R.id.list_user_relative);
         originalLayoutHeight = vh.relativeLayout.getLayoutParams().height;
         originalImageHeight = vh.user_image.getLayoutParams().height;
@@ -64,7 +68,9 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
                 holder.user_age.setText("" + u.convertBirthdayToAge() + " ans");
                 holder.user_name.setText(u.getName());
                 holder.user_envie.setText(u.getEnvie());
+                String dist = String.valueOf((int) CalculateDistance.getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(u.getLatitude(), u.getLongitude())));
 
+                holder.user_dist.setText(dist +" m");
 
                 if (u.getGender().compareTo("male")==0) {
                     holder.user_image.getLayoutParams().height = originalImageHeight -70;
@@ -96,6 +102,7 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
         public ImageView user_image;
         public TextView user_name;
         public TextView user_age;
+        public TextView user_dist;
         public TextView user_envie;
         public RelativeLayout relativeLayout;
         public ViewHolder(View itemView) {

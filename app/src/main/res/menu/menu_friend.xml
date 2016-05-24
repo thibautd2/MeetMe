@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/menu_maps"
+        android:icon="@drawable/ic_map_icon"
+        android:title="maps"
+        app:showAsAction="always" />
+    <item android:id="@+id/menu_friends"
+        android:icon="@drawable/ic_list"
+        android:title="friends"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_edit"
+        android:icon="@drawable/ic_desc"
+        android:title="desc"
+        app:showAsAction="ifRoom"
+        android:visible="false" />
+    <item
+        android:id="@+id/menu_message"
+        android:icon="@drawable/ic_message"
+        android:title="message"
+        app:showAsAction="ifRoom"
+        android:visible="false" />
+    <item
+        android:id="@+id/menu_heart"
+        android:icon="@drawable/ic_heart"
+        android:title="desc"
+        app:showAsAction="ifRoom"
+        android:visible="false" />
+
+    <item
+        android:id="@+id/menu_deco"
+        android:icon="@drawable/ic_action_settings"
+        android:title="deconnexion"
+        app:showAsAction="ifRoom"
+        android:visible="false" />
+
+</menu>
