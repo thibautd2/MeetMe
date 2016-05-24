@@ -362,6 +362,7 @@ public class ProfileActivity extends AppCompatActivity{
               //  addFriend(FacebookUser.getInstance(), currentUser);
                // addFriend(currentUser, FacebookUser.getInstance());
 
+                Toast.makeText(getApplicationContext(), "Nouveel demande d'amis envoyé à " + currentUser.getName(), Toast.LENGTH_LONG).show();
                 findViewById(R.id.add_friends_btn).setVisibility(View.INVISIBLE);
                 getFriendsPictures();
             }
