@@ -285,7 +285,6 @@ public class FacebookHandler
                 friendsIdCurrent.add(FacebookUser.getInstance().getFriends().getJSONArray("data").getJSONObject(i).getString("id"));
             }
 
-
             return friendsIdCurrent;
         }
 

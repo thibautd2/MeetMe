@@ -1,8 +1,6 @@
 package com.mti.meetme;
 
 import android.app.Dialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,21 +11,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -44,8 +37,6 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.iid.InstanceID;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -57,33 +48,23 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.mti.meetme.Interface.ContextDrawerAdapter;
+import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.DrawerListAdapter;
-import com.mti.meetme.Tools.MenuSlideItem;
 import com.mti.meetme.Tools.Map.CalculateDistance;
 import com.mti.meetme.Tools.Map.FollowMeLocationSource;
+import com.mti.meetme.Tools.MenuSlideItem;
 import com.mti.meetme.Tools.Network.Network;
-import com.mti.meetme.Tools.Notifs.GcmBroadcastReceiver;
-import com.mti.meetme.Tools.Notifs.GcmIntentService;
-import com.mti.meetme.controller.FacebookUser;
-import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.RoundedPicasso;
+import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.controller.TodayDesire;
-import com.pubnub.api.Pubnub;
-import com.pubnub.api.PubnubError;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.WeakHashMap;
-import com.pubnub.api.*;
-import org.json.*;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, ContextDrawerAdapter {
 
@@ -114,16 +95,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        ////**/*// PRACTICING NOTIFS //*/*/*/*
-       InstanceID instanceID = InstanceID.getInstance(this);
-        try {
-            String token = instanceID.getToken(getResources().getString(R.string.SenderID),
-                    GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-            GcmBroadcastReceiver broadcastReceiver = new GcmBroadcastReceiver();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         gender = Gender.ALL;
         markers = new WeakHashMap<String, Marker>();
         super.onCreate(savedInstanceState);

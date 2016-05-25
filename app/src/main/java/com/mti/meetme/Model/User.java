@@ -181,7 +181,7 @@ public class User implements Serializable, Parcelable {
 
     public int convertBirthdayToAge()
     {
-        /*AgeRange = "23";
+        AgeRange = "23";
         if (Birthday != null && !Birthday.isEmpty()) {
             try {
                 LocalDate birthdate = new LocalDate(Integer.parseInt(Birthday.split("/")[2]), //YYYY
@@ -193,7 +193,9 @@ public class User implements Serializable, Parcelable {
             catch (NoClassDefFoundError e)
             {
                 return 23;
-            }*/
+            }
+        }
+
         return 23;
     }
 

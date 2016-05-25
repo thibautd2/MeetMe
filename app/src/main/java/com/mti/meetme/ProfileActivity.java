@@ -319,9 +319,10 @@ public class ProfileActivity extends AppCompatActivity{
 
     private void getFriendsPictures()
     {
-     //   Bundle params = new Bundle();
-     //   params.putBoolean("redirect", false);
-        if (currentUser.receiveMeetMeFriendsTab() == null)
+        Bundle params = new Bundle();
+        params.putBoolean("redirect", false);
+
+        /*if (currentUser.receiveMeetMeFriendsTab() == null)
             return;
 
         friendsLayout.removeAllViews();
@@ -346,12 +347,12 @@ public class ProfileActivity extends AppCompatActivity{
                     Log.e("profileActy", "onCancelled");
                 }
             });
-        }
+        }*/
 
-        /*
+
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
-                "/" + currentUser.receiveMeetMeFriendsTab().get(idFriendsCount) + "/picture",
+                "/" + currentUser.getFriendsID().get(idFriendsCount) + "/picture",
                 params,
                 HttpMethod.GET,
                 new GraphRequest.Callback()
@@ -378,7 +379,7 @@ public class ProfileActivity extends AppCompatActivity{
                     }
                 }
         ).executeAsync();
-    */}
+    }
 
     private void sendInvitationBtn() {
         ImageButton imageButton = (ImageButton) findViewById(R.id.add_friends_btn);

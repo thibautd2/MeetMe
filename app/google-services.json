@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "656764838815",
+    "firebase_url": "https://intense-fire-5226.firebaseio.com",
+    "project_id": "intense-fire-5226",
+    "storage_bucket": "intense-fire-5226.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:656764838815:android:136cee976b45dd8b",
+        "android_client_info": {
+          "package_name": "com.mti.meetme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "656764838815-7t85r4u21p4dvaa9eal88erlm594arfb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2eH2kYoyJ-FbhEFrV4ilVkY4APAaScJ8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
