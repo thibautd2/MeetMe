@@ -47,7 +47,7 @@ public class DrawerListAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        View view;
+        final View view;
 
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -56,6 +56,12 @@ public class DrawerListAdapter extends BaseAdapter {
                 view = inflater.inflate(R.layout.drawer_item_title, null);
                 TextView subtitleView = (TextView) view.findViewById(R.id.subTitle);
                 subtitleView.setText(mNavItems.get(position).mSubtitle);
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mContext.menuDrawerSimpleButtonListener(mNavItems.get(position).mIcon);
+                    }
+                });
             }
             else if (mNavItems.get(position).getType() == MenuSlideItem.Type.SEEKBAR) {
                 view = inflater.inflate(R.layout.drawer_item_seekbar, null);

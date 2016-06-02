@@ -10,6 +10,7 @@ import android.widget.TextView;
  */
 public interface ContextDrawerAdapter {
     Object getSystemService(@NonNull String name);
+    void menuDrawerSimpleButtonListener(int idBtn);
     void menuDrawerSeekBarListener(SeekBar seekBar, TextView textView, String btnName);
     void menuDrawerMultyChoiceListener(CheckBox checkBox, String btnName, boolean ischecked);
 }

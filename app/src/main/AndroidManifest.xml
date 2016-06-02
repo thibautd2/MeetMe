@@ -87,6 +87,12 @@
             android:name=".FriendsListActivity"
             android:label="Mes ami(e)s"/>
 
+        <activity
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:name=".MeetmeGame"
+            android:label="Création de partie"/>
+
         <service
             android:name=".notifications.MyFirebaseMessagingService">
             <intent-filter>

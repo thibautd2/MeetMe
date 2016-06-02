@@ -116,6 +116,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         MenuSlideItems.add(new MenuSlideItem("Distance", " km", R.drawable.radar, new MenuSlideItem.MySeekBar(0, 10, 10)));
         MenuSlideItems.add(new MenuSlideItem("Genre", R.drawable.gender, new MenuSlideItem.MyCheckBox("Men", true), new MenuSlideItem.MyCheckBox("Women", true), null, null));
+        MenuSlideItems.add(new MenuSlideItem("Lancer un jeux", R.drawable.ic_game, "Creation de partie"));
 
         followMeLocationSource = new FollowMeLocationSource(this);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -231,8 +232,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void selectItemFromDrawer(int position) {
-
-        mDrawerLayout.closeDrawer(mDrawerPane);
+        Log.e("mapActy", "selectItemFromDrawer ");
+       // mDrawerLayout.closeDrawer(mDrawerPane);
     }
 
     @Override
@@ -242,6 +243,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         updateMap();
+    }
+
+    @Override
+    public void menuDrawerSimpleButtonListener(int idBtn) {
+        Log.e("mapActy", "menuDrawerSimpleButtonListener, id: " + idBtn + ", btn: " + R.drawable.ic_game);
+        if (idBtn == R.drawable.ic_game) {
+            //todo intent to create game
+            Intent intent = new Intent(this, MeetmeGame.class);
+            startActivity(intent);
+        }
+
+        mDrawerLayout.closeDrawer(mDrawerPane);
     }
 
     @Override
