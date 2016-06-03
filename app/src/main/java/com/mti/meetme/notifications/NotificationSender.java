@@ -29,21 +29,21 @@ public class NotificationSender extends AsyncTask<String, Void, Void> {
 
         try{
 
-            // 1. URL
+            //URL
             URL url = new URL(REQUEST_URL);
 
-            // 2. Open connection
+            //Open connection
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-            // 3. Specify POST method
+            //Specify POST method
             conn.setRequestMethod("POST");
 
-            // 4. Set the headers
+            //Set the headers
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("Authorization", "key=AIzaSyDXwo-cw_qTrpo_AfMbHeaWoee2PICs9kI");
             conn.setDoOutput(true);
 
-            // 5. Add JSON data into POST request body
+            //Add JSON data into POST request body
 
             String destinationId = params[0];
 
@@ -56,21 +56,21 @@ public class NotificationSender extends AsyncTask<String, Void, Void> {
             parent.put("to", params[0]);
             parent.put("notification", notif);
 
-            OutputStreamWriter wr= new OutputStreamWriter(conn .getOutputStream());
+            OutputStreamWriter wr= new OutputStreamWriter(conn.getOutputStream());
             wr.write(parent.toString());
 
-            // 5.4 Send the request
+            //Send the request
             wr.flush();
 
-            // 5.5 close
+            //close
             wr.close();
 
-            // 6. Get the response
+            //Get the response
             int responseCode = conn.getResponseCode();
             Log.w("NOTIFS", "\nSending 'POST' request to URL : " + url);
             Log.w("NOTIFS", "Response Code : " + responseCode);
 
-            // 7. Print result
+            //Print result
             Log.w("NOTIFS", conn.getResponseMessage());
 
         } catch (MalformedURLException e) {
