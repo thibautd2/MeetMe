@@ -244,6 +244,7 @@ public class ProfileActivity extends AppCompatActivity{
 
             }
         });
+
         /*
         if (user == null)
             findViewById(R.id.add_friends_btn).setVisibility(View.INVISIBLE);
@@ -384,6 +385,7 @@ public class ProfileActivity extends AppCompatActivity{
     private void sendInvitationBtn() {
         ImageButton imageButton = (ImageButton) findViewById(R.id.add_friends_btn);
 
+        assert imageButton != null;
         imageButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
