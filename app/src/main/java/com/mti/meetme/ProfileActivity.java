@@ -26,12 +26,14 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.Profil.CarousselPager;
 import com.mti.meetme.Tools.FacebookHandler;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
+import com.mti.meetme.notifications.NotificationSender;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -323,34 +325,6 @@ public class ProfileActivity extends AppCompatActivity{
         Bundle params = new Bundle();
         params.putBoolean("redirect", false);
 
-        /*if (currentUser.receiveMeetMeFriendsTab() == null)
-            return;
-
-        friendsLayout.removeAllViews();
-        for (String id : currentUser.receiveMeetMeFriendsTab()) {
-            Firebase ref = Network.find_user(id);
-            ref.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    ImageView newItem = new ImageView(ProfileActivity.this);
-                    User u = dataSnapshot.getValue(User.class);
-
-                    if (FacebookUser.getInstance().haveThisFriend(u.getUid())) {
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) getResources().getDimension(R.dimen.profile_activity_icone), (int) getResources().getDimension(R.dimen.profile_activity_icone));
-                        params.setMargins(10, 0, 10, 0);
-                        friendsLayout.addView(newItem, params);
-                        Picasso.with(ProfileActivity.this).load(u.getPic1()).placeholder(R.drawable.anonyme).transform(new RoundedPicasso()).into(newItem);
-                    }
-                }
-
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {
-                    Log.e("profileActy", "onCancelled");
-                }
-            });
-        }*/
-
-
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
                 "/" + currentUser.getFriendsID().get(idFriendsCount) + "/picture",
@@ -371,7 +345,7 @@ public class ProfileActivity extends AppCompatActivity{
                             friendsLayout.addView(newItem, params);
                             idFriendsCount++;
                         }
-                        if (idFriendsCount < currentUser.receiveMeetMeFriendsTab().size()) {
+                        if (idFriendsCount < currentUser.getFriendsID().size()) {
                             getFriendsPictures();
                         }
                     } catch (Exception e) {

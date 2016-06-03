@@ -24,6 +24,7 @@ import com.facebook.login.widget.LoginButton;
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.FacebookHandler;
 import com.mti.meetme.Tools.RoundedPicasso;
@@ -133,7 +134,7 @@ public class LoginActivity extends Activity implements FacebookCallback<LoginRes
         fb_birthday = object.optString("birthday");
         fb_gender = object.optString("gender");
         fb_id = object.optString("id");
-        currentUser = new User(fb_age_range, null, fb_name, fb_birthday, "Trololo", fb_email, fb_img, fb_gender, TodayDesire.Desire.Everything);
+        currentUser = new User(fb_age_range, null, fb_name, fb_birthday, "", fb_email, fb_img, fb_gender, TodayDesire.Desire.Everything, FirebaseInstanceId.getInstance().getToken());
 
         onFacebookAccessTokenChange(AccessToken.getCurrentAccessToken());
     }
