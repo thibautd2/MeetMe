@@ -6,7 +6,7 @@
     android:background="@android:color/holo_blue_bright"
     tools:context="com.mti.meetme.LoginActivity">
 
-    <com.mti.meetme.fonts.CoquetteTextView
+    <TextView
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:text="@string/welcome_login"

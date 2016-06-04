@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -75,19 +76,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     boolean dispo = true;
     public static GeoFire geoFire;
     FollowMeLocationSource followMeLocationSource;
-    private WeakHashMap<String,Marker> markers;
+    private WeakHashMap<String, Marker> markers;
     private int rayon = 10000;
+
     private enum Gender {
         MEN,
         WOMEN,
         ALL
-    };
+    }
+
+    ;
     private Gender gender;
 
 
     ListView mDrawerList;
     RelativeLayout mDrawerPane;
-  //  private ActionBarDrawerToggle mDrawerToggle;
+    //  private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
 
     ArrayList<MenuSlideItem> MenuSlideItems = new ArrayList<MenuSlideItem>();
@@ -105,7 +109,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         geoFire = new GeoFire(Network.geofire);
         all_user = new ArrayList<>();
-		
+
         final ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_drawer); // set a custom icon for the default home button
         ab.setDisplayShowHomeEnabled(true); // show or hide the default home button
@@ -143,7 +147,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         View.OnClickListener update_desire = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            update_TodayDesire(v, dialog);
+                update_TodayDesire(v, dialog);
             }
         };
 
@@ -158,19 +162,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         dialog.setCancelable(false);
     }
 
-    public void update_TodayDesire(View v, Dialog dialog)
-    {
+    public void update_TodayDesire(View v, Dialog dialog) {
         Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
-        String currentDesire ="";
-        if(v.getId()== R.id.party)
+        String currentDesire = "";
+        if (v.getId() == R.id.party)
             currentDesire = TodayDesire.Desire.party.toString();
-        if(v.getId()== R.id.drink)
+        if (v.getId() == R.id.drink)
             currentDesire = TodayDesire.Desire.Drink.toString();
-        if(v.getId()== R.id.meet)
+        if (v.getId() == R.id.meet)
             currentDesire = TodayDesire.Desire.Date.toString();
-        if(v.getId()== R.id.sport)
+        if (v.getId() == R.id.sport)
             currentDesire = TodayDesire.Desire.Sport.toString();
-        if(v.getId()== R.id.all)
+        if (v.getId() == R.id.all)
             currentDesire = TodayDesire.Desire.Everything.toString();
 
         Map<String, Object> envie = new HashMap<String, Object>();
@@ -180,16 +183,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-
     @Override
     public void onResume() {
         super.onResume();
         followMeLocationSource.getBestAvailableProvider();
         if (mMap != null)
-        mMap.setMyLocationEnabled(true);
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this,  getString(R.string.no_permission_granted), Toast.LENGTH_LONG).show();
+            }
+        else
+                mMap.setMyLocationEnabled(true);
 
     }
-
 
 
     @Override
@@ -205,7 +210,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (item.getItemId()) {
             case R.id.menu_profile:
                 Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-               intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 return true;
             case R.id.menu_list:
@@ -253,8 +258,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 men = true;
             else if (checkBox.getText().equals("Men") && !ischecked && gender != Gender.MEN) {
                 men = false;
-            }
-            else if (checkBox.getText().equals("Men")) {
+            } else if (checkBox.getText().equals("Men")) {
                 checkBox.setChecked(true);
                 women = false;
             }
@@ -262,14 +266,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 women = true;
             else if (checkBox.getText().equals("Women") && !ischecked && gender != Gender.WOMEN) {
                 women = false;
-            }
-            else if (checkBox.getText().equals("Women")) {
+            } else if (checkBox.getText().equals("Women")) {
                 checkBox.setChecked(true);
                 men = false;
             }
 
             gender = getGender(men, women);
-           // Log.e("MapsActivity", "change gander: " + gender.toString());
+            // Log.e("MapsActivity", "change gander: " + gender.toString());
         }
         updateMap();
     }
@@ -292,25 +295,34 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Intent intent = new Intent(this, ProfileActivity.class);
             startActivity(intent);
         }
-        if(mMap == null) {
-            mMap = googleMap;
-            mMap.setMyLocationEnabled(true);
-            mMap.getUiSettings().setMyLocationButtonEnabled(true);
-            mMap.getUiSettings().setZoomControlsEnabled(false);
-            mMap.setLocationSource(followMeLocationSource);
+        if (mMap == null) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this,  getString(R.string.no_permission_granted), Toast.LENGTH_LONG).show();
+            } else {
+                mMap = googleMap;
+                mMap.setMyLocationEnabled(true);
+                mMap.getUiSettings().setMyLocationButtonEnabled(true);
+                mMap.getUiSettings().setZoomControlsEnabled(false);
+                mMap.setLocationSource(followMeLocationSource);
+            }
+
+
         }
         GetCurrentLocation();
         updateMap();
     }
 
     private void updateMap() {
-        mMap.clear();
+        if(mMap != null)
+        {
+            mMap.clear();
+            searchCircle = mMap.addCircle(new CircleOptions().center(latLngCenter).radius(rayon));
+            searchCircle.setFillColor(Color.argb(95, 255, 255, 255));
+            searchCircle.setStrokeWidth(4);
+            searchCircle.setStrokeColor(Color.argb(100, 0, 221, 255));
+        }
+
         all_user.clear();
-        markers.clear();
-        searchCircle = mMap.addCircle(new CircleOptions().center(latLngCenter).radius(rayon));
-        searchCircle.setFillColor(Color.argb(95, 255, 255, 255));
-        searchCircle.setStrokeWidth(4);
-        searchCircle.setStrokeColor(Color.argb(100, 0, 221, 255));
         getAllUSerPosition();
     }
 
@@ -320,7 +332,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         FacebookUser.getInstance().setLatitude(pos.latitude);
         FacebookUser.getInstance().setLongitude(pos.longitude);
         latLngCenter = pos;
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(pos.latitude, pos.longitude), 13));
+        if(mMap != null) {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(pos.latitude, pos.longitude), 13));
+        }
         sendPosition();
     }
 
@@ -329,7 +343,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         List<String> providers = locationManager.getProviders(true);
         Location location = null;
         for (int i = 0; i < providers.size(); i++) {
-            location = locationManager.getLastKnownLocation(providers.get(i));
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this,  getString(R.string.no_permission_granted), Toast.LENGTH_LONG).show();
+                break;
+            }
+            else
+                location = locationManager.getLastKnownLocation(providers.get(i));
+
             if (location != null)
                 break;
         }
@@ -465,6 +485,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void init_infos_window()
     {
+        if(mMap != null)
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
@@ -528,6 +549,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return null;
             }
         };
+        if(mMap!=null)
         mMap.setInfoWindowAdapter(adapt);
     }
 

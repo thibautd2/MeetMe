@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "com.mti.meetme"
@@ -12,6 +12,9 @@ android {
         versionName "1.0"
         multiDexEnabled true
      }
+    configurations {
+        compile.exclude group: "org.apache.httpcomponents", module: "httpclient"
+    }
 
     android {
         packagingOptions {
@@ -33,14 +36,13 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.facebook.android:facebook-android-sdk:4.12.1'
-    compile 'com.google.android.gms:play-services:9.0.0'
     compile 'com.android.support:design:23.4.0'
     compile 'com.android.support:support-v4:23.4.0'
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.google.guava:guava:18.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.google.android.gms:play-services-maps:9.0.0'
-    compile 'com.google.android.gms:play-services-appinvite:9.0.0'
+    compile 'com.google.android.gms:play-services-maps:9.0.1'
+    compile 'com.google.android.gms:play-services-appinvite:9.0.1'
     compile 'commons-codec:commons-codec:1.10'
     compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
     compile 'com.firebase:firebase-client-android:2.5.1'
@@ -51,6 +53,7 @@ dependencies {
     compile 'com.pubnub:pubnub-android:3.7.8'
     compile 'com.android.support:cardview-v7:23.4.0'
     compile 'com.google.firebase:firebase-messaging:9.0.0'
+
 }
 
 apply plugin: 'com.google.gms.google-services'
