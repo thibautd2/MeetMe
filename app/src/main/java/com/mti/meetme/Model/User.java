@@ -90,6 +90,9 @@ public class User implements Serializable, Parcelable {
     @com.google.gson.annotations.SerializedName("FriendRequestSend")
     private String FriendRequestSend;
 
+    @com.google.gson.annotations.SerializedName("FcmID")
+    private String FcmID;
+
     private JSONObject Likes;
     private JSONObject Friends;
 
@@ -97,7 +100,7 @@ public class User implements Serializable, Parcelable {
     private ArrayList<String> friendsId = null;
 
 
-    public User(String ageRange, String uid, String name, String birthday, String description, String email, String pic1, String gender, TodayDesire.Desire desire) {
+    public User(String ageRange, String uid, String name, String birthday, String description, String email, String pic1, String gender, TodayDesire.Desire desire, String fcmID) {
         Name = name;
         Birthday = birthday;
         Description = description;
@@ -110,8 +113,8 @@ public class User implements Serializable, Parcelable {
         Latitude = null;
         Envie = desire.toString();
         friendRequestReceived = "";
+        FcmID = fcmID;
     }
-
 
     public User() {}
 
@@ -136,6 +139,7 @@ public class User implements Serializable, Parcelable {
         Envie = in.readString();
         FriendRequestSend = in.readString();
         friendRequestReceived = in.readString();
+        FcmID = in.readString();
     }
 
     @Override
@@ -160,6 +164,7 @@ public class User implements Serializable, Parcelable {
         dest.writeString(Envie);
         dest.writeString(FriendRequestReceived);
         dest.writeString(FriendRequestSend);
+        dest.writeString(FcmID);
     }
 
     @Override
@@ -489,6 +494,12 @@ public class User implements Serializable, Parcelable {
     public void setPic5(String pic5) {
         Pic5 = pic5;
     }
+
+    public String getFcmID() {
+        return FcmID;
+    }
+
+    public void setFcmID(String fcmID) { FcmID = fcmID;}
 
     public String getFriendRequestReceived() {
         if (FriendRequestReceived == null)

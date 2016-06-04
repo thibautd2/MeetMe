@@ -12,3 +12,32 @@ bouton msg sur les profils amis
 bouton localisation d'amis
 voir les todo in code
 
+je savais pas où mettre ce code donc voilà :
+
+  /*if (currentUser.receiveMeetMeFriendsTab() == null)
+            return;
+
+        friendsLayout.removeAllViews();
+        for (String id : currentUser.receiveMeetMeFriendsTab()) {
+            Firebase ref = Network.find_user(id);
+            ref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    ImageView newItem = new ImageView(ProfileActivity.this);
+                    User u = dataSnapshot.getValue(User.class);
+
+                    if (FacebookUser.getInstance().haveThisFriend(u.getUid())) {
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) getResources().getDimension(R.dimen.profile_activity_icone), (int) getResources().getDimension(R.dimen.profile_activity_icone));
+                        params.setMargins(10, 0, 10, 0);
+                        friendsLayout.addView(newItem, params);
+                        Picasso.with(ProfileActivity.this).load(u.getPic1()).placeholder(R.drawable.anonyme).transform(new RoundedPicasso()).into(newItem);
+                    }
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    Log.e("profileActy", "onCancelled");
+                }
+            });
+        }*/
+

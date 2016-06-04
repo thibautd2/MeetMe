@@ -12,8 +12,10 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.controller.FacebookUser;
+import com.mti.meetme.notifications.NotificationSender;
 import com.pubnub.api.Callback;
 import com.pubnub.api.Pubnub;
 import com.pubnub.api.PubnubError;
@@ -82,6 +84,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                                     }
                                 }
                             });
+                        }
+                        else
+                        {
+                            Log.w("TOKEN", "LOL");
+                            //Log.w("TOKEN", FirebaseInstanceId.getInstance().getToken());
+                            new NotificationSender().execute(targetUser.getFcmID(), targetUser.getName(), messageObj.getString("text"));
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
