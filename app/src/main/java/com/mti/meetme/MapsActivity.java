@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -49,6 +50,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.mti.meetme.Interface.ContextDrawerAdapter;
+import com.mti.meetme.Model.Event;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.DrawerListAdapter;
 import com.mti.meetme.Tools.Map.CalculateDistance;
@@ -71,6 +73,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private GoogleMap mMap;
     private ArrayList<User> all_user;
+    private ArrayList<Event> all_event;
     private Circle searchCircle;
     static LatLng latLngCenter;
     boolean dispo = true;
@@ -83,15 +86,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         MEN,
         WOMEN,
         ALL
-    }
-
-    ;
+    };
     private Gender gender;
-
 
     ListView mDrawerList;
     RelativeLayout mDrawerPane;
-    //  private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
 
     ArrayList<MenuSlideItem> MenuSlideItems = new ArrayList<MenuSlideItem>();
@@ -109,19 +108,34 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         geoFire = new GeoFire(Network.geofire);
         all_user = new ArrayList<>();
+        all_event= new ArrayList<>();
 
+        followMeLocationSource = new FollowMeLocationSource(this);
+
+        init_menu();
+        init_envie_du_jour();
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MapsActivity.this, EventActivity.class);
+                startActivity(intent);
+            }
+        });
+
+    }
+
+
+    public  void init_menu()
+    {
         final ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_drawer); // set a custom icon for the default home button
         ab.setDisplayShowHomeEnabled(true); // show or hide the default home button
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setDisplayShowCustomEnabled(true); // enable overriding the default toolbar layout
         ab.setDisplayShowTitleEnabled(true);
-
-
         MenuSlideItems.add(new MenuSlideItem("Distance", " km", R.drawable.radar, new MenuSlideItem.MySeekBar(0, 10, 10)));
         MenuSlideItems.add(new MenuSlideItem("Genre", R.drawable.gender, new MenuSlideItem.MyCheckBox("Men", true), new MenuSlideItem.MyCheckBox("Women", true), null, null));
-
-        followMeLocationSource = new FollowMeLocationSource(this);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
         mDrawerList = (ListView) findViewById(R.id.navList);
@@ -133,7 +147,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 selectItemFromDrawer(position);
             }
         });
+    }
 
+    public void init_envie_du_jour()
+    {
         final Dialog dialog = new Dialog(MapsActivity.this);
         dialog.setTitle("Envie du jour !");
         dialog.setContentView(R.layout.envie_du_jour);
@@ -162,6 +179,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         dialog.setCancelable(false);
     }
 
+
     public void update_TodayDesire(View v, Dialog dialog) {
         Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
         String currentDesire = "";
@@ -173,9 +191,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             currentDesire = TodayDesire.Desire.Date.toString();
         if (v.getId() == R.id.sport)
             currentDesire = TodayDesire.Desire.Sport.toString();
+        if (v.getId() == R.id.play)
+            currentDesire = TodayDesire.Desire.play.toString();
         if (v.getId() == R.id.all)
             currentDesire = TodayDesire.Desire.Everything.toString();
 
+        FacebookUser.getInstance().setEnvie(currentDesire);
         Map<String, Object> envie = new HashMap<String, Object>();
         envie.put("envie", currentDesire);
         ref.updateChildren(envie);
@@ -207,9 +228,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = null;
         switch (item.getItemId()) {
             case R.id.menu_profile:
-                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                intent = new Intent(getApplicationContext(), ProfileActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 return true;
@@ -305,8 +327,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mMap.getUiSettings().setZoomControlsEnabled(false);
                 mMap.setLocationSource(followMeLocationSource);
             }
-
-
         }
         GetCurrentLocation();
         updateMap();
@@ -387,6 +407,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         searchCircle.setStrokeColor(Color.argb(100, 0, 221, 255));
     }
 
+
+
     private void getAllUSerPosition()
     {
         GeoLocation geoLocation = new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
@@ -394,45 +416,65 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
-                Firebase ref = Network.find_user(key);
-                final String fKey = key;
-                ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot snapshot) {
-                        boolean userExist = false;
-                        if(snapshot != null) {
-                            User u = snapshot.getValue(User.class);
-                            final String uid = FacebookUser.getInstance().getUid();
-                            if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(uid) != 0) {
-                                if (gender != Gender.WOMEN && u.getGender().compareTo("male") == 0) {
-                                    Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(all_user.size())));
-                                    if (fKey != null && marker != null && markers.get(fKey) == null)
-                                        markers.put(fKey, marker);
-                                } else if (gender != Gender.MEN && u.getGender().compareTo("male") != 0) {
-                                    Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                            u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(all_user.size())));
-                                    if (fKey != null && marker != null && markers.get(fKey) == null)
-                                        markers.put(fKey, marker);
-                                }
-
-                                for (int i = 0; i < all_user.size(); i++) {
-                                    if (all_user.get(i).getUid().compareTo(u.getUid()) == 0) {
-                                        userExist = true;
-                                        all_user.set(i, u);
+                if(!key.startsWith("Event :")) {
+                    Firebase ref = Network.find_user(key);
+                    final String fKey = key;
+                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            boolean userExist = false;
+                            if (snapshot != null) {
+                                User u = snapshot.getValue(User.class);
+                                final String uid = FacebookUser.getInstance().getUid();
+                                if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(uid) != 0) {
+                                    if (gender != Gender.WOMEN && u.getGender().compareTo("male") == 0) {
+                                        Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                                u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(all_user.size())));
+                                        if (fKey != null && marker != null && markers.get(fKey) == null)
+                                            markers.put(fKey, marker);
+                                    } else if (gender != Gender.MEN && u.getGender().compareTo("male") != 0) {
+                                        Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                                u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(all_user.size())));
+                                        if (fKey != null && marker != null && markers.get(fKey) == null)
+                                            markers.put(fKey, marker);
                                     }
-                                }
-                                if (!userExist)
-                                    all_user.add(u);
-                            }
-                            init_infos_window();
-                        }
-                    }
 
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-                    }
-                });
+                                    for (int i = 0; i < all_user.size(); i++) {
+                                        if (all_user.get(i).getUid().compareTo(u.getUid()) == 0) {
+                                            userExist = true;
+                                            all_user.set(i, u);
+                                        }
+                                    }
+                                    if (!userExist)
+                                        all_user.add(u);
+                                }
+                                init_infos_window();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+                        }
+                    });
+                }
+                else {
+                    Firebase ref = Network.find_event(key);
+                    final String fKey = key;
+                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Event event = dataSnapshot.getValue(Event.class);
+                            all_event.add(event);
+                            Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                    event.getLatitude(), event.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.paryt_marker)).snippet(String.valueOf("event "+all_event.size())));
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+
+                        }
+                    });
+                }
             }
 
             @Override
@@ -471,7 +513,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     });
                 }
             }
-
             @Override
             public void onGeoQueryReady() {
             }
@@ -489,6 +530,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
+                if(!marker.getSnippet().startsWith("event "))
+                {
                 final User user = all_user.get(Integer.parseInt(marker.getSnippet()));
                 final Dialog dialog = new Dialog(MapsActivity.this);
                 dialog.setContentView(R.layout.user_pop_up);
@@ -520,28 +563,32 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
                 dialog.show();
-            }
+            }}
         });
 
         GoogleMap.InfoWindowAdapter adapt = new GoogleMap.InfoWindowAdapter() {
             @Override
             public View getInfoWindow(Marker arg0) {
-                int id = Integer.parseInt(arg0.getSnippet());
-                Log.e("MARKER ID", "MARKER ID : "+ id);
-                User u = all_user.get(id);
+                if(!arg0.getSnippet().startsWith("event ")) {
+                    int id = Integer.parseInt(arg0.getSnippet());
+                    Log.e("MARKER ID", "MARKER ID : " + id);
+                    User u = all_user.get(id);
+                    View v = getLayoutInflater().inflate(R.layout.info_window, null);
+                    ImageView img = (ImageView) v.findViewById(R.id.user_image);
+                    TextView name = (TextView) v.findViewById(R.id.user_name);
+                    TextView age = (TextView) v.findViewById(R.id.user_age);
+                    TextView distance = (TextView) v.findViewById(R.id.distance);
+                    String dist = String.valueOf((int) CalculateDistance.getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(u.getLatitude(), u.getLongitude())));
+                    distance.setText(dist + " m");
+                    name.setText(u.getName());
+                    age.setText(String.valueOf(u.convertBirthdayToAge()) + " ans");
+                    Picasso.with(getApplication())
+                            .load(u.getPic1())
+                            .transform(new RoundedPicasso())
+                            .into(img, new InfoWindowRefresher(arg0));
+                    return v;
+                }
                 View v = getLayoutInflater().inflate(R.layout.info_window, null);
-                ImageView img = (ImageView) v.findViewById(R.id.user_image);
-                TextView name = (TextView) v.findViewById(R.id.user_name);
-                TextView age = (TextView) v.findViewById(R.id.user_age);
-                TextView distance = (TextView) v.findViewById(R.id.distance);
-                String dist = String.valueOf((int) CalculateDistance.getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(u.getLatitude(), u.getLongitude())));
-                distance.setText(dist +" m");
-                name.setText(u.getName());
-                age.setText(String.valueOf(u.convertBirthdayToAge()) +" ans");
-                Picasso.with(getApplication())
-                                .load(u.getPic1())
-                                .transform(new RoundedPicasso())
-                                .into(img, new InfoWindowRefresher(arg0));
                 return v;
             }
             @Override

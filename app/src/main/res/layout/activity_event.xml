@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:baselineAligned="false">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/event_activity"
+        android:requiresFadingEdge="horizontal|vertical"
+        android:background="#e6e6e6">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/event_header"
+            android:id="@+id/relativeLayout"
+            android:alpha="1">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:layout_below="@+id/event_name"
+                android:id="@+id/event_description"
+                android:hint="Description"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:padding="10dp"
+                android:minLines="2"
+                android:backgroundTint="#ffffff"
+                android:background="#ffffff"
+                android:layout_alignEnd="@+id/event_name"
+                android:maxLines="2"
+                android:layout_alignStart="@+id/event_name" />
+
+            <Button
+                android:text="Créer "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignEnd="@+id/event_description"
+                android:id="@+id/event_create"
+                android:background="@android:color/holo_blue_light"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:fadingEdge="horizontal|vertical"
+                android:elevation="1dp"
+                android:textColor="#2d2d2d" />
+
+
+
+
+            <AutoCompleteTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textPostalAddress"
+                android:ems="10"
+                android:id="@+id/event_adresse"
+                android:hint="Adresse"
+                android:padding="10dp"
+                android:layout_below="@+id/event_description"
+                android:layout_alignStart="@+id/event_description"
+                android:background="#ffffff"
+                android:layout_alignEnd="@+id/event_description">  <requestFocus />
+            </AutoCompleteTextView>
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textPostalAddress"
+                android:ems="10"
+                android:id="@+id/event_date"
+                android:hint="Date et Heure"
+                android:padding="10dp"
+                android:backgroundTint="#ffffff"
+                android:background="#ffffff"
+                android:layout_below="@+id/event_adresse"
+                android:layout_alignStart="@+id/event_adresse"
+                android:layout_marginTop="10dp" />
+
+            <RadioButton
+                android:text="@string/amis"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:id="@+id/event_friends"
+                android:layout_above="@+id/event_create"
+                android:layout_alignStart="@+id/event_date"
+                android:textColor="#2d2d2d"
+                android:layout_marginLeft="10dp" />
+
+            <TextView
+                android:text="@string/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/event_title"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:layout_marginLeft="40dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/event_name"
+                android:selectAllOnFocus="false"
+                android:hint="Name"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:padding="10dp"
+                android:backgroundTint="#ffffff"
+                android:elevation="0dp"
+                android:background="#ffffff"
+
+                android:layout_below="@+id/event_title"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView3"
+                android:text="@string/visibilite"
+                android:ems="10"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:layout_above="@+id/event_all"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="15dp"
+                android:layout_marginTop="10dp" />
+
+            <RadioButton
+                android:text="@string/all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/event_all"
+                android:textColor="#2d2d2d"
+                android:layout_alignBaseline="@+id/event_friends"
+                android:layout_alignBottom="@+id/event_friends"
+                android:layout_alignEnd="@+id/event_create"
+                android:layout_marginRight="10dp" />
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="110dp"
+            android:id="@+id/event_header"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:background="#000000" />
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="38dp"
+            android:layout_marginTop="35dp"
+            android:id="@+id/imageView"
+            android:background="@drawable/com_facebook_close" />
+
+    </RelativeLayout>
+</LinearLayout>

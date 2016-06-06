@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.mti.meetme"
-        minSdkVersion 17
+        minSdkVersion 19
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -41,8 +41,8 @@ dependencies {
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.google.guava:guava:18.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.google.android.gms:play-services-maps:9.0.1'
-    compile 'com.google.android.gms:play-services-appinvite:9.0.1'
+    compile 'com.google.android.gms:play-services-maps:9.0.2'
+    compile 'com.google.android.gms:play-services-appinvite:9.0.2'
     compile 'commons-codec:commons-codec:1.10'
     compile 'org.apache.httpcomponents:httpcore:4.4.1'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.3.5'

@@ -324,7 +324,7 @@ public class ProfileActivity extends AppCompatActivity{
     {
         Bundle params = new Bundle();
         params.putBoolean("redirect", false);
-
+        if(idFriendsCount < currentUser.getFriendsID().size())
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
                 "/" + currentUser.getFriendsID().get(idFriendsCount) + "/picture",

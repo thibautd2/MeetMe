@@ -8,8 +8,8 @@ public class TodayDesire {
     public enum Desire
     {
         Everything ("Partant pour tout"),
-        Date ("Rencontre"),
         Drink ("Prendre un verre"),
+        Date ("Rencontre"),
         Sport ("Sport"),
         party ("Soirée"),
         play ("Jouer");

@@ -12,6 +12,19 @@
     <string name="title_activity_maps">Map</string>
 
 
+    <string name="googleMapKey">
+
+    </string>
+
+
+
+    <!-- EventActivity -->
+    <string name="event_title">Evenement</string>
+    <string name="visibilite">Qui souhaites tu inviter?</string>
+    <string name="amis">Tous mes amis</string>
+    <string name="all">Tout le monde</string>
+    <string name="title">Créer un nouvel événement</string>
+
     <!-- ProfileActivity -->
     <string name="profile_title">Profile</string>
     <string name="likes_title">Likes :</string>
