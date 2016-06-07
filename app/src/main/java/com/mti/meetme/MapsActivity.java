@@ -49,6 +49,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.common.collect.Maps;
 import com.mti.meetme.Interface.ContextDrawerAdapter;
 import com.mti.meetme.Model.Event;
 import com.mti.meetme.Model.User;
@@ -71,10 +72,10 @@ import java.util.WeakHashMap;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, ContextDrawerAdapter {
 
-    private GoogleMap mMap;
-    private ArrayList<User> all_user;
-    private ArrayList<Event> all_event;
-    private Circle searchCircle;
+    public GoogleMap mMap;
+    public ArrayList<User> all_user;
+    public ArrayList<Event> all_event;
+    public Circle searchCircle;
     static LatLng latLngCenter;
     boolean dispo = true;
     public static GeoFire geoFire;
@@ -174,7 +175,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         sport.setOnClickListener(update_desire);
         play.setOnClickListener(update_desire);
         all.setOnClickListener(update_desire);
-
         dialog.show();
         dialog.setCancelable(false);
     }
@@ -258,7 +258,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void selectItemFromDrawer(int position) {
-
         mDrawerLayout.closeDrawer(mDrawerPane);
     }
 
@@ -267,7 +266,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (btnName.equals("Distance")) {
             rayon = 1000 * seekBar.getProgress();
         }
-
         updateMap();
     }
 
@@ -292,9 +290,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 checkBox.setChecked(true);
                 men = false;
             }
-
             gender = getGender(men, women);
-            // Log.e("MapsActivity", "change gander: " + gender.toString());
         }
         updateMap();
     }
@@ -332,7 +328,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         updateMap();
     }
 
-    private void updateMap() {
+    public void updateMap() {
         if(mMap != null)
         {
             mMap.clear();
@@ -341,7 +337,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             searchCircle.setStrokeWidth(4);
             searchCircle.setStrokeColor(Color.argb(100, 0, 221, 255));
         }
-
+        all_event.clear();
         all_user.clear();
         getAllUSerPosition();
     }
@@ -388,15 +384,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Map<String, Object> pos = new HashMap<String, Object>();
         pos.put("latitude", String.valueOf(FacebookUser.getInstance().getLatitude()));
         pos.put("longitude", String.valueOf(FacebookUser.getInstance().getLongitude()));
-        geoFire.setLocation(FacebookUser.getInstance().getUid(), new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()));
         latLngCenter = new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
+        geoFire.setLocation(FacebookUser.getInstance().getUid(), new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()));
         ref.updateChildren(pos, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
             }
         });
     }
-
 
     public void update_circle()
     {
@@ -427,18 +422,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 User u = snapshot.getValue(User.class);
                                 final String uid = FacebookUser.getInstance().getUid();
                                 if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(uid) != 0) {
+                                    Marker marker = null;
                                     if (gender != Gender.WOMEN && u.getGender().compareTo("male") == 0) {
-                                        Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                        marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
                                                 u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(all_user.size())));
-                                        if (fKey != null && marker != null && markers.get(fKey) == null)
-                                            markers.put(fKey, marker);
                                     } else if (gender != Gender.MEN && u.getGender().compareTo("male") != 0) {
-                                        Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                        marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
                                                 u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(all_user.size())));
-                                        if (fKey != null && marker != null && markers.get(fKey) == null)
-                                            markers.put(fKey, marker);
                                     }
-
+                                    if (fKey != null && marker != null && markers.get(fKey) == null)
+                                        markers.put(fKey, marker);
                                     for (int i = 0; i < all_user.size(); i++) {
                                         if (all_user.get(i).getUid().compareTo(u.getUid()) == 0) {
                                             userExist = true;
@@ -464,9 +457,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             Event event = dataSnapshot.getValue(Event.class);
-                            all_event.add(event);
                             Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
                                     event.getLatitude(), event.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.paryt_marker)).snippet(String.valueOf("event "+all_event.size())));
+                            all_event.add(event);
+                            if (fKey != null && marker != null && markers.get(fKey) == null)
+                                markers.put(fKey, marker);
                         }
 
                         @Override
@@ -489,6 +484,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onKeyMoved(String key, GeoLocation location) {
                 final Marker marker = markers.get(key);
+                String k = key;
                 if (marker != null) {
                     final Handler handler = new Handler();
                     final long start = SystemClock.uptimeMillis();
@@ -511,6 +507,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             }
                         }
                     });
+                }
+                else {
+                    latLngCenter = new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
+                    updateMap();
                 }
             }
             @Override
@@ -569,26 +569,49 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         GoogleMap.InfoWindowAdapter adapt = new GoogleMap.InfoWindowAdapter() {
             @Override
             public View getInfoWindow(Marker arg0) {
-                if(!arg0.getSnippet().startsWith("event ")) {
+                View v = getLayoutInflater().inflate(R.layout.info_window, null);
+                ImageView img = (ImageView) v.findViewById(R.id.user_image);
+                TextView name = (TextView) v.findViewById(R.id.user_name);
+                TextView age = (TextView) v.findViewById(R.id.user_age);
+                TextView distance = (TextView) v.findViewById(R.id.distance);
+
+                if(!arg0.getSnippet().startsWith("event ")) //UTILISATEUR
+                {
                     int id = Integer.parseInt(arg0.getSnippet());
                     Log.e("MARKER ID", "MARKER ID : " + id);
-                    User u = all_user.get(id);
-                    View v = getLayoutInflater().inflate(R.layout.info_window, null);
-                    ImageView img = (ImageView) v.findViewById(R.id.user_image);
-                    TextView name = (TextView) v.findViewById(R.id.user_name);
-                    TextView age = (TextView) v.findViewById(R.id.user_age);
-                    TextView distance = (TextView) v.findViewById(R.id.distance);
-                    String dist = String.valueOf((int) CalculateDistance.getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(u.getLatitude(), u.getLongitude())));
-                    distance.setText(dist + " m");
-                    name.setText(u.getName());
-                    age.setText(String.valueOf(u.convertBirthdayToAge()) + " ans");
-                    Picasso.with(getApplication())
-                            .load(u.getPic1())
-                            .transform(new RoundedPicasso())
-                            .into(img, new InfoWindowRefresher(arg0));
+                    User u = null;
+                    if(id < all_user.size())
+                     u = all_user.get(id);
+                    if(u!=null) {
+                         double dist =  CalculateDistance.getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(u.getLatitude(), u.getLongitude()));
+                        distance.setText(String.format("%.1f",dist)+ " km");
+                        name.setText(u.getName());
+                        age.setText(String.valueOf(u.convertBirthdayToAge()) + " ans");
+                        Picasso.with(getApplication())
+                                .load(u.getPic1())
+                                .placeholder(R.drawable.defaultuser)
+                                .transform(new RoundedPicasso())
+                                .into(img, new InfoWindowRefresher(arg0));
+                    }
                     return v;
                 }
-                View v = getLayoutInflater().inflate(R.layout.info_window, null);
+                else //Event
+                {
+                    String token = "event ";
+                    String realid = arg0.getSnippet().replace(token, "");
+                    int id = Integer.parseInt(realid);
+                    Log.e("MARKER ID", "MARKER ID : " + id);
+                    Event e = null;
+                    if(id < all_event.size())
+                    e = all_event.get(id);
+                    if(e != null) {
+                        Double dist = (CalculateDistance.getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(e.getLatitude(), e.getLongitude())));
+                        distance.setText(String.format("%.1f",dist )+ " km");
+                        img.setBackgroundResource(R.drawable.paryt_marker);
+                        name.setText(e.getName());
+                        age.setText(e.date);
+                    }
+                }
                 return v;
             }
             @Override

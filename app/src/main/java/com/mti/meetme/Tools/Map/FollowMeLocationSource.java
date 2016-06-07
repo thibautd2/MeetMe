@@ -75,10 +75,11 @@ public class FollowMeLocationSource implements LocationSource, LocationListener 
         if (mListener != null) {
             mListener.onLocationChanged(location);
         }
-        Log.e("VERRIFFF", "fezfe");
+
         FacebookUser.getInstance().setLongitude(location.getLongitude());
         FacebookUser.getInstance().setLatitude(location.getLatitude());
         MapsActivity.sendPosition();
+
     }
 
     @Override

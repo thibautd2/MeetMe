@@ -82,24 +82,13 @@
                 android:layout_alignStart="@+id/event_adresse"
                 android:layout_marginTop="10dp" />
 
-            <RadioButton
-                android:text="@string/amis"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:id="@+id/event_friends"
-                android:layout_above="@+id/event_create"
-                android:layout_alignStart="@+id/event_date"
-                android:textColor="#2d2d2d"
-                android:layout_marginLeft="10dp" />
-
             <TextView
                 android:text="@string/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/event_title"
                 android:textColor="#000000"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:layout_marginLeft="40dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
@@ -134,9 +123,11 @@
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:layout_above="@+id/event_all"
-                android:layout_centerHorizontal="true"
                 android:layout_marginBottom="15dp"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="true"
+                android:gravity="center" />
 
             <RadioButton
                 android:text="@string/all"
@@ -148,6 +139,18 @@
                 android:layout_alignBottom="@+id/event_friends"
                 android:layout_alignEnd="@+id/event_create"
                 android:layout_marginRight="10dp" />
+
+            <RadioButton
+                android:text="@string/amis"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:id="@+id/event_friends"
+                android:textColor="#2d2d2d"
+                android:layout_marginLeft="10dp"
+                android:layout_above="@+id/event_create"
+                android:layout_alignStart="@+id/event_date"
+                android:layout_marginStart="17dp" />
         </RelativeLayout>
 
         <ImageView
@@ -167,6 +170,17 @@
             android:layout_marginTop="35dp"
             android:id="@+id/imageView"
             android:background="@drawable/com_facebook_close" />
+
+        <TextView
+            android:text="Type d'evenement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/imageView"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:id="@+id/textView2"
+            android:textColor="#ffffff"
+            android:textSize="22sp" />
 
     </RelativeLayout>
 </LinearLayout>

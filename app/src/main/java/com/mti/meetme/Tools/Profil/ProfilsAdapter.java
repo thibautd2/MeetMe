@@ -68,9 +68,9 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
                 holder.user_age.setText("" + u.convertBirthdayToAge() + " ans");
                 holder.user_name.setText(u.getName());
                 holder.user_envie.setText(u.getEnvie());
-                String dist = String.valueOf((int) CalculateDistance.getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(u.getLatitude(), u.getLongitude())));
+                double dist =  CalculateDistance.getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(u.getLatitude(), u.getLongitude()));
 
-                holder.user_dist.setText(dist +" m");
+                holder.user_dist.setText(String.format("%.1f",dist )+ " km");
 
                 if (u.getGender().compareTo("male")==0) {
                     holder.user_image.getLayoutParams().height = originalImageHeight -70;
