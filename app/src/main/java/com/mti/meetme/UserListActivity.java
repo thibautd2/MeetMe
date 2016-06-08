@@ -128,6 +128,11 @@ public class UserListActivity extends AppCompatActivity {
           }
       });
     }
-
+    @Override
+    public void onBackPressed()
+    {
+        super.onBackPressed();
+        startActivity(new Intent(UserListActivity.this, MapsActivity.class));
+    }
 
 }
