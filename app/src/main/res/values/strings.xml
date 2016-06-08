@@ -1,12 +1,12 @@
 <resources>
 
     <!-- SplashActivity -->
-    <string name="download">Downloading stuff...</string>
+    <string name="download">Preparing awesomeness...</string>
     <!-- LoginActivity -->
     <string name="app_name">MeetMe</string>
     <string name="welcome_login">Bienvenue sur MeetMe !</string>
-    <string name="progress_status_connect">Connecting...</string>
-    <string name="progress_status_retrieving">Retrieving Facebook data...</string>
+    <string name="progress_status_connect">Connexion...</string>
+    <string name="progress_status_retrieving">Téléchargement des données Facebook...</string>
 
     <string name="facebook_app_id">1701752870109248</string>
     <string name="title_activity_maps">Map</string>
@@ -19,20 +19,20 @@
 
 
     <!-- EventActivity -->
-    <string name="event_title">Evenement</string>
-    <string name="visibilite">Qui souhaites tu inviter?</string>
+    <string name="event_title">Evènement</string>
+    <string name="visibilite">Qui souhaites-tu inviter?</string>
     <string name="amis">Tous mes amis</string>
     <string name="all">Tout le monde</string>
-    <string name="title">Créer un nouvel événement</string>
+    <string name="title">Créer un nouvel évènement</string>
 
     <!-- ProfileActivity -->
-    <string name="profile_title">Profile</string>
+    <string name="profile_title">Profil</string>
     <string name="likes_title">Likes :</string>
-    <string name="likes_common_title">Mutual likes:</string>
-    <string name="friends_title">Friends :</string>
-    <string name="friends_common_title">Mutual friends:</string>
+    <string name="likes_common_title">Likes communs:</string>
+    <string name="friends_title">Amis :</string>
+    <string name="friends_common_title">Amis communs :</string>
     <string name="description_title">Description :</string>
-    <string name="description_popup_title">Edit your description</string>
+    <string name="description_popup_title">Entrez une nouvelle description</string>
 
     <!-- PubNub -->
     <string name="PublishKey">pub-c-b24d94ea-c6f3-4946-a59b-88956fc28e96</string>
