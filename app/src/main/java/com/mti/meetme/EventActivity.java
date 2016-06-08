@@ -1,9 +1,11 @@
 package com.mti.meetme;
 import android.content.Intent;
 import android.media.Image;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.StringDef;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -45,18 +47,23 @@ import android.widget.Filterable;
 
 public class EventActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    private static final String LOG_TAG = "GooglePlacesAutocomplete";
+    private static final String LOG_TAG = "ErreurApiGoogle";
     private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
+    //https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=API_KEY
+    private static final String PLACES_API_BASE_GEOCODE = "https://maps.googleapis.com/maps/api/geocode";
     private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
     private static final String OUT_JSON = "/json";
-    private static  String API_KEY;
+    private static final String API_KEY = "AIzaSyDcQEKTAlU8QCI-_W3RLPonTzJcLJMsrSk";
+    private static double lon;
+    private static double lat;
+    public static boolean valCoord;
+    public static  PlacesAutoCompleteAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_event);
 
-        API_KEY = "AIzaSyBiS4uTQvQH-1bohB0TUpH9YNynRS299gw";
         ImageView img = (ImageView) findViewById(R.id.event_header);
 
         final User u  = FacebookUser.getInstance();
@@ -82,8 +89,8 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
         final RadioButton friend = (RadioButton) findViewById(R.id.event_friends);
         final RadioButton all = (RadioButton) findViewById(R.id.event_all);
         AutoCompleteTextView autoCompView = (AutoCompleteTextView) findViewById(R.id.event_adresse);
-
-        autoCompView.setAdapter(new GooglePlacesAutocompleteAdapter(this, R.layout.adresse_list_item));
+       adapter = new PlacesAutoCompleteAdapter(this, R.layout.adresse_list_item);
+        autoCompView.setAdapter(adapter);
         autoCompView.setOnItemClickListener(this);
 
         CompoundButton.OnCheckedChangeListener change = new CompoundButton.OnCheckedChangeListener() {
@@ -136,59 +143,11 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
         Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
     }
 
-    public static ArrayList autocomplete(String input) {
-        ArrayList resultList = null;
 
-        HttpURLConnection conn = null;
-        StringBuilder jsonResults = new StringBuilder();
-        try {
-            StringBuilder sb = new StringBuilder(PLACES_API_BASE + TYPE_AUTOCOMPLETE + OUT_JSON);
-            sb.append("?key=" + API_KEY);
-            sb.append("&components=country:fr");
-            sb.append("&input=" + URLEncoder.encode(input, "utf8"));
+    private class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
+        private ArrayList<String> resultList;
 
-            URL url = new URL(sb.toString());
-            conn = (HttpURLConnection) url.openConnection();
-            InputStreamReader in = new InputStreamReader(conn.getInputStream());
-
-            // Load the results into a StringBuilder
-            int read;
-            char[] buff = new char[1024];
-            while ((read = in.read(buff)) != -1) {
-                jsonResults.append(buff, 0, read);
-            }
-        } catch (MalformedURLException e) {
-            return resultList;
-        } catch (IOException e) {
-            return resultList;
-        } finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
-        }
-
-        try {
-            // Create a JSON object hierarchy from the results
-            JSONObject jsonObj = new JSONObject(jsonResults.toString());
-            JSONArray predsJsonArray = jsonObj.getJSONArray("predictions");
-
-            // Extract the Place descriptions from the results
-            resultList = new ArrayList(predsJsonArray.length());
-            for (int i = 0; i < predsJsonArray.length(); i++) {
-                System.out.println(predsJsonArray.getJSONObject(i).getString("description"));
-                System.out.println("============================================================");
-                resultList.add(predsJsonArray.getJSONObject(i).getString("description"));
-            }
-        } catch (JSONException e) {
-        }
-
-        return resultList;
-    }
-
-    class GooglePlacesAutocompleteAdapter extends ArrayAdapter implements Filterable {
-        private ArrayList resultList;
-
-        public GooglePlacesAutocompleteAdapter(Context context, int textViewResourceId) {
+        public PlacesAutoCompleteAdapter(Context context, int textViewResourceId) {
             super(context, textViewResourceId);
         }
 
@@ -199,7 +158,7 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
 
         @Override
         public String getItem(int index) {
-            return (String) resultList.get(index);
+            return resultList.get(index);
         }
 
         @Override
@@ -223,13 +182,125 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
                 protected void publishResults(CharSequence constraint, FilterResults results) {
                     if (results != null && results.count > 0) {
                         notifyDataSetChanged();
-                    } else {
+                    }
+                    else {
                         notifyDataSetInvalidated();
                     }
-                }
-            };
+                }};
             return filter;
         }
+    }
+
+
+    private ArrayList<String> autocomplete(String input) {
+        ArrayList<String> resultList = null;
+        //ArrayList<String> resultListId = null;
+        adapter.notifyDataSetChanged();
+        HttpURLConnection conn = null;
+        StringBuilder jsonResults = new StringBuilder();
+        try {
+            StringBuilder sb = new StringBuilder(PLACES_API_BASE + TYPE_AUTOCOMPLETE + OUT_JSON);
+            sb.append("?key=" + API_KEY);
+            //sb.append("types=geocode");
+            sb.append("&components=country:fr");
+            sb.append("&input=" + URLEncoder.encode(input, "utf8"));
+
+            URL url = new URL(sb.toString());
+            conn = (HttpURLConnection) url.openConnection();
+            InputStreamReader in = new InputStreamReader(conn.getInputStream());
+
+            // Load the results into a StringBuilder
+            int read;
+            char[] buff = new char[1024];
+            while ((read = in.read(buff)) != -1) {
+                jsonResults.append(buff, 0, read);
+            }
+        } catch (MalformedURLException e) {
+            Log.e(LOG_TAG, "Error processing Places API URL", e);
+            return resultList;
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error connecting to Places API", e);
+            return resultList;
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+
+        try {
+            // Create a JSON object hierarchy from the results
+            JSONObject jsonObj = new JSONObject(jsonResults.toString());
+            JSONArray predsJsonArray = jsonObj.getJSONArray("predictions");
+            resultList = new ArrayList<String>(predsJsonArray.length());
+            //resultListId = new ArrayList<String>(predsJsonArray.length());
+            for (int i = 0; i < predsJsonArray.length(); i++) {
+                resultList.add(predsJsonArray.getJSONObject(i).getString("description"));
+                //resultListId.add(predsJsonArray.getJSONObject(i).getString("place_id"));
+            }
+        }
+        catch (JSONException e) {
+            Log.e(LOG_TAG, "Cannot process JSON results", e);
+        }
+        adapter.notifyDataSetChanged();
+        return resultList;
+    }
+
+
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+    }
+    private int[] getCoord(String input) {
+        ArrayList<String> resultList = null;
+        HttpURLConnection conn = null;
+        StringBuilder jsonResults = new StringBuilder();
+        try {
+
+            StringBuilder sb = new StringBuilder(PLACES_API_BASE_GEOCODE + OUT_JSON);
+            sb.append("?key=" + API_KEY);
+            //sb.append("types=geocode");
+            sb.append("&components=country:fr");
+            sb.append("&address=" + URLEncoder.encode(input, "utf8"));
+
+            URL url = new URL(sb.toString());
+            conn = (HttpURLConnection) url.openConnection();
+            InputStreamReader in = new InputStreamReader(conn.getInputStream());
+
+            // Load the results into a StringBuilder
+            int read;
+            char[] buff = new char[1024];
+            while ((read = in.read(buff)) != -1) {
+                jsonResults.append(buff, 0, read);
+            }
+        } catch (MalformedURLException e) {
+            Log.e(LOG_TAG, "Error processing Places API URL", e);
+            return null;
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error connecting to Places API", e);
+            return null;
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+        try {
+            JSONObject jsonObj = new JSONObject(jsonResults.toString());
+            //Log.w("RECUP", jsonResults.toString());
+            lon = ((JSONArray)jsonObj.get("results")).getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lng");
+            lat = ((JSONArray)jsonObj.get("results")).getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lat");
+
+            //double[] coord = new double[] {lon, lat};
+            Log.w("COORD", " coordonnee = lon/lat = " + lon + "/" + lat);
+            valCoord = true;
+        }
+        catch (JSONException e) {
+            Log.e(LOG_TAG, "Cannot process JSON results", e);
+        }
+        adapter.notifyDataSetChanged();
+        return null;
+
     }
 
 
