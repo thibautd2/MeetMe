@@ -165,7 +165,7 @@
                     android:layout_alignEnd="@+id/event_create" />
 
                 <Button
-                    android:text="Create"
+                    android:text="Créer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/event_create"

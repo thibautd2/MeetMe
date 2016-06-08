@@ -1,5 +1,7 @@
 package com.mti.meetme;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -29,6 +31,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONException;
 import android.content.Context;
@@ -120,13 +123,14 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
                     String visibility = "friends";
                     if (all.isChecked())
                         visibility = "all";
+
                     Event event = new Event(name.getText().toString(), desc.getText().toString(), adresse.getText().toString(),
                             u.getUid(), visibility, u.getEnvie(), date.getText().toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
+                    getLocationFromAddress(event);
                     Firebase ref = Network.create_event("Event :"+name.getText().toString() + u.getUid());
-
                     ref.setValue(event);
                     GeoFire geoFire = new GeoFire(Network.geofire);
-                    geoFire.setLocation("Event :"+name.getText().toString() + u.getUid(), new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()));
+                    geoFire.setLocation("Event :"+name.getText().toString() + u.getUid(), new GeoLocation(event.getLatitude(), event.getLongitude()));
                     Toast.makeText(getApplicationContext(), "Evénement Créé !", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(EventActivity.this, MapsActivity.class);
                     startActivity(intent);
@@ -238,6 +242,23 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
             };
             return filter;
         }
+    }
+
+    public String getLocationFromAddress(Event ev){
+        Geocoder coder = new Geocoder(this);
+        List<Address> address;
+        try {
+            address = coder.getFromLocationName(ev.getAdresse(),5);
+            if (address==null) {
+                return null;
+            }
+            Address location=address.get(0);
+           ev.setLatitude(location.getLatitude());
+           ev.setLongitude(location.getLongitude());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
