@@ -95,11 +95,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             });
                         }
                         else
-                        {
-                            Log.w("TOKEN", "LOL");
-                            //Log.w("TOKEN", FirebaseInstanceId.getInstance().getToken());
-                            new NotificationSender().execute(targetUser.getFcmID(), targetUser.getName(), messageObj.getString("text"));
-                        }
+                            new NotificationSender().execute(targetUser.getFcmID(), currentUser.getName() + " vous a envoyé un message", messageObj.getString("text"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
