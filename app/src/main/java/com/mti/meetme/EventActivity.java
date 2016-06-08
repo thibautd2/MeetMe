@@ -1,9 +1,8 @@
 package com.mti.meetme;
 import android.content.Intent;
-import android.media.Image;
-import android.os.AsyncTask;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
-import android.support.annotation.StringDef;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +31,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONException;
 import android.content.Context;
@@ -57,7 +57,7 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
     private static double lon;
     private static double lat;
     public static boolean valCoord;
-    public static  PlacesAutoCompleteAdapter adapter;
+    public static  GooglePlacesAutocompleteAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +89,7 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
         final RadioButton friend = (RadioButton) findViewById(R.id.event_friends);
         final RadioButton all = (RadioButton) findViewById(R.id.event_all);
         AutoCompleteTextView autoCompView = (AutoCompleteTextView) findViewById(R.id.event_adresse);
-       adapter = new PlacesAutoCompleteAdapter(this, R.layout.adresse_list_item);
+        adapter = new GooglePlacesAutocompleteAdapter(this, R.layout.adresse_list_item);
         autoCompView.setAdapter(adapter);
         autoCompView.setOnItemClickListener(this);
 
@@ -123,13 +123,14 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
                     String visibility = "friends";
                     if (all.isChecked())
                         visibility = "all";
+
                     Event event = new Event(name.getText().toString(), desc.getText().toString(), adresse.getText().toString(),
                             u.getUid(), visibility, u.getEnvie(), date.getText().toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
+                    getLocationFromAddress(event);
                     Firebase ref = Network.create_event("Event :"+name.getText().toString() + u.getUid());
-
                     ref.setValue(event);
                     GeoFire geoFire = new GeoFire(Network.geofire);
-                    geoFire.setLocation("Event :"+name.getText().toString() + u.getUid(), new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()));
+                    geoFire.setLocation("Event :"+name.getText().toString() + u.getUid(), new GeoLocation(event.getLatitude(), event.getLongitude()));
                     Toast.makeText(getApplicationContext(), "Evénement Créé !", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(EventActivity.this, MapsActivity.class);
                     startActivity(intent);
@@ -138,70 +139,14 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
         });
     }
 
-    public void onItemClick(AdapterView adapterView, View view, int position, long id) {
-        String str = (String) adapterView.getItemAtPosition(position);
-        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
-    }
+    public static ArrayList autocomplete(String input) {
+        ArrayList resultList = null;
 
-
-    private class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
-        private ArrayList<String> resultList;
-
-        public PlacesAutoCompleteAdapter(Context context, int textViewResourceId) {
-            super(context, textViewResourceId);
-        }
-
-        @Override
-        public int getCount() {
-            return resultList.size();
-        }
-
-        @Override
-        public String getItem(int index) {
-            return resultList.get(index);
-        }
-
-        @Override
-        public Filter getFilter() {
-            Filter filter = new Filter() {
-                @Override
-                protected FilterResults performFiltering(CharSequence constraint) {
-                    FilterResults filterResults = new FilterResults();
-                    if (constraint != null) {
-                        // Retrieve the autocomplete results.
-                        resultList = autocomplete(constraint.toString());
-
-                        // Assign the data to the FilterResults
-                        filterResults.values = resultList;
-                        filterResults.count = resultList.size();
-                    }
-                    return filterResults;
-                }
-
-                @Override
-                protected void publishResults(CharSequence constraint, FilterResults results) {
-                    if (results != null && results.count > 0) {
-                        notifyDataSetChanged();
-                    }
-                    else {
-                        notifyDataSetInvalidated();
-                    }
-                }};
-            return filter;
-        }
-    }
-
-
-    private ArrayList<String> autocomplete(String input) {
-        ArrayList<String> resultList = null;
-        //ArrayList<String> resultListId = null;
-        adapter.notifyDataSetChanged();
         HttpURLConnection conn = null;
         StringBuilder jsonResults = new StringBuilder();
         try {
             StringBuilder sb = new StringBuilder(PLACES_API_BASE + TYPE_AUTOCOMPLETE + OUT_JSON);
             sb.append("?key=" + API_KEY);
-            //sb.append("types=geocode");
             sb.append("&components=country:fr");
             sb.append("&input=" + URLEncoder.encode(input, "utf8"));
 
@@ -231,76 +176,89 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
             // Create a JSON object hierarchy from the results
             JSONObject jsonObj = new JSONObject(jsonResults.toString());
             JSONArray predsJsonArray = jsonObj.getJSONArray("predictions");
-            resultList = new ArrayList<String>(predsJsonArray.length());
-            //resultListId = new ArrayList<String>(predsJsonArray.length());
+
+            // Extract the Place descriptions from the results
+            resultList = new ArrayList(predsJsonArray.length());
             for (int i = 0; i < predsJsonArray.length(); i++) {
+                System.out.println(predsJsonArray.getJSONObject(i).getString("description"));
+                System.out.println("============================================================");
                 resultList.add(predsJsonArray.getJSONObject(i).getString("description"));
-                //resultListId.add(predsJsonArray.getJSONObject(i).getString("place_id"));
             }
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
             Log.e(LOG_TAG, "Cannot process JSON results", e);
         }
-        adapter.notifyDataSetChanged();
+
         return resultList;
     }
 
-
-
     @Override
-    public void onResume()
-    {
-        super.onResume();
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        String str = (String) parent.getItemAtPosition(position);
+        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
     }
-    private int[] getCoord(String input) {
-        ArrayList<String> resultList = null;
-        HttpURLConnection conn = null;
-        StringBuilder jsonResults = new StringBuilder();
+
+    class GooglePlacesAutocompleteAdapter extends ArrayAdapter implements Filterable {
+        private ArrayList resultList;
+
+        public GooglePlacesAutocompleteAdapter(Context context, int textViewResourceId) {
+            super(context, textViewResourceId);
+        }
+
+        @Override
+        public int getCount() {
+            return resultList.size();
+        }
+
+        @Override
+        public String getItem(int index) {
+            return (String) resultList.get(index);
+        }
+
+        @Override
+        public Filter getFilter() {
+            Filter filter = new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    FilterResults filterResults = new FilterResults();
+                    if (constraint != null) {
+                        // Retrieve the autocomplete results.
+                        resultList = autocomplete(constraint.toString());
+
+                        // Assign the data to the FilterResults
+                        filterResults.values = resultList;
+                        filterResults.count = resultList.size();
+                    }
+                    return filterResults;
+                }
+
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    if (results != null && results.count > 0) {
+                        notifyDataSetChanged();
+                    } else {
+                        notifyDataSetInvalidated();
+                    }
+                }
+            };
+            return filter;
+        }
+    }
+
+    public String getLocationFromAddress(Event ev){
+        Geocoder coder = new Geocoder(this);
+        List<Address> address;
         try {
-
-            StringBuilder sb = new StringBuilder(PLACES_API_BASE_GEOCODE + OUT_JSON);
-            sb.append("?key=" + API_KEY);
-            //sb.append("types=geocode");
-            sb.append("&components=country:fr");
-            sb.append("&address=" + URLEncoder.encode(input, "utf8"));
-
-            URL url = new URL(sb.toString());
-            conn = (HttpURLConnection) url.openConnection();
-            InputStreamReader in = new InputStreamReader(conn.getInputStream());
-
-            // Load the results into a StringBuilder
-            int read;
-            char[] buff = new char[1024];
-            while ((read = in.read(buff)) != -1) {
-                jsonResults.append(buff, 0, read);
+            address = coder.getFromLocationName(ev.getAdresse(),5);
+            if (address==null) {
+                return null;
             }
-        } catch (MalformedURLException e) {
-            Log.e(LOG_TAG, "Error processing Places API URL", e);
-            return null;
+            Address location=address.get(0);
+           ev.setLatitude(location.getLatitude());
+           ev.setLongitude(location.getLongitude());
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error connecting to Places API", e);
-            return null;
-        } finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
+            e.printStackTrace();
         }
-        try {
-            JSONObject jsonObj = new JSONObject(jsonResults.toString());
-            //Log.w("RECUP", jsonResults.toString());
-            lon = ((JSONArray)jsonObj.get("results")).getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lng");
-            lat = ((JSONArray)jsonObj.get("results")).getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lat");
-
-            //double[] coord = new double[] {lon, lat};
-            Log.w("COORD", " coordonnee = lon/lat = " + lon + "/" + lat);
-            valCoord = true;
-        }
-        catch (JSONException e) {
-            Log.e(LOG_TAG, "Cannot process JSON results", e);
-        }
-        adapter.notifyDataSetChanged();
         return null;
-
     }
 
 

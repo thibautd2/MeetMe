@@ -12,143 +12,9 @@
         android:requiresFadingEdge="horizontal|vertical"
         android:background="#f5f4f4">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/event_header"
-            android:id="@+id/relativeLayout"
-            android:alpha="1">
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:ems="10"
-                android:layout_below="@+id/event_name"
-                android:id="@+id/event_description"
-                android:hint="Description"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:padding="10dp"
-                android:minLines="2"
-                android:background="#ffffff"
-                android:layout_alignEnd="@+id/event_name"
-                android:maxLines="2"
-                android:layout_alignStart="@+id/event_name" />
-
-            <Button
-                android:text="Créer "
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignEnd="@+id/event_description"
-                android:id="@+id/event_create"
-                android:background="@android:color/holo_blue_light"
-                android:padding="10dp"
-                android:layout_marginBottom="10dp"
-                android:fadingEdge="horizontal|vertical"
-                android:elevation="1dp"
-                android:textColor="#2d2d2d" />
-
-
-            <TextView
-                android:text="@string/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/event_title"
-                android:textColor="#000000"
-                android:textSize="20sp"
-                android:layout_marginLeft="40dp"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp" />
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:ems="10"
-                android:id="@+id/event_name"
-                android:selectAllOnFocus="false"
-                android:hint="Name"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:padding="10dp"
-                android:elevation="0dp"
-                android:background="#ffffff"
-
-                android:layout_below="@+id/event_title"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="20dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView3"
-                android:text="@string/visibilite"
-                android:ems="10"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentStart="true"
-                android:gravity="center"
-                android:layout_below="@+id/event_date"
-                android:layout_marginTop="15dp" />
-
-            <RadioButton
-                android:text="@string/all"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/event_all"
-                android:textColor="#2d2d2d"
-                android:layout_alignBaseline="@+id/event_friends"
-                android:layout_alignBottom="@+id/event_friends"
-                android:layout_alignEnd="@+id/event_create"
-                android:layout_marginRight="10dp" />
-
-            <AutoCompleteTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="textPostalAddress"
-                android:ems="10"
-                android:id="@+id/event_adresse"
-                android:hint="Adresse"
-                android:padding="10dp"
-                android:background="#ffffff"
-                android:layout_below="@+id/event_description"
-                android:layout_alignStart="@+id/event_description">  <requestFocus />
-            </AutoCompleteTextView>
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="textPostalAddress"
-                android:ems="10"
-                android:id="@+id/event_date"
-                android:hint="Date et Heure"
-                android:padding="10dp"
-                android:background="#ffffff"
-                android:layout_below="@+id/event_adresse"
-                android:layout_alignStart="@+id/event_adresse"
-                android:layout_marginTop="10dp" />
-
-            <RadioButton
-                android:text="@string/amis"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/event_friends"
-                android:textColor="#2d2d2d"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="17dp"
-                android:layout_below="@+id/textView3"
-                android:layout_alignStart="@+id/event_date"
-                android:layout_marginTop="15dp" />
-        </RelativeLayout>
-
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="85dp"
             android:id="@+id/event_header"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
@@ -174,6 +40,141 @@
             android:layout_alignBottom="@+id/textView2"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="15dp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/event_header">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/event_header"
+                android:id="@+id/relativeLayout"
+                android:alpha="1">
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:ems="10"
+                    android:layout_below="@+id/event_name"
+                    android:id="@+id/event_description"
+                    android:hint="Description"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:padding="10dp"
+                    android:minLines="2"
+                    android:background="#ffffff"
+                    android:layout_alignEnd="@+id/event_name"
+                    android:maxLines="2"
+                    android:layout_alignStart="@+id/event_name" />
+
+
+                <TextView
+                    android:text="@string/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/event_title"
+                    android:textColor="#000000"
+                    android:textSize="20sp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:ems="10"
+                    android:id="@+id/event_name"
+                    android:selectAllOnFocus="false"
+                    android:hint="Name"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:padding="10dp"
+                    android:elevation="0dp"
+                    android:background="#ffffff"
+
+                    android:layout_below="@+id/event_title"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="20dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView3"
+                    android:text="@string/visibilite"
+                    android:ems="10"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentStart="true"
+                    android:gravity="center"
+                    android:layout_below="@+id/event_date"
+                    android:layout_marginTop="15dp" />
+
+                <AutoCompleteTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPostalAddress"
+                    android:ems="10"
+                    android:id="@+id/event_adresse"
+                    android:hint="Adresse"
+                    android:padding="10dp"
+                    android:background="#ffffff"
+                    android:layout_below="@+id/event_description"
+                    android:layout_alignStart="@+id/event_description">  <requestFocus />
+                </AutoCompleteTextView>
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPostalAddress"
+                    android:ems="10"
+                    android:id="@+id/event_date"
+                    android:hint="Date et Heure"
+                    android:padding="10dp"
+                    android:background="#ffffff"
+                    android:layout_below="@+id/event_adresse"
+                    android:layout_alignStart="@+id/event_adresse"
+                    android:layout_marginTop="10dp" />
+
+                <RadioButton
+                    android:text="@string/amis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/event_friends"
+                    android:textColor="#2d2d2d"
+                    android:layout_marginLeft="10dp"
+                    android:layout_alignStart="@+id/event_date"
+                    android:layout_below="@+id/textView3"
+                    android:layout_marginTop="20dp" />
+
+                <RadioButton
+                    android:text="@string/all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/event_all"
+                    android:textColor="#2d2d2d"
+                    android:layout_marginRight="10dp"
+                    android:layout_alignBaseline="@+id/event_friends"
+                    android:layout_alignBottom="@+id/event_friends"
+                    android:layout_alignEnd="@+id/event_create" />
+
+                <Button
+                    android:text="Créer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/event_create"
+                    android:layout_below="@+id/event_all"
+                    android:layout_alignEnd="@+id/event_description"
+                    android:layout_marginTop="30dp"
+                    android:background="?android:attr/colorAccent" />
+            </RelativeLayout>
+        </ScrollView>
 
     </RelativeLayout>
 </LinearLayout>
