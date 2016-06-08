@@ -1,6 +1,15 @@
 package com.mti.meetme;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.NinePatch;
 import android.graphics.Point;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -149,7 +158,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private void displayMessageIn(String message)
     {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, 0, 0, 5);
+        params.setMargins(0, 0, 0, 10);
         params.gravity = Gravity.END;
 
         Point size = new Point();
@@ -188,7 +197,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private void fillFromHistory(JSONArray messages) throws JSONException
     {
         LinearLayout.LayoutParams paramsIn = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        paramsIn.setMargins(0, 0, 0, 5);
+        paramsIn.setMargins(0, 0, 10, 15);
         paramsIn.gravity = Gravity.END;
 
         LinearLayout.LayoutParams paramsOut = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -206,7 +215,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 TextView messageView = new TextView(this);
                 messageView.setLayoutParams(paramsIn);
                 messageView.setMaxWidth(size.x / 2);
-                messageView.setBackground(getResources().getDrawable(R.drawable.bubble_in));
+                messageView.setBackground(getResources().getDrawable(R.drawable.bubble_out));
                 messageView.setText(message.getString("text"));
 
                 messagesLayout.addView(messageView);
