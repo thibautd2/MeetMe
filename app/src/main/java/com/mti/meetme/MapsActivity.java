@@ -101,6 +101,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Firebase.setAndroidContext(this);
 
         gender = Gender.ALL;
         markers = new WeakHashMap<String, Marker>();
@@ -208,6 +209,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onResume() {
         super.onResume();
+        Firebase.setAndroidContext(this);
         backtwice = 0;
         followMeLocationSource.getBestAvailableProvider();
         if (mMap != null)

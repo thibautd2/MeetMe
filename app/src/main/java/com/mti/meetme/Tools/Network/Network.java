@@ -20,6 +20,7 @@ public class Network {
     {
         return new Firebase(connexion_to_user+"/"+Uid);
     }
+
     public static Firebase find_MeetmeFriends(String Uid) {
         return new Firebase(connexion_to_user+"/"+Uid + "/" + "meetMeFriends");
     }
@@ -27,13 +28,14 @@ public class Network {
     public static Firebase find_FriendRequestReceived(String Uid) {
         return new Firebase(connexion_to_user+"/"+Uid + "/" + "friendRequestReceived");
     }
+
     public static  Firebase create_event(String event)
     {
         return new Firebase(connexion_to_event+"/"+event);
     }
+
     public static  Firebase find_event(String event)
     {
         return new Firebase(connexion_to_event+"/"+event);
     }
-
 }

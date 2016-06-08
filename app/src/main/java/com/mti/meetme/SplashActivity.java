@@ -33,6 +33,7 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
 
         FacebookSdk.sdkInitialize(this);
         Firebase.setAndroidContext(this);
+
         ref = Network.bdd_connexion;
         launcher = false;
 
