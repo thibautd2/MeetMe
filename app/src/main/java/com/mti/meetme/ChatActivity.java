@@ -215,7 +215,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 TextView messageView = new TextView(this);
                 messageView.setLayoutParams(paramsIn);
                 messageView.setMaxWidth(size.x / 2);
-                messageView.setBackground(getResources().getDrawable(R.drawable.bubble_out));
+                messageView.setBackground(getResources().getDrawable(R.drawable.bubble_in));
                 messageView.setText(message.getString("text"));
 
                 messagesLayout.addView(messageView);

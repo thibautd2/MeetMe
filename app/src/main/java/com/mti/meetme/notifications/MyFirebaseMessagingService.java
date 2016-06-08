@@ -36,7 +36,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
         Log.i(TAG, "From: " + remoteMessage.getFrom());
         Log.i(TAG, "Notification Message Body: " + remoteMessage.getNotification().getBody());
 
-        sendNotification(remoteMessage.getNotification().getBody());
+        sendNotification(remoteMessage.getNotification().getBody(), remoteMessage.getNotification().getTitle());
     }
 
     /**
@@ -44,7 +44,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
      *
      * @param messageBody FCM message body received.
      */
-    private void sendNotification(String messageBody) {
+    private void sendNotification(String messageBody, String messageTitle) {
         Intent intent = new Intent(this, ProfileActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
@@ -52,8 +52,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_list)
-                .setContentTitle("FCM Message")
+                .setSmallIcon(R.drawable.logo)
+                .setContentTitle(messageTitle)
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)

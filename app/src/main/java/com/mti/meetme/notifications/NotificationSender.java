@@ -45,8 +45,6 @@ public class NotificationSender extends AsyncTask<String, Void, Void> {
 
             //Add JSON data into POST request body
 
-            String destinationId = params[0];
-
             JSONObject parent=new JSONObject();
             JSONObject notif=new JSONObject();
             notif.put("body", params[2]);
