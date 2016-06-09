@@ -147,6 +147,14 @@ public class UserListActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed()
+    {
+        super.onBackPressed();
+        startActivity(new Intent(UserListActivity.this, MapsActivity.class));
+
+    }
+
     private double getDistToMe(User u1) {
         LatLng latLng = new LatLng(u1.getLatitude(), u1.getLongitude());
 

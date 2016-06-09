@@ -53,9 +53,6 @@ public class ProfileActivity extends AppCompatActivity{
     private TextView  friendsTextView;
     private TextView  descriptionTextView;
 
-    private Menu menu;
-    private MenuItem editDescItem;
-
     private User user;
     private User currentUser;
 
@@ -68,6 +65,8 @@ public class ProfileActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        Firebase.setAndroidContext(this);
 
         user = (User) getIntent().getSerializableExtra("User");
         pubnub = new Pubnub(getResources().getString(R.string.PublishKey), getResources().getString(R.string.PublishKey));
@@ -83,6 +82,12 @@ public class ProfileActivity extends AppCompatActivity{
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Firebase.setAndroidContext(this);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_profile, menu);
         super.onCreateOptionsMenu(menu);
@@ -94,7 +99,6 @@ public class ProfileActivity extends AppCompatActivity{
         else
         {
             menu.findItem(R.id.menu_message).setVisible(true);
-            menu.findItem(R.id.menu_heart).setVisible(true);
         }
 
         return true;
@@ -366,7 +370,7 @@ public class ProfileActivity extends AppCompatActivity{
             @Override
             public void onClick(View arg0) {
                 friendRequest(FacebookUser.getInstance(), currentUser);
-                Toast.makeText(getApplicationContext(), "Nouvelle demande d'amis envoyé à " + currentUser.getName(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Nouvelle demande d'ami envoyée à " + currentUser.getName(), Toast.LENGTH_LONG).show();
                // findViewById(R.id.add_friends_btn).setVisibility(View.INVISIBLE);
                 getFriendsPictures();
                // setFriendBtn();

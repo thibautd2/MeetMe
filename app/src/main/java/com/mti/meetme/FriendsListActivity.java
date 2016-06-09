@@ -210,5 +210,10 @@ public class FriendsListActivity extends AppCompatActivity {
             }
         });
     }
-
+    @Override
+    public void onBackPressed()
+    {
+        super.onBackPressed();
+        startActivity(new Intent(FriendsListActivity.this, MapsActivity.class));
+    }
 }

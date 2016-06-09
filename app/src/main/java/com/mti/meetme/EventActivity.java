@@ -1,10 +1,15 @@
 package com.mti.meetme;
 import android.content.Intent;
-import android.media.Image;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
-import android.support.annotation.StringDef;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -30,6 +35,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONException;
 import android.content.Context;
@@ -39,25 +45,29 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Filter;
 import android.widget.Filterable;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
+
 /**
  * Created by thiba_000 on 04/06/2016.
  */
 
-public class EventActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class EventActivity extends Fragment implements AdapterView.OnItemClickListener {
 
-    private static final String LOG_TAG = "GooglePlacesAutocomplete";
+    private static final String LOG_TAG = "ErreurApiGoogle";
     private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
     private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
     private static final String OUT_JSON = "/json";
-    private static  String API_KEY;
+    private static final String API_KEY = "AIzaSyDcQEKTAlU8QCI-_W3RLPonTzJcLJMsrSk";
+    private static double lon;
+    private static double lat;
+    public static boolean valCoord;
+    public static  GooglePlacesAutocompleteAdapter adapter;
+    public boolean adressevalid = true;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_event);
-
-        API_KEY = "AIzaSyBiS4uTQvQH-1bohB0TUpH9YNynRS299gw";
-        ImageView img = (ImageView) findViewById(R.id.event_header);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        ImageView img = (ImageView)  getView().findViewById(R.id.event_header);
 
         final User u  = FacebookUser.getInstance();
         String currentDesire = u.getEnvie();
@@ -74,16 +84,16 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
         if(currentDesire.compareTo(TodayDesire.Desire.Everything.toString())==0)
             img.setBackgroundResource(R.drawable.allfine);
 
-        Button Create = (Button) findViewById(R.id.event_create);
-        final EditText name = (EditText) findViewById(R.id.event_name);
-        final EditText desc = (EditText) findViewById(R.id.event_description);
-        final EditText adresse = (EditText) findViewById(R.id.event_adresse);
-        final EditText date = (EditText) findViewById(R.id.event_date);
-        final RadioButton friend = (RadioButton) findViewById(R.id.event_friends);
-        final RadioButton all = (RadioButton) findViewById(R.id.event_all);
-        AutoCompleteTextView autoCompView = (AutoCompleteTextView) findViewById(R.id.event_adresse);
-
-        autoCompView.setAdapter(new GooglePlacesAutocompleteAdapter(this, R.layout.adresse_list_item));
+        Button Create = (Button) getView().findViewById(R.id.event_create);
+        final EditText name = (EditText) getView().findViewById(R.id.event_name);
+        final EditText desc = (EditText) getView().findViewById(R.id.event_description);
+        final EditText adresse = (EditText) getView().findViewById(R.id.event_adresse);
+        final EditText date = (EditText) getView().findViewById(R.id.event_date);
+        final RadioButton friend = (RadioButton) getView().findViewById(R.id.event_friends);
+        final RadioButton all = (RadioButton) getView().findViewById(R.id.event_all);
+        AutoCompleteTextView autoCompView = (AutoCompleteTextView) getView().findViewById(R.id.event_adresse);
+        adapter = new GooglePlacesAutocompleteAdapter(getApplicationContext(), R.layout.adresse_list_item);
+        autoCompView.setAdapter(adapter);
         autoCompView.setOnItemClickListener(this);
 
         CompoundButton.OnCheckedChangeListener change = new CompoundButton.OnCheckedChangeListener() {
@@ -116,24 +126,45 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
                     String visibility = "friends";
                     if (all.isChecked())
                         visibility = "all";
+
                     Event event = new Event(name.getText().toString(), desc.getText().toString(), adresse.getText().toString(),
                             u.getUid(), visibility, u.getEnvie(), date.getText().toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
-                    Firebase ref = Network.create_event("Event :"+name.getText().toString() + u.getUid());
-
-                    ref.setValue(event);
-                    GeoFire geoFire = new GeoFire(Network.geofire);
-                    geoFire.setLocation("Event :"+name.getText().toString() + u.getUid(), new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()));
-                    Toast.makeText(getApplicationContext(), "Evénement Créé !", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(EventActivity.this, MapsActivity.class);
-                    startActivity(intent);
+                    adressevalid = true;
+                    getLocationFromAddress(event);
+                    if(!adressevalid)
+                    {
+                        Toast.makeText(getApplicationContext(), "Merci de sélectionner une adresse proposée", Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        if (visibility.compareTo("friends") == 0)
+                            event.setInvited(u.getMeetMeFriends());
+                        Firebase ref = Network.create_event("Event :" + name.getText().toString() + u.getUid());
+                        ref.setValue(event);
+                        GeoFire geoFire = new GeoFire(Network.geofire);
+                        geoFire.setLocation("Event :" + name.getText().toString() + u.getUid(), new GeoLocation(event.getLatitude(), event.getLongitude()));
+                        Toast.makeText(getApplicationContext(), "Evénement Créé !", Toast.LENGTH_LONG).show();
+                        //todo uncomment this
+                         Intent intent = new Intent(getContext(), MapsActivity.class);
+                        startActivity(intent);
+                    }
                 }
             }
         });
     }
 
-    public void onItemClick(AdapterView adapterView, View view, int position, long id) {
-        String str = (String) adapterView.getItemAtPosition(position);
-        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+
+        return inflater.inflate(R.layout.activity_event, container, false);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+
     }
 
     public static ArrayList autocomplete(String input) {
@@ -158,8 +189,10 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
                 jsonResults.append(buff, 0, read);
             }
         } catch (MalformedURLException e) {
+            Log.e(LOG_TAG, "Error processing Places API URL", e);
             return resultList;
         } catch (IOException e) {
+            Log.e(LOG_TAG, "Error connecting to Places API", e);
             return resultList;
         } finally {
             if (conn != null) {
@@ -180,9 +213,16 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
                 resultList.add(predsJsonArray.getJSONObject(i).getString("description"));
             }
         } catch (JSONException e) {
+            Log.e(LOG_TAG, "Cannot process JSON results", e);
         }
 
         return resultList;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        String str = (String) parent.getItemAtPosition(position);
+        Toast.makeText(getContext(), str, Toast.LENGTH_SHORT).show();
     }
 
     class GooglePlacesAutocompleteAdapter extends ArrayAdapter implements Filterable {
@@ -211,7 +251,6 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
                     if (constraint != null) {
                         // Retrieve the autocomplete results.
                         resultList = autocomplete(constraint.toString());
-
                         // Assign the data to the FilterResults
                         filterResults.values = resultList;
                         filterResults.count = resultList.size();
@@ -232,11 +271,25 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
         }
     }
 
+    public String getLocationFromAddress(Event ev){
+        Geocoder coder = new Geocoder(getApplicationContext());
+        List<Address> address;
+        try {
+            address = coder.getFromLocationName(ev.getAdresse(),5);
+            if (address==null || address.size() == 0 ) {
+                adressevalid = false;
+                return null;
+            }
 
-    @Override
-    public void onBackPressed()
-    {
-        super.onBackPressed();
-        startActivity(new Intent(EventActivity.this, MapsActivity.class));
+            Address location=address.get(0);
+            ev.setLatitude(location.getLatitude());
+            ev.setLongitude(location.getLongitude());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
+
+
+
 }

@@ -27,6 +27,10 @@ public class Event implements Serializable {
     public Double latitude;
     @com.google.gson.annotations.SerializedName("longitude")
     public Double longitude;
+    @com.google.gson.annotations.SerializedName("invited")
+    public String invited;
+
+
 
     public Event(){};
 
@@ -40,6 +44,14 @@ public class Event implements Serializable {
         this.date = date;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public String getInvited() {
+        return invited;
+    }
+
+    public void setInvited(String invited) {
+        this.invited = invited;
     }
 
     public String getName() {

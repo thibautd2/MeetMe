@@ -82,12 +82,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     FollowMeLocationSource followMeLocationSource;
     private WeakHashMap<String, Marker> markers;
     private int rayon = 10000;
+    public static int backtwice = 0;
 
     private enum Gender {
         MEN,
         WOMEN,
         ALL
     };
+
     private Gender gender;
 
     ListView mDrawerList;
@@ -98,18 +100,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Firebase.setAndroidContext(this);
 
         gender = Gender.ALL;
         markers = new WeakHashMap<String, Marker>();
         super.onCreate(savedInstanceState);
-
+        backtwice = 0;
         setContentView(R.layout.activity_maps);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         geoFire = new GeoFire(Network.geofire);
         all_user = new ArrayList<>();
-        all_event= new ArrayList<>();
+        all_event = new ArrayList<>();
 
         followMeLocationSource = new FollowMeLocationSource(this);
 
@@ -119,7 +122,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MapsActivity.this, EventActivity.class);
+                Intent intent = new Intent(MapsActivity.this, CreateEventManager.class);
                 startActivity(intent);
             }
         });
@@ -127,8 +130,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-    public  void init_menu()
-    {
+    public void init_menu() {
         final ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_drawer); // set a custom icon for the default home button
         ab.setDisplayShowHomeEnabled(true); // show or hide the default home button
@@ -151,8 +153,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-    public void init_envie_du_jour()
-    {
+    public void init_envie_du_jour() {
         final Dialog dialog = new Dialog(MapsActivity.this);
         dialog.setTitle("Envie du jour !");
         dialog.setContentView(R.layout.envie_du_jour);
@@ -208,12 +209,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onResume() {
         super.onResume();
+        Firebase.setAndroidContext(this);
+        backtwice = 0;
         followMeLocationSource.getBestAvailableProvider();
         if (mMap != null)
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this,  getString(R.string.no_permission_granted), Toast.LENGTH_LONG).show();
-            }
-        else
+                Toast.makeText(this, getString(R.string.no_permission_granted), Toast.LENGTH_LONG).show();
+            } else
                 mMap.setMyLocationEnabled(true);
 
     }
@@ -316,7 +318,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         if (mMap == null) {
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this,  getString(R.string.no_permission_granted), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.no_permission_granted), Toast.LENGTH_LONG).show();
             } else {
                 mMap = googleMap;
                 mMap.setMyLocationEnabled(true);
@@ -330,8 +332,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void updateMap() {
-        if(mMap != null)
-        {
+        if (mMap != null) {
             mMap.clear();
             searchCircle = mMap.addCircle(new CircleOptions().center(latLngCenter).radius(rayon));
             searchCircle.setFillColor(Color.argb(95, 255, 255, 255));
@@ -340,7 +341,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         all_event.clear();
         all_user.clear();
-        getAllUSerPosition();
+        getAllUSerandEventPosition();
     }
 
     private void GetCurrentLocation() {
@@ -349,7 +350,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         FacebookUser.getInstance().setLatitude(pos.latitude);
         FacebookUser.getInstance().setLongitude(pos.longitude);
         latLngCenter = pos;
-        if(mMap != null) {
+        if (mMap != null) {
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(pos.latitude, pos.longitude), 13));
         }
         sendPosition();
@@ -361,10 +362,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Location location = null;
         for (int i = 0; i < providers.size(); i++) {
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this,  getString(R.string.no_permission_granted), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.no_permission_granted), Toast.LENGTH_LONG).show();
                 break;
-            }
-            else
+            } else
                 location = locationManager.getLastKnownLocation(providers.get(i));
 
             if (location != null)
@@ -394,8 +394,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-    public void update_circle()
-    {
+    public void update_circle() {
         LatLng pos = new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
         searchCircle = mMap.addCircle(new CircleOptions().center(pos).radius(rayon));
         searchCircle.setFillColor(Color.argb(95, 255, 255, 255));
@@ -403,14 +402,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         searchCircle.setStrokeColor(Color.argb(100, 0, 221, 255));
     }
 
-    private void getAllUSerPosition()
-    {
+
+    private void getAllUSerandEventPosition() {
         GeoLocation geoLocation = new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
-        GeoQuery geoQuery = geoFire.queryAtLocation(geoLocation, rayon/1000);
+        GeoQuery geoQuery = geoFire.queryAtLocation(geoLocation, rayon / 1000);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
-                if(!key.startsWith("Event :")) {
+                if (!key.startsWith("Event :")) {
                     Firebase ref = Network.find_user(key);
                     final String fKey = key;
                     ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -448,19 +447,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         public void onCancelled(FirebaseError firebaseError) {
                         }
                     });
-                }
-                else {
+                } else {
                     Firebase ref = Network.find_event(key);
                     final String fKey = key;
                     ref.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             Event event = dataSnapshot.getValue(Event.class);
-                            Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                    event.getLatitude(), event.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.paryt_marker)).snippet(String.valueOf("event "+all_event.size())));
-                            all_event.add(event);
-                            if (fKey != null && marker != null && markers.get(fKey) == null)
-                                markers.put(fKey, marker);
+                            if(event.visibility.compareTo("all") == 0 || (event.getInvited()!=null && FacebookUser.getInstance().getMeetMeFriends().contains(event.ownerid)) || event.ownerid.compareTo(FacebookUser.getInstance().getUid()) == 0) {
+                                Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                        event.getLatitude(), event.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.paryt_marker)).snippet(String.valueOf("event " + all_event.size())));
+                                all_event.add(event);
+                                if (fKey != null && marker != null && markers.get(fKey) == null)
+                                    markers.put(fKey, marker);
+                            }
                         }
 
                         @Override
@@ -506,12 +506,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             }
                         }
                     });
-                }
-                else {
+                } else {
                     latLngCenter = new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
                     updateMap();
                 }
             }
+
             @Override
             public void onGeoQueryReady() {
             }
@@ -520,50 +520,48 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onGeoQueryError(FirebaseError error) {
             }
         });
+    }
 
-        }
+    public void init_infos_window() {
+        if (mMap != null)
+            mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                @Override
+                public void onInfoWindowClick(Marker marker) {
+                    if (!marker.getSnippet().startsWith("event ")) {
+                        final User user = all_user.get(Integer.parseInt(marker.getSnippet()));
+                        final Dialog dialog = new Dialog(MapsActivity.this);
+                        dialog.setContentView(R.layout.user_pop_up);
 
-    public void init_infos_window()
-    {
-        if(mMap != null)
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                if(!marker.getSnippet().startsWith("event "))
-                {
-                final User user = all_user.get(Integer.parseInt(marker.getSnippet()));
-                final Dialog dialog = new Dialog(MapsActivity.this);
-                dialog.setContentView(R.layout.user_pop_up);
+                        int age = user.convertBirthdayToAge();
+                        dialog.setTitle(user.getName() + "  " + age + " ans");
+                        ImageView image = (ImageView) dialog.findViewById(R.id.user_img2);
 
-                int age = user.convertBirthdayToAge();
-                dialog.setTitle(user.getName()+"  "+age+" ans");
-                ImageView image = (ImageView) dialog.findViewById(R.id.user_img2);
+                        Picasso.with(MapsActivity.this).load(user.getPic1()).fit().centerCrop().into(image);
+                        TextView accept = (TextView) dialog.findViewById(R.id.interessé);
+                        TextView cancel = (TextView) dialog.findViewById(R.id.pasinteressé);
+                        accept.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
 
-                Picasso.with(MapsActivity.this).load(user.getPic1()).fit().centerCrop().into(image);
-                TextView accept = (TextView) dialog.findViewById(R.id.interessé);
-                TextView cancel = (TextView) dialog.findViewById(R.id.pasinteressé);
-                accept.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
+                                Intent intent = new Intent(MapsActivity.this, ProfileActivity.class);
+                                Bundle b = new Bundle();
+                                b.putSerializable("User", user);
+                                intent.putExtras(b);
+                                startActivity(intent);
+                            }
+                        });
 
-                        Intent intent = new Intent(MapsActivity.this, ProfileActivity.class);
-                        Bundle b = new Bundle();
-                        b.putSerializable("User", user);
-                        intent.putExtras(b);
-                        startActivity(intent);
+                        cancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+                        dialog.show();
                     }
-                });
-
-                cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
-            }}
-        });
+                }
+            });
 
         GoogleMap.InfoWindowAdapter adapt = new GoogleMap.InfoWindowAdapter() {
             @Override
@@ -574,16 +572,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 TextView age = (TextView) v.findViewById(R.id.user_age);
                 TextView distance = (TextView) v.findViewById(R.id.distance);
 
-                if(!arg0.getSnippet().startsWith("event ")) //UTILISATEUR
+                if (!arg0.getSnippet().startsWith("event ")) //UTILISATEUR
                 {
                     int id = Integer.parseInt(arg0.getSnippet());
                     Log.e("MARKER ID", "MARKER ID : " + id);
                     User u = null;
-                    if(id < all_user.size())
-                     u = all_user.get(id);
-                    if(u!=null) {
-                         double dist =  CalculateDistance.getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(u.getLatitude(), u.getLongitude()));
-                        distance.setText(String.format("%.1f",dist)+ " km");
+                    if (id < all_user.size())
+                        u = all_user.get(id);
+                    if (u != null) {
+                        double dist = CalculateDistance.getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(u.getLatitude(), u.getLongitude()));
+                        distance.setText(String.format("%.1f", dist) + " km");
                         name.setText(u.getName());
                         age.setText(String.valueOf(u.convertBirthdayToAge()) + " ans");
                         Picasso.with(getApplication())
@@ -593,19 +591,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 .into(img, new InfoWindowRefresher(arg0));
                     }
                     return v;
-                }
-                else //Event
+                } else //Event
                 {
                     String token = "event ";
                     String realid = arg0.getSnippet().replace(token, "");
                     int id = Integer.parseInt(realid);
                     Log.e("MARKER ID", "MARKER ID : " + id);
                     Event e = null;
-                    if(id < all_event.size())
-                    e = all_event.get(id);
-                    if(e != null) {
+                    if (id < all_event.size())
+                        e = all_event.get(id);
+                    if (e != null) {
                         Double dist = (CalculateDistance.getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(e.getLatitude(), e.getLongitude())));
-                        distance.setText(String.format("%.1f",dist )+ " km");
+                        distance.setText(String.format("%.1f", dist) + " km");
                         img.setBackgroundResource(R.drawable.paryt_marker);
                         name.setText(e.getName());
                         age.setText(e.date);
@@ -613,15 +610,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 return v;
             }
+
             @Override
             public View getInfoContents(Marker marker) {
                 return null;
             }
         };
-        if(mMap!=null)
-        mMap.setInfoWindowAdapter(adapt);
+        if (mMap != null)
+            mMap.setInfoWindowAdapter(adapt);
     }
-
 
 
     private class InfoWindowRefresher implements Callback {
@@ -638,10 +635,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         @Override
         public void onSuccess() {
-            if (markerToRefresh != null && markerToRefresh.isInfoWindowShown() ) {
+            if (markerToRefresh != null && markerToRefresh.isInfoWindowShown()) {
                 markerToRefresh.hideInfoWindow();
                 markerToRefresh.showInfoWindow();
             }
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        backtwice += 1;
+        if (backtwice >= 2) {
+            backtwice = 0;
+            super.onBackPressed();
+            return;
+        } else
+                Toast.makeText(this, "Appuie à nouveau pour quitter Meetme", Toast.LENGTH_LONG).show();
+
+    }
+
 }
+
