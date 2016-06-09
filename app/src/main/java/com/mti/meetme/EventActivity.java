@@ -49,8 +49,6 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
 
     private static final String LOG_TAG = "ErreurApiGoogle";
     private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
-    //https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=API_KEY
-    private static final String PLACES_API_BASE_GEOCODE = "https://maps.googleapis.com/maps/api/geocode";
     private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
     private static final String OUT_JSON = "/json";
     private static final String API_KEY = "AIzaSyDcQEKTAlU8QCI-_W3RLPonTzJcLJMsrSk";
@@ -58,6 +56,7 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
     private static double lat;
     public static boolean valCoord;
     public static  GooglePlacesAutocompleteAdapter adapter;
+    public boolean adressevalid = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,14 +125,23 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
 
                     Event event = new Event(name.getText().toString(), desc.getText().toString(), adresse.getText().toString(),
                             u.getUid(), visibility, u.getEnvie(), date.getText().toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
+                    adressevalid = true;
                     getLocationFromAddress(event);
-                    Firebase ref = Network.create_event("Event :"+name.getText().toString() + u.getUid());
-                    ref.setValue(event);
-                    GeoFire geoFire = new GeoFire(Network.geofire);
-                    geoFire.setLocation("Event :"+name.getText().toString() + u.getUid(), new GeoLocation(event.getLatitude(), event.getLongitude()));
-                    Toast.makeText(getApplicationContext(), "Evénement Créé !", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(EventActivity.this, MapsActivity.class);
-                    startActivity(intent);
+                    if(!adressevalid)
+                    {
+                        Toast.makeText(getApplicationContext(), "Merci de sélectionner une adresse proposée", Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        if (visibility.compareTo("friends") == 0)
+                            event.setInvited(u.getMeetMeFriends());
+                        Firebase ref = Network.create_event("Event :" + name.getText().toString() + u.getUid());
+                        ref.setValue(event);
+                        GeoFire geoFire = new GeoFire(Network.geofire);
+                        geoFire.setLocation("Event :" + name.getText().toString() + u.getUid(), new GeoLocation(event.getLatitude(), event.getLongitude()));
+                        Toast.makeText(getApplicationContext(), "Evénement Créé !", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(EventActivity.this, MapsActivity.class);
+                        startActivity(intent);
+                    }
                 }
             }
         });
@@ -223,7 +231,6 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
                     if (constraint != null) {
                         // Retrieve the autocomplete results.
                         resultList = autocomplete(constraint.toString());
-
                         // Assign the data to the FilterResults
                         filterResults.values = resultList;
                         filterResults.count = resultList.size();
@@ -249,12 +256,14 @@ public class EventActivity extends AppCompatActivity implements AdapterView.OnIt
         List<Address> address;
         try {
             address = coder.getFromLocationName(ev.getAdresse(),5);
-            if (address==null) {
+            if (address==null || address.size() == 0 ) {
+                adressevalid = false;
                 return null;
             }
+
             Address location=address.get(0);
-           ev.setLatitude(location.getLatitude());
-           ev.setLongitude(location.getLongitude());
+            ev.setLatitude(location.getLatitude());
+            ev.setLongitude(location.getLongitude());
         } catch (IOException e) {
             e.printStackTrace();
         }

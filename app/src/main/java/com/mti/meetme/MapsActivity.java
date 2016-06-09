@@ -341,7 +341,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         all_event.clear();
         all_user.clear();
-        getAllUSerPosition();
+        getAllUSerandEventPosition();
     }
 
     private void GetCurrentLocation() {
@@ -403,7 +403,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-    private void getAllUSerPosition() {
+    private void getAllUSerandEventPosition() {
         GeoLocation geoLocation = new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
         GeoQuery geoQuery = geoFire.queryAtLocation(geoLocation, rayon / 1000);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
@@ -454,11 +454,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             Event event = dataSnapshot.getValue(Event.class);
-                            Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                    event.getLatitude(), event.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.paryt_marker)).snippet(String.valueOf("event " + all_event.size())));
-                            all_event.add(event);
-                            if (fKey != null && marker != null && markers.get(fKey) == null)
-                                markers.put(fKey, marker);
+                            if(event.visibility.compareTo("all") == 0 || (event.getInvited()!=null && FacebookUser.getInstance().getMeetMeFriends().contains(event.ownerid)) || event.ownerid.compareTo(FacebookUser.getInstance().getUid()) == 0) {
+                                Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                        event.getLatitude(), event.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.paryt_marker)).snippet(String.valueOf("event " + all_event.size())));
+                                all_event.add(event);
+                                if (fKey != null && marker != null && markers.get(fKey) == null)
+                                    markers.put(fKey, marker);
+                            }
                         }
 
                         @Override
