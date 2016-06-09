@@ -135,6 +135,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setDisplayShowCustomEnabled(true); // enable overriding the default toolbar layout
         ab.setDisplayShowTitleEnabled(true);
+        //todo singleton on drawerAdapter then us it in listacty
         MenuSlideItems.add(new MenuSlideItem("Distance", " km", R.drawable.radar, new MenuSlideItem.MySeekBar(0, 10, 10)));
         MenuSlideItems.add(new MenuSlideItem("Genre", R.drawable.gender, new MenuSlideItem.MyCheckBox("Men", true), new MenuSlideItem.MyCheckBox("Women", true), null, null));
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -401,8 +402,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         searchCircle.setStrokeWidth(4);
         searchCircle.setStrokeColor(Color.argb(100, 0, 221, 255));
     }
-
-
 
     private void getAllUSerPosition()
     {

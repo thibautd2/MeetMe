@@ -1,6 +1,7 @@
 package com.mti.meetme;
 
 import android.content.Intent;
+import android.hardware.camera2.params.Face;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -18,13 +19,19 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.android.gms.maps.model.LatLng;
 import com.mti.meetme.Model.User;
+import com.mti.meetme.Tools.Map.CalculateDistance;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.Profil.ProfilsAdapter;
 import com.mti.meetme.controller.FacebookUser;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -119,8 +126,10 @@ public class UserListActivity extends AppCompatActivity {
               for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                   User u = postSnapshot.getValue(User.class);
                   if(u != null && u.getUid() != null && u.getUid().compareTo(FacebookUser.getInstance().getUid())!=0)
-                  users.add(u);
+                      users.add(u);
               }
+
+              sortList();
               adapter.notifyDataSetChanged();
           }
           @Override
@@ -129,5 +138,21 @@ public class UserListActivity extends AppCompatActivity {
       });
     }
 
+    public void sortList() {
+        Collections.sort(users, new Comparator<User>() {
+            @Override
+            public int compare(User o1, User o2) {
+                return Double.compare(getDistToMe(o1), getDistToMe(o2));
+            }
+        });
+    }
 
+    private double getDistToMe(User u1) {
+        LatLng latLng = new LatLng(u1.getLatitude(), u1.getLongitude());
+
+        User u2 = FacebookUser.getInstance();
+        LatLng latLng2 = new LatLng(u2.getLatitude(), u2.getLongitude());
+
+        return CalculateDistance.getDistance(latLng, latLng2);
+    }
 }

@@ -228,15 +228,18 @@ public class ProfileActivity extends AppCompatActivity{
             public void onDataChange(DataSnapshot snapshot) {
                 User u = snapshot.getValue(User.class);
 
+                ImageButton imageButton = (ImageButton) findViewById(R.id.add_friends_btn);
+                imageButton.setOnClickListener(null);
+
                 if (u.getUid().equals(currentUser.getUid()))
-                    findViewById(R.id.add_friends_btn).setVisibility(View.INVISIBLE);
+                    imageButton.setVisibility(View.INVISIBLE);
                 else if (u.haveThisFriend(currentUser.getUid()))
-                    findViewById(R.id.add_friends_btn).setBackground(getResources().getDrawable(R.drawable.valide));
+                    imageButton.setBackground(getResources().getDrawable(R.drawable.valide));
                 else if (u.haveThisFriendRequestReceived(currentUser.getUid())) {
-                    findViewById(R.id.add_friends_btn).setBackground(getResources().getDrawable(R.drawable.demande));
+                    imageButton.setBackground(getResources().getDrawable(R.drawable.demande));
                     acceptInvitationBtn();
                 } else if (u.haveThisFriendRequestSend(currentUser.getUid()))
-                    findViewById(R.id.add_friends_btn).setBackground(getResources().getDrawable(R.drawable.intero));
+                    imageButton.setBackground(getResources().getDrawable(R.drawable.intero));
                 else
                     sendInvitationBtn();
             }
@@ -272,8 +275,6 @@ public class ProfileActivity extends AppCompatActivity{
         friendsLayout = (LinearLayout) findViewById(R.id.friends_layout);
         pager = (ViewPager) findViewById(R.id.user_img_list);
         descriptionTextView = (TextView) findViewById(R.id.description_text);
-
-
     }
 
     /*********************************************************************
