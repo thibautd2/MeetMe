@@ -1,4 +1,5 @@
 package com.mti.meetme;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -26,6 +28,9 @@ import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.controller.TodayDesire;
+
+import org.joda.time.LocalDate;
+import org.joda.time.Years;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.IOException;
@@ -35,6 +40,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.json.JSONException;
@@ -63,6 +69,11 @@ public class EventActivity extends Fragment implements AdapterView.OnItemClickLi
     public static boolean valCoord;
     public static  GooglePlacesAutocompleteAdapter adapter;
     public boolean adressevalid = true;
+    DatePickerDialog dial;
+    private int year;
+    private int month;
+    private int day;
+    private EditText date;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -84,27 +95,48 @@ public class EventActivity extends Fragment implements AdapterView.OnItemClickLi
         if(currentDesire.compareTo(TodayDesire.Desire.Everything.toString())==0)
             img.setBackgroundResource(R.drawable.allfine);
 
-        Button Create = (Button) getView().findViewById(R.id.event_create);
+
+     /*   Button Create = (Button) getView().findViewById(R.id.event_create);
         final EditText name = (EditText) getView().findViewById(R.id.event_name);
         final EditText desc = (EditText) getView().findViewById(R.id.event_description);
         final EditText adresse = (EditText) getView().findViewById(R.id.event_adresse);
         final EditText date = (EditText) getView().findViewById(R.id.event_date);
         final RadioButton friend = (RadioButton) getView().findViewById(R.id.event_friends);
         final RadioButton all = (RadioButton) getView().findViewById(R.id.event_all);
-        AutoCompleteTextView autoCompView = (AutoCompleteTextView) getView().findViewById(R.id.event_adresse);
+        AutoCompleteTextView autoCompView = (AutoCompleteTextView) getView().findViewById(R.id.event_adresse);*/
         adapter = new GooglePlacesAutocompleteAdapter(getApplicationContext(), R.layout.adresse_list_item);
+
+        final Calendar c = Calendar.getInstance();
+        year = c.get(Calendar.YEAR);
+        month = c.get(Calendar.MONTH);
+        day = c.get(Calendar.DAY_OF_MONTH);
+
+        Button Create = (Button) getView().findViewById(R.id.event_create);
+        final EditText name = (EditText) getView().findViewById(R.id.event_name);
+        final EditText desc = (EditText) getView().findViewById(R.id.event_description);
+        final EditText adresse = (EditText) getView().findViewById(R.id.event_adresse);
+        date = (EditText) getView().findViewById(R.id.event_date);
+        final RadioButton friend = (RadioButton) getView().findViewById(R.id.event_friends);
+        final RadioButton all = (RadioButton) getView().findViewById(R.id.event_all);
+        AutoCompleteTextView autoCompView = (AutoCompleteTextView) getView().findViewById(R.id.event_adresse);
+        adapter = new GooglePlacesAutocompleteAdapter(getContext(), R.layout.adresse_list_item);
         autoCompView.setAdapter(adapter);
         autoCompView.setOnItemClickListener(this);
+        dial =  new DatePickerDialog(getContext(), datePickerListener, year, month,day);
+        date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dial.show();
+            }
+        });
 
         CompoundButton.OnCheckedChangeListener change = new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
                 if(isChecked) {
                     all.setChecked(false);
                     friend.setChecked(false);
                     buttonView.setChecked(true);
-
                 }
             }
         };
@@ -126,7 +158,6 @@ public class EventActivity extends Fragment implements AdapterView.OnItemClickLi
                     String visibility = "friends";
                     if (all.isChecked())
                         visibility = "all";
-
                     Event event = new Event(name.getText().toString(), desc.getText().toString(), adresse.getText().toString(),
                             u.getUid(), visibility, u.getEnvie(), date.getText().toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
                     adressevalid = true;
@@ -280,7 +311,6 @@ public class EventActivity extends Fragment implements AdapterView.OnItemClickLi
                 adressevalid = false;
                 return null;
             }
-
             Address location=address.get(0);
             ev.setLatitude(location.getLatitude());
             ev.setLongitude(location.getLongitude());
@@ -290,6 +320,22 @@ public class EventActivity extends Fragment implements AdapterView.OnItemClickLi
         return null;
     }
 
-
+    private DatePickerDialog.OnDateSetListener datePickerListener
+            = new DatePickerDialog.OnDateSetListener() {
+        public void onDateSet(DatePicker view, int selectedYear,
+                              int selectedMonth, int selectedDay) {
+            year = selectedYear;
+            month = selectedMonth;
+            day = selectedDay;
+            LocalDate eventDate = new LocalDate (year, month+1, day);
+            LocalDate now = new LocalDate();
+            if(eventDate.isBefore(now))
+                Toast.makeText(getApplicationContext(), "Merci de choisir une date valide", Toast.LENGTH_LONG).show();
+            else
+            date.setText(new StringBuilder().append(month + 1)
+                        .append("/").append(day).append("/").append(year)
+                        .append(""));
+            }
+    };
 
 }
