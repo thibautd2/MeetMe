@@ -3,10 +3,12 @@ package com.mti.meetme.notifications;
 import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
@@ -57,23 +59,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
         ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);
 
-        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        //Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.logo)
                 .setContentTitle(messageTitle)
                 .setContentText(messageBody)
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri);
-
-        /*if (isRunningInForeground())
-        {
-            Log.w("Receiving notification", "App running");
-            notificationBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.logo)
-                    .setContentTitle(messageTitle)
-                    .setContentText(messageBody)
-                    .setAutoCancel(true);
-        }*/
+                .setAutoCancel(true);
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -81,14 +72,28 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
         notificationManager.notify(0, notificationBuilder.build());
     }
 
-    private boolean isRunningInForeground() {
-        ActivityManager manager =
-                (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningTaskInfo> tasks = manager.getRunningTasks(1);
-        if (tasks.isEmpty()) {
-            return false;
+    private boolean isAppIsInBackground(Context context) {
+        boolean isInBackground = true;
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+            List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
+            for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+                if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                    for (String activeProcess : processInfo.pkgList) {
+                        if (activeProcess.equals(context.getPackageName())) {
+                            isInBackground = false;
+                        }
+                    }
+                }
+            }
+        } else {
+            List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
+            ComponentName componentInfo = taskInfo.get(0).topActivity;
+            if (componentInfo.getPackageName().equals(context.getPackageName())) {
+                isInBackground = false;
+            }
         }
-        String topActivityName = tasks.get(0).topActivity.getPackageName();
-        return topActivityName.equalsIgnoreCase(getPackageName());
+
+        return isInBackground;
     }
 }
