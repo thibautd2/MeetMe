@@ -24,6 +24,7 @@ import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.facebook.login.LoginManager;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -130,7 +131,8 @@ public class ProfileActivity extends AppCompatActivity{
                 return true;
             case R.id.menu_deco:
                 Network.bdd_connexion.unauth();
-                Intent decoIntent = new Intent(this, LoginActivity.class);
+                Intent decoIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                LoginManager.getInstance().logOut();
                 startActivity(decoIntent);
                 return true;
             default:
