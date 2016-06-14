@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.LinearGradient;
 import android.hardware.camera2.params.Face;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,7 +37,7 @@ import java.util.Map;
 /**
  * Created by thiba_000 on 12/04/2016.
  */
-public class FriendsListActivity extends AppCompatActivity {
+public class FriendsListActivity extends FragmentActivity {
 
     LinearLayoutManager mLinearLayoutManager;
     RecyclerView mRecyclerView;

@@ -21,12 +21,16 @@ public class EventUserFragmentActivity extends TabActivity {
         tabHost = (TabHost) findViewById(android.R.id.tabhost);
         TabHost.TabSpec tab1 = tabHost.newTabSpec("First Tab");
         TabHost.TabSpec tab2 = tabHost.newTabSpec("Second Tab");
+        TabHost.TabSpec tab3 = tabHost.newTabSpec("third Tab");
         tab1.setIndicator("Evénement");
         tab1.setContent(new Intent(this,EventListActivity.class));
-        tab2.setIndicator("Rencontre");
+        tab2.setIndicator("Inconnus");
         tab2.setContent(new Intent(this,UserListActivity.class));
+        tab3.setIndicator("Amis");
+        tab3.setContent(new Intent(this,FriendsListActivity.class));
         tabHost.addTab(tab1);
         tabHost.addTab(tab2);
+        tabHost.addTab(tab3);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
