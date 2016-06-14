@@ -629,7 +629,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         distance.setText(String.format("%.1f", dist) + " km");
                         img.setBackgroundResource(R.drawable.paryt_marker);
                         name.setText(e.getName());
-                        age.setText(e.date);
+                        age.setText(e.date.toString().substring(0,5));
                     }
                 }
                 return v;
