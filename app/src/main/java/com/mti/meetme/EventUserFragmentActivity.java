@@ -3,9 +3,32 @@ package com.mti.meetme;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TabHost;
+import android.widget.TextView;
+
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+import com.mti.meetme.Interface.ContextDrawerAdapter;
+import com.mti.meetme.Model.SortUserList;
+import com.mti.meetme.Tools.DrawerListAdapter;
+import com.mti.meetme.Tools.MenuSlideItem;
+import com.mti.meetme.Tools.Network.Network;
+import com.mti.meetme.controller.UserList;
+
+import java.util.ArrayList;
+
+import static com.mti.meetme.EventActivity.adapter;
 
 /**
  * Created by thiba_000 on 13/06/2016.
@@ -23,15 +46,16 @@ public class EventUserFragmentActivity extends TabActivity {
         TabHost.TabSpec tab2 = tabHost.newTabSpec("Second Tab");
         TabHost.TabSpec tab3 = tabHost.newTabSpec("third Tab");
         tab1.setIndicator("Evénement");
-        tab1.setContent(new Intent(this,EventListActivity.class));
+        tab1.setContent(new Intent(this, EventListActivity.class));
         tab2.setIndicator("Inconnus");
-        tab2.setContent(new Intent(this,UserListActivity.class));
+        tab2.setContent(new Intent(this, UserListActivity.class));
         tab3.setIndicator("Amis");
-        tab3.setContent(new Intent(this,FriendsListActivity.class));
+        tab3.setContent(new Intent(this, FriendsListActivity.class));
         tabHost.addTab(tab1);
         tabHost.addTab(tab2);
         tabHost.addTab(tab3);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_profile, menu);

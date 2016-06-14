@@ -176,7 +176,7 @@ public class ProfileActivity extends AppCompatActivity{
         alert.show();
     }
 
-    private void setupActionBar() {
+  /*  private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
 
         actionBar.setDisplayShowTitleEnabled(false);
@@ -190,7 +190,7 @@ public class ProfileActivity extends AppCompatActivity{
 
         actionBar.setCustomView(customNav, lp1);
     }
-
+*/
     private void bindViews()
     {
         nameTextView = (TextView) findViewById(R.id.name_textview);
