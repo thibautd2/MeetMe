@@ -19,6 +19,6 @@ public class CalculateDistance {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         double dist = earthRadius * c;
         int meterConversion = 1609;
-        return Double.valueOf((dist * meterConversion)/100f);
+        return Double.valueOf((dist * meterConversion)/1000f);
     }
 }

@@ -361,6 +361,13 @@ public class ProfileActivity extends AppCompatActivity{
         ).executeAsync();
     }
 
+
+    /*********************************************************************
+     *
+     *        FRIENDS HANDLING
+     *
+     *********************************************************************/
+
     private void sendInvitationBtn() {
         ImageButton imageButton = (ImageButton) findViewById(R.id.add_friends_btn);
 
@@ -383,6 +390,8 @@ public class ProfileActivity extends AppCompatActivity{
                 user_b.setFriendRequestReceived(str);
                 user_a.setFriendRequestSend(str2);
 
+                new NotificationSender().execute(user_b.getFcmID(), "Nouvelle demande d'ami reçue !", user_a.getName() + " vous a envoyé une demande");
+
                 Firebase ref = Network.find_user(user_a.getUid());
                 Map<String, Object> desc = new HashMap<>();
                 desc.put("friendRequestSend", str2);
@@ -399,6 +408,7 @@ public class ProfileActivity extends AppCompatActivity{
     private void acceptInvitationBtn() {
         ImageButton imageButton = (ImageButton) findViewById(R.id.add_friends_btn);
 
+        assert imageButton != null;
         imageButton.setOnClickListener(new View.OnClickListener() {
 
             @Override

@@ -23,6 +23,12 @@ import java.net.URL;
  */
 public class NotificationSender extends AsyncTask<String, Void, Void> {
 
+    /*Usage pour envoyer des notifications : new NotificationSender().execute(param1, param2, param3);
+
+    param1 : FCM ID de la cible -> user_cible.getFcmID()
+    param2 : titre de la notif
+    param3 : corps de la notif */
+
     @Override
     protected Void doInBackground(String... params) {
         String REQUEST_URL = "https://fcm.googleapis.com/fcm/send";
