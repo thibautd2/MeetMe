@@ -57,9 +57,9 @@ public class UserListActivity extends FragmentActivity implements ContextDrawerA
 
     LinearLayoutManager mLinearLayoutManager;
     RecyclerView mRecyclerView;
-    ArrayList<User> users;
     ProfilsAdapter adapter;
     ItemTouchHelper.SimpleCallback simpleItemTouchCallback;
+    ArrayList<User> users;
 
     private ListView mDrawerList;
     private RelativeLayout mDrawerPane;
@@ -74,7 +74,7 @@ public class UserListActivity extends FragmentActivity implements ContextDrawerA
         simpleItemTouchCallback = getNewItemTocuh();
 
         users = new ArrayList<>();
-        getall_user();
+        updateUsers();
         bindViews();
         init_menu();
         populate();
@@ -168,7 +168,7 @@ public class UserListActivity extends FragmentActivity implements ContextDrawerA
         });
     }
 
-    public void getall_user()
+    public void updateUsers()
     {
         Firebase ref = Network.getAlluser;
          ref.addValueEventListener(new ValueEventListener() {
@@ -177,11 +177,11 @@ public class UserListActivity extends FragmentActivity implements ContextDrawerA
               users.clear();
               for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                   User u = postSnapshot.getValue(User.class);
-                  if(u != null && u.getUid() != null && u.getUid().compareTo(FacebookUser.getInstance().getUid())!=0)
+                  if(u != null && u.getUid() != null && u.getUid().compareTo(FacebookUser.getInstance().getUid())!=0 && SortUserList.getInstance().user_correspond(u))
                       users.add(u);
               }
 
-              sortList();
+              UserList.getInstance().sortListUser(users);
               adapter.notifyDataSetChanged();
           }
           @Override
@@ -190,21 +190,11 @@ public class UserListActivity extends FragmentActivity implements ContextDrawerA
       });
     }
 
-    public void sortList() {
-        Collections.sort(users, new Comparator<User>() {
-            @Override
-            public int compare(User o1, User o2) {
-                return Double.compare(getDistToMe(o1), getDistToMe(o2));
-            }
-        });
-    }
-
     @Override
     public void onBackPressed()
     {
         super.onBackPressed();
         startActivity(new Intent(UserListActivity.this, MapsActivity.class));
-
     }
 
     private double getDistToMe(User u1) {
@@ -225,19 +215,7 @@ public class UserListActivity extends FragmentActivity implements ContextDrawerA
         if (btnName.equals("Distance")) {
             SortUserList.getInstance().distanceToSearch = 1000 * seekBar.getProgress();
 
-            Firebase ref = Network.getAlluser;
-
-            ref.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    UserList.getInstance().updateUserList(snapshot);
-                    adapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {
-                }
-            });
+            updateUsers();
         }
 
         //updateMap();
@@ -256,19 +234,7 @@ public class UserListActivity extends FragmentActivity implements ContextDrawerA
             else if (checkBox.getText().equals("Women"))
                 SortUserList.getInstance().displayWomen = ischecked;
 
-            Firebase ref = Network.getAlluser;
-
-            ref.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    UserList.getInstance().updateUserList(snapshot);
-                    adapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {
-                }
-            });
+            updateUsers();
         }
 
         adapter.notifyDataSetChanged();

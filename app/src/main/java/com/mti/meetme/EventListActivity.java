@@ -23,6 +23,7 @@ import com.mti.meetme.Tools.Map.CalculateDistance;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.Profil.ProfilsAdapter;
 import com.mti.meetme.controller.FacebookUser;
+import com.mti.meetme.controller.UserList;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -121,6 +122,8 @@ public class EventListActivity extends FragmentActivity {
                     if(event.visibility.compareTo("all") == 0 || (event.getInvited()!=null && FacebookUser.getInstance().getMeetMeFriends().contains(event.ownerid)) || event.ownerid.compareTo(FacebookUser.getInstance().getUid()) == 0) {
                         events.add(event);}
                 }
+
+                UserList.getInstance().sortListEvent(events);
                 adapter.notifyDataSetChanged();
             }
             @Override
