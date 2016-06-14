@@ -84,12 +84,9 @@ public class FriendsListAdapter extends  RecyclerView.Adapter<FriendsListAdapter
                             str += s + ";";
 
                     user_a.setMeetMeFriends(str);
-
                     Firebase ref = Network.find_user(user_a.getUid());
-
                     Map<String, Object> desc = new HashMap<>();
                     desc.put("meetMeFriends", str);
-
                     ref.updateChildren(desc, null);
                 }
             }

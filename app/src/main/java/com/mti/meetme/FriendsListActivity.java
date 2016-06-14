@@ -79,7 +79,7 @@ public class FriendsListActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.menu_friends:
-                Intent intent2 = new Intent(getApplicationContext(), UserListActivity.class);
+                Intent intent2 = new Intent(getApplicationContext(), EventUserFragmentActivity.class);
                 intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent2);
                 return true;

@@ -1,50 +1,42 @@
 package com.mti.meetme;
 
+import android.app.Fragment;
 import android.content.Intent;
-import android.hardware.camera2.params.Face;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.google.android.gms.maps.model.LatLng;
+import com.mti.meetme.Model.Event;
 import com.mti.meetme.Model.User;
+import com.mti.meetme.Tools.Event.EventAdapter;
 import com.mti.meetme.Tools.Map.CalculateDistance;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.Profil.ProfilsAdapter;
 import com.mti.meetme.controller.FacebookUser;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
- * Created by thiba_000 on 12/04/2016.
+ * Created by thiba_000 on 13/06/2016.
  */
 
-public class UserListActivity extends FragmentActivity {
-
+public class EventListActivity extends FragmentActivity {
     LinearLayoutManager mLinearLayoutManager;
     RecyclerView mRecyclerView;
-    ArrayList<User> users;
-    ProfilsAdapter adapter;
+    ArrayList<Event> events;
+    EventAdapter adapter;
     ItemTouchHelper.SimpleCallback simpleItemTouchCallback;
 
     @Override
@@ -54,8 +46,8 @@ public class UserListActivity extends FragmentActivity {
 
         simpleItemTouchCallback = getNewItemTocuh();
 
-        users = new ArrayList<>();
-        getall_user();
+        events = new ArrayList<>();
+        getall_event();
         bindViews();
         populate();
     }
@@ -90,7 +82,7 @@ public class UserListActivity extends FragmentActivity {
                 startActivity(intent);
                 return true;
             case R.id.menu_friends:
-                Intent intent2 = new Intent(getApplicationContext(), FriendsListActivity.class);
+                Intent intent2 = new Intent(getApplicationContext(), EventUserFragmentActivity.class);
                 intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent2);
                 return true;
@@ -108,7 +100,7 @@ public class UserListActivity extends FragmentActivity {
 
     public void populate()
     {
-        adapter = new ProfilsAdapter(users, this);
+        adapter = new EventAdapter(events, this);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         StaggeredGridLayoutManager gaggeredGridLayoutManager = new StaggeredGridLayoutManager(2, 1);
         mRecyclerView.setLayoutManager(gaggeredGridLayoutManager);
@@ -117,42 +109,33 @@ public class UserListActivity extends FragmentActivity {
         adapter.notifyDataSetChanged();
     }
 
-    public void getall_user()
+    public void getall_event()
     {
-        Firebase ref = Network.getAlluser;
-         ref.addValueEventListener(new ValueEventListener() {
-          @Override
-          public void onDataChange(DataSnapshot snapshot) {
-              users.clear();
-              for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                  User u = postSnapshot.getValue(User.class);
-                  if(u != null && u.getUid() != null && u.getUid().compareTo(FacebookUser.getInstance().getUid())!=0)
-                      users.add(u);
-              }
-
-              sortList();
-              adapter.notifyDataSetChanged();
-          }
-          @Override
-          public void onCancelled(FirebaseError firebaseError) {
-          }
-      });
-    }
-
-    public void sortList() {
-        Collections.sort(users, new Comparator<User>() {
+        Firebase ref = Network.connexion_to_event;
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
-            public int compare(User o1, User o2) {
-                return Double.compare(getDistToMe(o1), getDistToMe(o2));
+            public void onDataChange(DataSnapshot snapshot) {
+                events.clear();
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                    Event event = postSnapshot.getValue(Event.class);
+                    if(event.visibility.compareTo("all") == 0 || (event.getInvited()!=null && FacebookUser.getInstance().getMeetMeFriends().contains(event.ownerid)) || event.ownerid.compareTo(FacebookUser.getInstance().getUid()) == 0) {
+                        events.add(event);}
+                }
+                adapter.notifyDataSetChanged();
+            }
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
             }
         });
     }
+
+
 
     @Override
     public void onBackPressed()
     {
         super.onBackPressed();
-        startActivity(new Intent(UserListActivity.this, MapsActivity.class));
+        startActivity(new Intent(EventListActivity.this, MapsActivity.class));
 
     }
 
@@ -165,3 +148,4 @@ public class UserListActivity extends FragmentActivity {
         return CalculateDistance.getDistance(latLng, latLng2);
     }
 }
+

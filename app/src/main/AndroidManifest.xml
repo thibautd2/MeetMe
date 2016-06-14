@@ -69,7 +69,7 @@
         <activity
             android:configChanges="orientation"
             android:screenOrientation="portrait"
-            android:name=".EventActivity"
+            android:name=".EventUserFragmentActivity"
             android:label="@string/event_title" />
 
         <activity
@@ -97,6 +97,11 @@
             android:screenOrientation="portrait"
             android:name=".UserListActivity"
             android:label="Rencontres"/>
+        <activity
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:name=".EventListActivity"
+            android:label="Evenement"/>
 
         <activity
             android:configChanges="orientation"
