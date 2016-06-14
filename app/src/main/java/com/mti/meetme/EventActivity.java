@@ -18,6 +18,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
@@ -112,6 +113,8 @@ public class EventActivity extends Fragment implements AdapterView.OnItemClickLi
         day = c.get(Calendar.DAY_OF_MONTH);
 
         Button Create = (Button) getView().findViewById(R.id.event_create);
+        TextView type = (TextView) getView().findViewById(R.id.event_type);
+        type.setText(currentDesire.toString());
         final EditText name = (EditText) getView().findViewById(R.id.event_name);
         final EditText desc = (EditText) getView().findViewById(R.id.event_description);
         final EditText adresse = (EditText) getView().findViewById(R.id.event_adresse);
@@ -159,7 +162,7 @@ public class EventActivity extends Fragment implements AdapterView.OnItemClickLi
                     if (all.isChecked())
                         visibility = "all";
                     Event event = new Event(name.getText().toString(), desc.getText().toString(), adresse.getText().toString(),
-                            u.getUid(), visibility, u.getEnvie(), date.getText().toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
+                            u.getUid(), visibility, u.getEnvie(), date.getText().toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), FacebookUser.getInstance().getName());
                     adressevalid = true;
                     getLocationFromAddress(event);
                     if(!adressevalid)
