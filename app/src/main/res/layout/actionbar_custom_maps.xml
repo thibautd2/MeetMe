@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:layout_gravity="fill_horizontal"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:id="@+id/mapsSettingsButton"
+        android:gravity="start"
+        android:maxHeight="40dp"
+        android:maxWidth="4dp"
+        android:background="@drawable/ic_action_settings" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/chatUserLayout"
+        android:layout_centerHorizontal="true">
+    <com.mti.meetme.fonts.CoquetteTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="@string/app_name"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"/>
+    </LinearLayout>
+
+    <ImageButton
+        android:layout_width="?attr/actionBarSize"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:id="@+id/mapsProfileButton"
+        android:gravity="end"
+        android:maxHeight="40dp"
+        android:maxWidth="4dp"
+        android:background="@drawable/ic_profile" />
+</RelativeLayout>
