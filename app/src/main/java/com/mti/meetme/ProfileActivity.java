@@ -4,10 +4,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -174,6 +176,33 @@ public class ProfileActivity extends AppCompatActivity{
         alert.show();
     }
 
+    private void setupActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(false);
+
+        ActionBar.LayoutParams lp1 = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
+        View customNav = LayoutInflater.from(this).inflate(R.layout.actionbar_custom_profile, null); // layout which contains your button.
+
+        actionBar.setCustomView(customNav, lp1);
+    }
+
+    private void bindViews()
+    {
+        nameTextView = (TextView) findViewById(R.id.name_textview);
+        ageTextView = (TextView) findViewById(R.id.age_textview);
+        likesTextView = (TextView) findViewById(R.id.likes_textview);
+        friendsTextView = (TextView) findViewById(R.id.friends_textview);
+        likesLayout = (LinearLayout) findViewById(R.id.likes_layout);
+        friendsLayout = (LinearLayout) findViewById(R.id.friends_layout);
+        pager = (ViewPager) findViewById(R.id.user_img_list);
+        descriptionTextView = (TextView) findViewById(R.id.description_text);
+    }
+
     private void populateViews() throws JSONException, InterruptedException {
         if (user == null)
             currentUser = FacebookUser.getInstance();
@@ -245,32 +274,6 @@ public class ProfileActivity extends AppCompatActivity{
 
             }
         });
-
-        /*
-        if (user == null)
-            findViewById(R.id.add_friends_btn).setVisibility(View.INVISIBLE);
-        else if (FacebookUser.getInstance().haveThisFriend(currentUser.getUid()))
-            findViewById(R.id.add_friends_btn).setBackground(getResources().getDrawable(R.drawable.valide));
-        else if (FacebookUser.getInstance().haveThisFriendRequestSend(currentUser.getUid()))
-            findViewById(R.id.add_friends_btn).setBackground(getResources().getDrawable(R.drawable.intero));
-        else if (FacebookUser.getInstance().haveThisFriendRequestReceived(currentUser.getUid())) {
-            findViewById(R.id.add_friends_btn).setBackground(getResources().getDrawable(R.drawable.demande));
-            acceptInvitationBtn();
-        }
-        else
-            sendInvitationBtn();*/
-    }
-
-    private void bindViews()
-    {
-        nameTextView = (TextView) findViewById(R.id.name_textview);
-        ageTextView = (TextView) findViewById(R.id.age_textview);
-        likesTextView = (TextView) findViewById(R.id.likes_textview);
-        friendsTextView = (TextView) findViewById(R.id.friends_textview);
-        likesLayout = (LinearLayout) findViewById(R.id.likes_layout);
-        friendsLayout = (LinearLayout) findViewById(R.id.friends_layout);
-        pager = (ViewPager) findViewById(R.id.user_img_list);
-        descriptionTextView = (TextView) findViewById(R.id.description_text);
     }
 
     /*********************************************************************

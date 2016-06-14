@@ -21,7 +21,7 @@
             android:background="#000000" />
 
         <TextView
-            android:text="Type d'evenement"
+            android:text="Type d'évènement"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/event_type"
@@ -66,7 +66,7 @@
                     android:layout_marginTop="5dp"
                     android:padding="10dp"
                     android:minLines="2"
-                    android:background="#ffffff"
+                    android:background="@drawable/rounded_corners"
                     android:layout_alignEnd="@+id/event_name"
                     android:maxLines="2"
                     android:layout_alignStart="@+id/event_name" />
@@ -93,10 +93,10 @@
                     android:hint="Name"
                     android:layout_marginLeft="40dp"
                     android:layout_marginRight="40dp"
+
                     android:padding="10dp"
                     android:elevation="0dp"
-                    android:background="#ffffff"
-
+                    android:background="@drawable/rounded_corners"
                     android:layout_below="@+id/event_title"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentEnd="true"
@@ -128,6 +128,7 @@
                     android:layout_below="@+id/event_description"
                     android:layout_alignStart="@+id/event_description"
                     android:layout_marginTop="5dp">  <requestFocus />
+
                 </AutoCompleteTextView>
 
                 <EditText
@@ -137,8 +138,8 @@
                     android:ems="10"
                     android:id="@+id/event_date"
                     android:hint="Date et Heure"
+                    android:background="@drawable/rounded_corners"
                     android:padding="10dp"
-                    android:background="#ffffff"
                     android:layout_below="@+id/event_adresse"
                     android:layout_alignStart="@+id/event_adresse"
                     android:layout_marginTop="5dp" />
@@ -177,6 +178,7 @@
                     android:layout_below="@+id/textView3"
                     android:layout_alignStart="@+id/event_date"
                     android:layout_marginStart="11dp" />
+
             </RelativeLayout>
         </ScrollView>
 

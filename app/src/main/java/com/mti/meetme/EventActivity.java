@@ -1,10 +1,12 @@
 package com.mti.meetme;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -97,14 +99,6 @@ public class EventActivity extends Fragment implements AdapterView.OnItemClickLi
             img.setBackgroundResource(R.drawable.allfine);
 
 
-     /*   Button Create = (Button) getView().findViewById(R.id.event_create);
-        final EditText name = (EditText) getView().findViewById(R.id.event_name);
-        final EditText desc = (EditText) getView().findViewById(R.id.event_description);
-        final EditText adresse = (EditText) getView().findViewById(R.id.event_adresse);
-        final EditText date = (EditText) getView().findViewById(R.id.event_date);
-        final RadioButton friend = (RadioButton) getView().findViewById(R.id.event_friends);
-        final RadioButton all = (RadioButton) getView().findViewById(R.id.event_all);
-        AutoCompleteTextView autoCompView = (AutoCompleteTextView) getView().findViewById(R.id.event_adresse);*/
         adapter = new GooglePlacesAutocompleteAdapter(getApplicationContext(), R.layout.adresse_list_item);
 
         final Calendar c = Calendar.getInstance();
@@ -196,8 +190,12 @@ public class EventActivity extends Fragment implements AdapterView.OnItemClickLi
     @Override
     public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+    }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        Firebase.setAndroidContext(getApplicationContext());
     }
 
     public static ArrayList autocomplete(String input) {
