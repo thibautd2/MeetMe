@@ -22,19 +22,15 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         />
 
-    <FrameLayout
-        android:id="@+id/content_frame"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:id="@+id/fab_event"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:clickable="true"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="10dp"
@@ -44,9 +40,22 @@
                 android:layout_marginEnd="10dp"
                 app:elevation="7dp"
                 android:src="@android:drawable/ic_menu_upload_you_tube" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+
+                android:layout_above="@+id/fab_event"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginEnd="10dp"
+                app:elevation="7dp"
+                android:src="@drawable/ic_list" />
         </RelativeLayout>
 
-    </FrameLayout>
 
     <!-- android:layout_gravity="start" tells DrawerLayout to treat
          this as a sliding drawer on the left side for left-to-right

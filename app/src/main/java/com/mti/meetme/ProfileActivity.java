@@ -113,16 +113,8 @@ public class ProfileActivity extends AppCompatActivity{
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 return true;
-            case R.id.menu_friends:
-                Intent intent2 = new Intent(getApplicationContext(), FriendsListActivity.class);
-                intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent2);
-                return true;
             case R.id.menu_edit:
                 displayEditDescription();
-                return true;
-            case R.id.menu_heart:
-                //Fais tes bails ici thibaut
                 return true;
             case R.id.menu_message:
                 Intent chatIntent = new Intent(getApplicationContext(), ChatActivity.class);

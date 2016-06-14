@@ -17,6 +17,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +25,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -84,6 +86,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private int rayon = 10000;
     public static int backtwice = 0;
 
+    private ImageButton settingsButton;
+    private ImageButton profileButton;
+
+    private FloatingActionButton eventButton;
+    private FloatingActionButton listButton;
+
     private enum Gender {
         MEN,
         WOMEN,
@@ -102,6 +110,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         Firebase.setAndroidContext(this);
 
+        setupActionBar();
+
         gender = Gender.ALL;
         markers = new WeakHashMap<String, Marker>();
         super.onCreate(savedInstanceState);
@@ -118,8 +128,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         init_menu();
         init_envie_du_jour();
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+
+        bindViews();
+        populateViews();
+    }
+
+    private void bindViews()
+    {
+        eventButton = (FloatingActionButton) findViewById(R.id.fab_event);
+        listButton = (FloatingActionButton) findViewById(R.id.fab_list);
+
+        profileButton = (ImageButton) findViewById(R.id.mapsProfileButton);
+        settingsButton = (ImageButton) findViewById(R.id.mapsSettingsButton);
+    }
+
+    private void populateViews()
+    {
+        eventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MapsActivity.this, CreateEventManager.class);
@@ -127,16 +152,40 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+
+        listButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MapsActivity.this, EventUserFragmentActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        profileButton.getLayoutParams().height -= 30;
+        profileButton.getLayoutParams().width -= 30;
+
+        profileButton.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }});
+
+        settingsButton.getLayoutParams().height -= 30;
+        settingsButton.getLayoutParams().width -= 30;
+
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mDrawerLayout.isDrawerOpen(mDrawerPane))
+                    mDrawerLayout.closeDrawer(mDrawerPane);
+                else
+                    mDrawerLayout.openDrawer(mDrawerPane);
+            }});
     }
 
-
     public void init_menu() {
-        final ActionBar ab = getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.drawable.ic_drawer); // set a custom icon for the default home button
-        ab.setDisplayShowHomeEnabled(true); // show or hide the default home button
-        ab.setDisplayHomeAsUpEnabled(true);
-        ab.setDisplayShowCustomEnabled(true); // enable overriding the default toolbar layout
-        ab.setDisplayShowTitleEnabled(true);
         //todo singleton on drawerAdapter then us it in listacty
         MenuSlideItems.add(new MenuSlideItem("Distance", " km", R.drawable.radar, new MenuSlideItem.MySeekBar(0, 10, 10)));
         MenuSlideItems.add(new MenuSlideItem("Genre", R.drawable.gender, new MenuSlideItem.MyCheckBox("Men", true), new MenuSlideItem.MyCheckBox("Women", true), null, null));
@@ -220,44 +269,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    private void setupActionBar() {
+        ActionBar actionBar = getSupportActionBar();
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_maps, menu);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(false);
 
-        super.onCreateOptionsMenu(menu);
-        return true;
-    }
+        ActionBar.LayoutParams lp1 = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
+        View customNav = LayoutInflater.from(this).inflate(R.layout.actionbar_custom_maps, null); // layout which contains your button.
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = null;
-        switch (item.getItemId()) {
-            case R.id.menu_profile:
-                intent = new Intent(getApplicationContext(), ProfileActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                return true;
-            case R.id.menu_list:
-                Intent intent2 = new Intent(getApplicationContext(), EventUserFragmentActivity.class);
-                intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent2.putExtra("showFriends", false);
-                startActivity(intent2);
-                return true;
-            case R.id.menu_friends:
-                Intent intent3 = new Intent(getApplicationContext(), FriendsListActivity.class);
-                intent3.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent3);
-                return true;
-            case android.R.id.home:
-                if (mDrawerLayout.isDrawerOpen(mDrawerPane))
-                    mDrawerLayout.closeDrawer(mDrawerPane);
-                else
-                    mDrawerLayout.openDrawer(mDrawerPane);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        actionBar.setCustomView(customNav, lp1);
     }
 
     private void selectItemFromDrawer(int position) {
