@@ -29,9 +29,9 @@ public class CreateEventManager extends FragmentActivity {
         List fragments = new Vector();
 
         // Ajout des Fragments dans la liste
-        fragments.add(Fragment.instantiate(this,EventActivity.class.getName()));
-        fragments.add(Fragment.instantiate(this,EventActivity.class.getName()));
-        fragments.add(Fragment.instantiate(this,EventActivity.class.getName()));
+        fragments.add(Fragment.instantiate(this,CreatePartyActivity.class.getName()));
+        fragments.add(Fragment.instantiate(this,CreateSportActivity.class.getName()));
+        fragments.add(Fragment.instantiate(this,CreateGameActivity.class.getName()));
 
         // Création de l'adapter qui s'occupera de l'affichage de la liste de
         // Fragments

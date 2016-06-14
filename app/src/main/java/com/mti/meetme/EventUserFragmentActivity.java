@@ -6,29 +6,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.CheckBox;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.TabHost;
-import android.widget.TextView;
-
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
-import com.mti.meetme.Interface.ContextDrawerAdapter;
-import com.mti.meetme.Model.SortUserList;
-import com.mti.meetme.Tools.DrawerListAdapter;
-import com.mti.meetme.Tools.MenuSlideItem;
-import com.mti.meetme.Tools.Network.Network;
-import com.mti.meetme.controller.UserList;
-
-import java.util.ArrayList;
-
-import static com.mti.meetme.EventActivity.adapter;
 
 /**
  * Created by thiba_000 on 13/06/2016.

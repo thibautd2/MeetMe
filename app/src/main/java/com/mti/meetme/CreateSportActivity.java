@@ -1,23 +1,26 @@
 package com.mti.meetme;
+
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -33,9 +36,10 @@ import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.controller.TodayDesire;
 
 import org.joda.time.LocalDate;
-import org.joda.time.Years;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -46,21 +50,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import org.json.JSONException;
-import android.content.Context;
-
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Filter;
-import android.widget.Filterable;
-
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * Created by thiba_000 on 04/06/2016.
  */
 
-public class EventActivity extends Fragment implements AdapterView.OnItemClickListener {
+public class CreateSportActivity extends Fragment implements AdapterView.OnItemClickListener {
 
     private static final String LOG_TAG = "ErreurApiGoogle";
     private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
@@ -84,19 +80,9 @@ public class EventActivity extends Fragment implements AdapterView.OnItemClickLi
         ImageView img = (ImageView)  getView().findViewById(R.id.event_header);
 
         final User u  = FacebookUser.getInstance();
-        String currentDesire = u.getEnvie();
-        if(currentDesire.compareTo(TodayDesire.Desire.play.toString())==0)
-            img.setBackgroundResource(R.drawable.finegames);
-        if(currentDesire.compareTo(TodayDesire.Desire.party.toString())==0)
-            img.setBackgroundResource(R.drawable.soiree2fine);
-        if(currentDesire.compareTo(TodayDesire.Desire.Drink.toString())==0)
-            img.setBackgroundResource(R.drawable.drinkfine);
-        if(currentDesire.compareTo(TodayDesire.Desire.Date.toString())==0)
-            img.setBackgroundResource(R.drawable.rencontrefine);
-        if(currentDesire.compareTo(TodayDesire.Desire.Sport.toString())==0)
-            img.setBackgroundResource(R.drawable.finesport);
-        if(currentDesire.compareTo(TodayDesire.Desire.Everything.toString())==0)
-            img.setBackgroundResource(R.drawable.allfine);
+        String currentDesire = "Let's play a sport !";
+
+        img.setBackgroundResource(R.drawable.finesport);
 
 
         adapter = new GooglePlacesAutocompleteAdapter(getApplicationContext(), R.layout.adresse_list_item);

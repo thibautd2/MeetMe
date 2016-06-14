@@ -40,14 +40,6 @@ import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.controller.UserList;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static com.mti.meetme.EventActivity.adapter;
 
 /**
  * Created by thiba_000 on 12/04/2016.
