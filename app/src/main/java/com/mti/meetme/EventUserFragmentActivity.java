@@ -32,6 +32,7 @@ public class EventUserFragmentActivity extends TabActivity {
         tabHost.addTab(tab2);
         tabHost.addTab(tab3);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_profile, menu);
