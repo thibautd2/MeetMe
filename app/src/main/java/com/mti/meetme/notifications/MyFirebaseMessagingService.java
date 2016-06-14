@@ -58,7 +58,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
                 .setSmallIcon(R.drawable.logo)
                 .setContentTitle(messageTitle)
                 .setContentText(messageBody)
-                .setPriority(Notification.PRIORITY_HIGH)
                 .setAutoCancel(true);
 
         NotificationManager notificationManager =
