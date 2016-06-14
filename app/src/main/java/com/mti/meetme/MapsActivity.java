@@ -258,7 +258,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onResume() {
         super.onResume();
-        Firebase.setAndroidContext(this);
+        Firebase.setAndroidContext(getApplicationContext());
         backtwice = 0;
         followMeLocationSource.getBestAvailableProvider();
         if (mMap != null)

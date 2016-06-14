@@ -21,7 +21,7 @@
             android:background="#000000" />
 
         <TextView
-            android:text="Type d'evenement"
+            android:text="Type d'évènement"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView2"
@@ -67,7 +67,7 @@
                     android:layout_marginBottom="10dp"
                     android:padding="10dp"
                     android:minLines="2"
-                    android:background="#ffffff"
+                    android:background="@drawable/rounded_corners"
                     android:layout_alignEnd="@+id/event_name"
                     android:maxLines="2"
                     android:layout_alignStart="@+id/event_name" />
@@ -89,14 +89,12 @@
                     android:inputType="textPersonName"
                     android:ems="10"
                     android:id="@+id/event_name"
-                    android:selectAllOnFocus="false"
-                    android:hint="Name"
+                    android:hint="Titre de l'évènement"
                     android:layout_marginLeft="30dp"
                     android:layout_marginRight="30dp"
                     android:padding="10dp"
                     android:elevation="0dp"
-                    android:background="#ffffff"
-
+                    android:background="@drawable/rounded_corners"
                     android:layout_below="@+id/event_title"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentEnd="true"
@@ -122,11 +120,11 @@
                     android:inputType="textPostalAddress"
                     android:ems="10"
                     android:id="@+id/event_adresse"
+                    android:background="@drawable/rounded_corners"
                     android:hint="Adresse"
                     android:padding="10dp"
-                    android:background="#ffffff"
                     android:layout_below="@+id/event_description"
-                    android:layout_alignStart="@+id/event_description">  <requestFocus />
+                    android:layout_alignStart="@+id/event_description">
                 </AutoCompleteTextView>
 
                 <EditText
@@ -136,8 +134,8 @@
                     android:ems="10"
                     android:id="@+id/event_date"
                     android:hint="Date et Heure"
+                    android:background="@drawable/rounded_corners"
                     android:padding="10dp"
-                    android:background="#ffffff"
                     android:layout_below="@+id/event_adresse"
                     android:layout_alignStart="@+id/event_adresse"
                     android:layout_marginTop="10dp" />
@@ -172,7 +170,7 @@
                     android:layout_below="@+id/event_all"
                     android:layout_alignEnd="@+id/event_description"
                     android:layout_marginTop="30dp"
-                    android:background="?android:attr/colorAccent" />
+                    android:background="?attr/colorAccent" />
             </RelativeLayout>
         </ScrollView>
 
