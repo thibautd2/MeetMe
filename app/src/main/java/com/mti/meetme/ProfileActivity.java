@@ -186,9 +186,9 @@ public class ProfileActivity extends AppCompatActivity{
         actionBar.setDisplayShowHomeEnabled(false);
 
         ActionBar.LayoutParams lp1 = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
-        View customNav = LayoutInflater.from(this).inflate(R.layout.actionbar_custom_profile, null); // layout which contains your button.
+       // View customNav = LayoutInflater.from(this).inflate(R.layout.actionbar_custom_profile, null); // layout which contains your button.
 
-        actionBar.setCustomView(customNav, lp1);
+       // actionBar.setCustomView(customNav, lp1);
     }
 */
     private void bindViews()

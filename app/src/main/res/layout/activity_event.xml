@@ -10,11 +10,11 @@
         android:layout_height="match_parent"
         android:id="@+id/event_activity"
         android:requiresFadingEdge="horizontal|vertical"
-        android:background="#f5f4f4">
+        android:background="#f7f7f7">
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="85dp"
+            android:layout_height="90dp"
             android:id="@+id/event_header"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
@@ -24,10 +24,10 @@
             android:text="Type d'évènement"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView2"
+            android:id="@+id/event_type"
             android:textColor="#ffffff"
             android:textSize="22sp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="25dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
 
@@ -37,7 +37,7 @@
             android:id="@+id/imageView"
             android:background="@android:drawable/ic_media_play"
             android:layout_marginEnd="31dp"
-            android:layout_alignBottom="@+id/textView2"
+            android:layout_alignBottom="@+id/event_type"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="15dp" />
 
@@ -60,12 +60,11 @@
                     android:layout_height="wrap_content"
                     android:inputType="textPersonName"
                     android:ems="10"
+                    android:padding="5dp"
                     android:layout_below="@+id/event_name"
                     android:id="@+id/event_description"
                     android:hint="Description"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:padding="10dp"
+                    android:layout_marginTop="5dp"
                     android:minLines="2"
                     android:background="@drawable/rounded_corners"
                     android:layout_alignEnd="@+id/event_name"
@@ -78,10 +77,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/event_title"
-                    android:textColor="#000000"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:layout_width="wrap_content"
@@ -89,11 +89,12 @@
                     android:inputType="textPersonName"
                     android:ems="10"
                     android:id="@+id/event_name"
-                    android:hint="Titre de l'évènement"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    android:padding="10dp"
+                    android:selectAllOnFocus="false"
+                    android:hint="Prenom"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginRight="40dp"
                     android:elevation="0dp"
+                    android:padding="5dp"
                     android:background="@drawable/rounded_corners"
                     android:layout_below="@+id/event_title"
                     android:layout_alignParentStart="true"
@@ -106,13 +107,13 @@
                     android:id="@+id/textView3"
                     android:text="@string/visibilite"
                     android:ems="10"
-                    android:textColor="#000000"
-                    android:textSize="18sp"
+                    android:textSize="17sp"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentStart="true"
                     android:gravity="center"
                     android:layout_below="@+id/event_date"
-                    android:layout_marginTop="15dp" />
+                    android:layout_marginTop="25dp"
+                    android:textStyle="bold" />
 
                 <AutoCompleteTextView
                     android:layout_width="wrap_content"
@@ -120,11 +121,13 @@
                     android:inputType="textPostalAddress"
                     android:ems="10"
                     android:id="@+id/event_adresse"
-                    android:background="@drawable/rounded_corners"
                     android:hint="Adresse"
-                    android:padding="10dp"
+                    android:padding="5dp"
+                    android:background="@drawable/rounded_corners"
                     android:layout_below="@+id/event_description"
-                    android:layout_alignStart="@+id/event_description">
+                    android:layout_alignStart="@+id/event_description"
+                    android:layout_marginTop="5dp">  <requestFocus />
+
                 </AutoCompleteTextView>
 
                 <EditText
@@ -135,21 +138,22 @@
                     android:id="@+id/event_date"
                     android:hint="Date et Heure"
                     android:background="@drawable/rounded_corners"
-                    android:padding="10dp"
+                    android:padding="5dp"
                     android:layout_below="@+id/event_adresse"
                     android:layout_alignStart="@+id/event_adresse"
-                    android:layout_marginTop="10dp" />
+                    android:layout_marginTop="5dp" />
 
-                <RadioButton
-                    android:text="@string/amis"
+                <Button
+                    android:text="Créer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/event_friends"
-                    android:textColor="#2d2d2d"
-                    android:layout_marginLeft="10dp"
-                    android:layout_alignStart="@+id/event_date"
-                    android:layout_below="@+id/textView3"
-                    android:layout_marginTop="20dp" />
+                    android:id="@+id/event_create"
+                    android:background="@drawable/rounded_corners_event"
+                    android:layout_below="@+id/event_all"
+                    android:layout_marginTop="20dp"
+                    android:textColor="#ffffff"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="30dp" />
 
                 <RadioButton
                     android:text="@string/all"
@@ -162,15 +166,18 @@
                     android:layout_alignBottom="@+id/event_friends"
                     android:layout_alignEnd="@+id/event_create" />
 
-                <Button
-                    android:text="Créer"
+                <RadioButton
+                    android:text="@string/amis"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/event_create"
-                    android:layout_below="@+id/event_all"
-                    android:layout_alignEnd="@+id/event_description"
-                    android:layout_marginTop="30dp"
-                    android:background="?attr/colorAccent" />
+                    android:id="@+id/event_friends"
+                    android:textColor="#2d2d2d"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_below="@+id/textView3"
+                    android:layout_alignStart="@+id/event_date"
+                    android:layout_marginStart="11dp" />
+
             </RelativeLayout>
         </ScrollView>
 

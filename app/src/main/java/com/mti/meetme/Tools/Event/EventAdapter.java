@@ -14,11 +14,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.mti.meetme.Model.Event;
-import com.mti.meetme.Model.User;
-import com.mti.meetme.ProfileActivity;
 import com.mti.meetme.R;
 import com.mti.meetme.Tools.Map.CalculateDistance;
-import com.mti.meetme.Tools.Profil.ProfilsAdapter;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.controller.TodayDesire;
 import com.squareup.picasso.Picasso;
@@ -50,12 +47,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>
         EventAdapter.ViewHolder vh = null;
         v = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_card, parent, false);
         vh = new EventAdapter.ViewHolder(v);
-        //vh.event_adresse = (TextView) v.findViewById(R.id.event_adresse_list);
+        vh.event_adresse = (TextView) v.findViewById(R.id.event_adresse);
         vh.event_dist = (TextView) v.findViewById(R.id.event_card_distance);
         vh.event_image = (ImageView) v.findViewById(R.id.event_img_list);
         vh.event_name = (TextView) v.findViewById(R.id.event_name_list);
         vh.event_heure = (TextView) v.findViewById(R.id.event_date_list);
         vh.relativeLayout = (RelativeLayout) v.findViewById(R.id.list_event_relative);
+        vh.event_username = (TextView) v.findViewById(R.id.event_user);
         originalLayoutHeight = vh.relativeLayout.getLayoutParams().height;
         originalImageHeight = vh.event_image.getLayoutParams().height;
         return vh;
@@ -68,11 +66,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>
 
 
             holder.event_name.setText(e.getName());
-           // holder.event_adresse.setText(e.getAdresse());
+            holder.event_adresse.setText(e.getAdresse());
             double dist =  CalculateDistance.getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(e.getLatitude(), e.getLongitude()));
             holder.event_heure.setText(e.getDate());
             holder.event_dist.setText(String.format("%.1f",dist )+ " km");
-
+            holder.event_username.setText(e.getUsername());
 
             String currentDesire = e.getCategorie();
             if(currentDesire.compareTo(TodayDesire.Desire.play.toString())==0)
@@ -109,6 +107,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>
         public TextView event_adresse;
         public TextView event_dist;
         public TextView event_heure;
+        public TextView event_username;
         public RelativeLayout relativeLayout;
         public ViewHolder(View itemView) {
             super(itemView);
