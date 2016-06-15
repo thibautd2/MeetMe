@@ -1,15 +1,13 @@
 package com.mti.meetme;
 
-import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -21,30 +19,28 @@ import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.Event.EventAdapter;
 import com.mti.meetme.Tools.Map.CalculateDistance;
 import com.mti.meetme.Tools.Network.Network;
-import com.mti.meetme.Tools.Profil.ProfilsAdapter;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.controller.UserList;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import android.view.View;
+import android.view.ViewGroup;
 
 /**
  * Created by thiba_000 on 13/06/2016.
  */
 
-public class EventListActivity extends FragmentActivity {
+public class EventListActivity extends Fragment {
     LinearLayoutManager mLinearLayoutManager;
     RecyclerView mRecyclerView;
     ArrayList<Event> events;
     EventAdapter adapter;
     ItemTouchHelper.SimpleCallback simpleItemTouchCallback;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profils_list);
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         simpleItemTouchCallback = getNewItemTocuh();
 
         events = new ArrayList<>();
@@ -52,6 +48,18 @@ public class EventListActivity extends FragmentActivity {
         bindViews();
         populate();
     }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_profils_list, container, false);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
 
     protected ItemTouchHelper.SimpleCallback getNewItemTocuh() {
         return new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -67,41 +75,15 @@ public class EventListActivity extends FragmentActivity {
         };
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_profile, menu);
-        super.onCreateOptionsMenu(menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_maps:
-                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                return true;
-            case R.id.menu_friends:
-                Intent intent2 = new Intent(getApplicationContext(), EventUserFragmentActivity.class);
-                intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent2);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
     public void bindViews()
     {
-
         //mLinearLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
-        mRecyclerView = (RecyclerView) findViewById(R.id.list_item);
+        mRecyclerView = (RecyclerView) getView().findViewById(R.id.list_item);
     }
 
     public void populate()
     {
-        adapter = new EventAdapter(events, this);
+        adapter = new EventAdapter(events, getActivity());
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         StaggeredGridLayoutManager gaggeredGridLayoutManager = new StaggeredGridLayoutManager(2, 1);
         mRecyclerView.setLayoutManager(gaggeredGridLayoutManager);
@@ -130,16 +112,6 @@ public class EventListActivity extends FragmentActivity {
             public void onCancelled(FirebaseError firebaseError) {
             }
         });
-    }
-
-
-
-    @Override
-    public void onBackPressed()
-    {
-        super.onBackPressed();
-        startActivity(new Intent(EventListActivity.this, MapsActivity.class));
-
     }
 
     private double getDistToMe(User u1) {

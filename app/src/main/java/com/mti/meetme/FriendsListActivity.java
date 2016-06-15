@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.LinearGradient;
 import android.hardware.camera2.params.Face;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -11,9 +13,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +41,7 @@ import java.util.Map;
 /**
  * Created by thiba_000 on 12/04/2016.
  */
-public class FriendsListActivity extends FragmentActivity {
+public class FriendsListActivity extends Fragment {
 
     LinearLayoutManager mLinearLayoutManager;
     RecyclerView mRecyclerView;
@@ -48,10 +52,8 @@ public class FriendsListActivity extends FragmentActivity {
     NewFriendsListAdapter adapterNFriend;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_friends_list);
-
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         friends = new ArrayList<>();
         newfriends = new ArrayList<>();
 
@@ -63,77 +65,59 @@ public class FriendsListActivity extends FragmentActivity {
         populate();
     }
 
-
+    @Nullable
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_friend, menu);
-        super.onCreateOptionsMenu(menu);
-        return true;
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_friends_list, container, false);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_maps:
-                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                return true;
-            case R.id.menu_friends:
-                Intent intent2 = new Intent(getApplicationContext(), EventUserFragmentActivity.class);
-                intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent2);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
-    public void bindViews()
-    {
-        mLinearLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
-        mRecyclerView = (RecyclerView) findViewById(R.id.list_item2);
-        mRecyclerViewNFriend = (RecyclerView) findViewById(R.id.list_item);
+    public void bindViews() {
+        mLinearLayoutManager = new GridLayoutManager(getContext(), 2);
+        mRecyclerView = (RecyclerView) getView().findViewById(R.id.list_item2);
+        mRecyclerViewNFriend = (RecyclerView) getView().findViewById(R.id.list_item);
     }
 
     public void populate() {
 
         //friendList
         Log.e("friendlisactivity", "friends size: " + friends.size());
-        adapter = new FriendsListAdapter(friends, this);
+        adapter = new FriendsListAdapter(friends, getActivity());
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(adapter.getSimpleItemTouchCallback());
-        LinearLayoutManager manager = new LinearLayoutManager(this);
+        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setAdapter(adapter);
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
         adapter.notifyDataSetChanged();
 
         //newFriendList
-        adapterNFriend = new NewFriendsListAdapter(newfriends, this);
+        adapterNFriend = new NewFriendsListAdapter(newfriends, getActivity());
         ItemTouchHelper itemTouchHelper2 = new ItemTouchHelper(adapterNFriend.getSimpleItemTouchCallback());
-        LinearLayoutManager manager2 = new LinearLayoutManager(this);
+        LinearLayoutManager manager2 = new LinearLayoutManager(getActivity());
         mRecyclerViewNFriend.setLayoutManager(manager2);
         mRecyclerViewNFriend.setAdapter(adapterNFriend);
         itemTouchHelper2.attachToRecyclerView(mRecyclerViewNFriend);
         adapterNFriend.notifyDataSetChanged();
 
         if (FacebookUser.getInstance().getFriendRequestReceived().equals("")) {
-            ((TextView) findViewById(R.id.demande)).setVisibility(View.GONE);
-            ((TextView) findViewById(R.id.friendsTxt)).setVisibility(View.GONE);
-        }
-        else {
-            ((TextView) findViewById(R.id.demande)).setVisibility(View.VISIBLE);
+            ((TextView) getView().findViewById(R.id.demande)).setVisibility(View.GONE);
+            ((TextView) getView().findViewById(R.id.friendsTxt)).setVisibility(View.GONE);
+        } else {
+            ((TextView) getView().findViewById(R.id.demande)).setVisibility(View.VISIBLE);
             if (FacebookUser.getInstance().getMeetMeFriends().equals(""))
-                ((TextView) findViewById(R.id.friendsTxt)).setVisibility(View.GONE);
+                ((TextView) getView().findViewById(R.id.friendsTxt)).setVisibility(View.GONE);
             else
-                ((TextView) findViewById(R.id.friendsTxt)).setVisibility(View.VISIBLE);
+                ((TextView) getView().findViewById(R.id.friendsTxt)).setVisibility(View.VISIBLE);
         }
 
 
     }
 
-    public void getfriends()
-    {
+    public void getfriends() {
         Firebase ref = Network.find_MeetmeFriends(FacebookUser.getInstance().getUid());
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -169,8 +153,7 @@ public class FriendsListActivity extends FragmentActivity {
         });
     }
 
-    public void getNewfriends()
-    {
+    public void getNewfriends() {
         Firebase ref = Network.find_FriendRequestReceived(FacebookUser.getInstance().getUid());
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -192,9 +175,9 @@ public class FriendsListActivity extends FragmentActivity {
                             adapterNFriend.notifyDataSetChanged();
 
 
-                            ((TextView) findViewById(R.id.demande)).setVisibility(View.VISIBLE);
+                            ((TextView) getView().findViewById(R.id.demande)).setVisibility(View.VISIBLE);
                             if (friends.size() != 0)
-                                ((TextView) findViewById(R.id.friendsTxt)).setVisibility(View.VISIBLE);
+                                ((TextView) getView().findViewById(R.id.friendsTxt)).setVisibility(View.VISIBLE);
                         }
 
                         @Override
@@ -210,11 +193,5 @@ public class FriendsListActivity extends FragmentActivity {
 
             }
         });
-    }
-    @Override
-    public void onBackPressed()
-    {
-        super.onBackPressed();
-        startActivity(new Intent(FriendsListActivity.this, MapsActivity.class));
     }
 }

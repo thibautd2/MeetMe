@@ -31,7 +31,7 @@ public class SortUserList {
     //todo should be on controller
     public boolean user_correspond(User u)
     {
-        if (getDistToMe(u) < distanceToSearch && (getGenderStr().equals("all") || u.getGender().equals(getGenderStr())) &&
+        if (getDistToMe(u) < distanceToSearch / 1000 && (getGenderStr().equals("all") || u.getGender().equals(getGenderStr())) &&
                 (FacebookUser.getInstance().getEnvie().equals(TodayDesire.Desire.Everything.toString()) ||
                         u.getEnvie().equals(TodayDesire.Desire.Everything.toString()) || u.getEnvie().equals(FacebookUser.getInstance().getEnvie())))
             return true;

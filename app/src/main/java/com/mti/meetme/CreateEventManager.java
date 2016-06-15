@@ -6,9 +6,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 
+import com.facebook.login.LoginManager;
 import com.mti.meetme.R;
 import com.mti.meetme.Tools.MyPagerAdapter;
+import com.mti.meetme.Tools.Network.Network;
 
 import java.util.List;
 import java.util.Vector;
@@ -17,7 +23,7 @@ import java.util.Vector;
  * Created by Alex on 09/06/2016.
  */
 
-public class CreateEventManager extends FragmentActivity {
+public class CreateEventManager extends AppCompatActivity {
     private PagerAdapter mPagerAdapter;
 
     @Override
@@ -40,6 +46,29 @@ public class CreateEventManager extends FragmentActivity {
         ViewPager pager = (ViewPager) super.findViewById(R.id.event_viewpager);
         // Affectation de l'adapter au ViewPager
         pager.setAdapter(this.mPagerAdapter);
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_profile, menu);
+        super.onCreateOptionsMenu(menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.menu_maps:
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

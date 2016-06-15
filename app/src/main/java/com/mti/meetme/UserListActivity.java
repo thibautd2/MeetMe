@@ -3,6 +3,9 @@ package com.mti.meetme;
 import android.content.Intent;
 import android.hardware.camera2.params.Face;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -12,9 +15,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ListView;
@@ -45,7 +50,7 @@ import java.util.ArrayList;
  * Created by thiba_000 on 12/04/2016.
  */
 
-public class UserListActivity extends FragmentActivity implements ContextDrawerAdapter {
+public class UserListActivity extends Fragment implements ContextDrawerAdapter {
 
     LinearLayoutManager mLinearLayoutManager;
     RecyclerView mRecyclerView;
@@ -59,10 +64,8 @@ public class UserListActivity extends FragmentActivity implements ContextDrawerA
     private ArrayList<MenuSlideItem> MenuSlideItems = new ArrayList<MenuSlideItem>();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profils_list);
-
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         simpleItemTouchCallback = getNewItemTocuh();
 
         users = new ArrayList<>();
@@ -71,6 +74,18 @@ public class UserListActivity extends FragmentActivity implements ContextDrawerA
         init_menu();
         populate();
     }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_profils_list, container, false);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
 
     protected ItemTouchHelper.SimpleCallback getNewItemTocuh() {
         return new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -86,47 +101,15 @@ public class UserListActivity extends FragmentActivity implements ContextDrawerA
         };
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_profile, menu);
-        super.onCreateOptionsMenu(menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_maps:
-                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                return true;
-            case R.id.menu_friends:
-                Intent intent2 = new Intent(getApplicationContext(), FriendsListActivity.class);
-                intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent2);
-                return true;
-            case android.R.id.home:
-                if (mDrawerLayout.isDrawerOpen(mDrawerPane))
-                    mDrawerLayout.closeDrawer(mDrawerPane);
-                else
-                    mDrawerLayout.openDrawer(mDrawerPane);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
     public void bindViews()
     {
-
         //mLinearLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
-        mRecyclerView = (RecyclerView) findViewById(R.id.list_item);
+        mRecyclerView = (RecyclerView) getView().findViewById(R.id.list_item);
     }
 
     public void populate()
     {
-        adapter = new ProfilsAdapter(users, this);
+        adapter = new ProfilsAdapter(users, getActivity());
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         StaggeredGridLayoutManager gaggeredGridLayoutManager = new StaggeredGridLayoutManager(2, 1);
         mRecyclerView.setLayoutManager(gaggeredGridLayoutManager);
@@ -147,10 +130,10 @@ public class UserListActivity extends FragmentActivity implements ContextDrawerA
         MenuSlideItems.add(new MenuSlideItem("Distance", " km", R.drawable.radar, new MenuSlideItem.MySeekBar(0, 10, SortUserList.getInstance().distanceToSearch / 1000)));
         MenuSlideItems.add(new MenuSlideItem("Genre", R.drawable.gender, new MenuSlideItem.MyCheckBox("Men", SortUserList.getInstance().displayMen),
                 new MenuSlideItem.MyCheckBox("Women", SortUserList.getInstance().displayWomen), null, null));
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
-        mDrawerList = (ListView) findViewById(R.id.navList);
-        DrawerListAdapter drawerAdapter = new DrawerListAdapter(this, MenuSlideItems);
+        mDrawerLayout = (DrawerLayout) getView().findViewById(R.id.drawer_layout);
+        mDrawerPane = (RelativeLayout) getView().findViewById(R.id.drawerPane);
+        mDrawerList = (ListView) getView().findViewById(R.id.navList);
+        DrawerListAdapter drawerAdapter = new DrawerListAdapter((ContextDrawerAdapter)super.getContext(), MenuSlideItems);
         mDrawerList.setAdapter(drawerAdapter);
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -182,13 +165,6 @@ public class UserListActivity extends FragmentActivity implements ContextDrawerA
       });
     }
 
-    @Override
-    public void onBackPressed()
-    {
-        super.onBackPressed();
-        startActivity(new Intent(UserListActivity.this, MapsActivity.class));
-    }
-
     private double getDistToMe(User u1) {
         LatLng latLng = new LatLng(u1.getLatitude(), u1.getLongitude());
 
@@ -203,14 +179,17 @@ public class UserListActivity extends FragmentActivity implements ContextDrawerA
     }
 
     @Override
+    public Object getSystemService(@NonNull String name) {
+        return null;
+    }
+
+    @Override
     public void menuDrawerSeekBarListener(SeekBar seekBar, TextView textView, String btnName) {
         if (btnName.equals("Distance")) {
             SortUserList.getInstance().distanceToSearch = 1000 * seekBar.getProgress();
 
             updateUsers();
         }
-
-        //updateMap();
     }
 
     @Override

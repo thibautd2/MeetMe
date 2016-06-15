@@ -1,37 +1,42 @@
 package com.mti.meetme;
 
-import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTabHost;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CheckBox;
+import android.widget.SeekBar;
 import android.widget.TabHost;
+import android.widget.TextView;
+
+import com.mti.meetme.Interface.ContextDrawerAdapter;
+import com.mti.meetme.Model.Event;
+
 
 /**
  * Created by thiba_000 on 13/06/2016.
  */
 
-public class EventUserFragmentActivity extends TabActivity {
-    private TabHost tabHost;
+public class EventUserFragmentActivity extends AppCompatActivity implements ContextDrawerAdapter {
+    private FragmentTabHost tabHost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.event_user_activity);
-        tabHost = (TabHost) findViewById(android.R.id.tabhost);
-        TabHost.TabSpec tab1 = tabHost.newTabSpec("First Tab");
-        TabHost.TabSpec tab2 = tabHost.newTabSpec("Second Tab");
-        TabHost.TabSpec tab3 = tabHost.newTabSpec("third Tab");
-        tab1.setIndicator("Evénement");
-        tab1.setContent(new Intent(this, EventListActivity.class));
-        tab2.setIndicator("Inconnus");
-        tab2.setContent(new Intent(this, UserListActivity.class));
-        tab3.setIndicator("Amis");
-        tab3.setContent(new Intent(this, FriendsListActivity.class));
-        tabHost.addTab(tab1);
-        tabHost.addTab(tab2);
-        tabHost.addTab(tab3);
+        tabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
+        tabHost.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
+
+        tabHost.addTab(tabHost.newTabSpec("First Tab").setIndicator("Evénement"),
+                EventListActivity.class, null);
+        tabHost.addTab(tabHost.newTabSpec("Second Tab").setIndicator("Inconnus"),
+                UserListActivity.class, null);
+        tabHost.addTab(tabHost.newTabSpec("Third Tab").setIndicator("Amis"),
+                FriendsListActivity.class, null);
     }
 
     @Override
@@ -49,14 +54,23 @@ public class EventUserFragmentActivity extends TabActivity {
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 return true;
-            case R.id.menu_friends:
-                Intent intent2 = new Intent(getApplicationContext(), EventUserFragmentActivity.class);
-                intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent2);
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+
+    //todo becarfull, should use the actual page !
+    @Override
+    public void menuDrawerSeekBarListener(SeekBar seekBar, TextView textView, String btnName) {
+      //  ContextDrawerAdapter page = (ContextDrawerAdapter) getSupportFragmentManager().findFragmentById(getTaskId());
+        ContextDrawerAdapter page = (ContextDrawerAdapter) getSupportFragmentManager().findFragmentByTag("Second Tab");
+        page.menuDrawerSeekBarListener(seekBar, textView, btnName);
+    }
+
+    @Override
+    public void menuDrawerMultyChoiceListener(CheckBox checkBox, String btnName, boolean ischecked) {
+        ContextDrawerAdapter page = (ContextDrawerAdapter) getSupportFragmentManager().findFragmentByTag("Second Tab");
+        page.menuDrawerMultyChoiceListener(checkBox, btnName, ischecked);
+    }
 }
