@@ -1,5 +1,6 @@
 package com.mti.meetme;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -131,14 +132,29 @@ public class ProfileActivity extends AppCompatActivity{
                 startActivity(chatIntent);
                 return true;
             case R.id.menu_deco:
-                Network.bdd_connexion.unauth();
-                Intent decoIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                LoginManager.getInstance().logOut();
-                startActivity(decoIntent);
+                unauthFacebook();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void unauthFacebook(){
+        Dialog d = new AlertDialog.Builder(this)
+                .setTitle("Déconnection")
+                .setMessage("Etes vous sur de vouloir vous déconnecter ?")
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Network.bdd_connexion.unauth();
+                        Intent decoIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                        LoginManager.getInstance().logOut();
+                        startActivity(decoIntent);
+                    }
+                })
+                .create();
+        d.show();
     }
 
     @Override
