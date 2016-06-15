@@ -42,6 +42,7 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import com.pubnub.api.*;
@@ -346,15 +347,27 @@ public class ProfileActivity extends AppCompatActivity{
                                     params.height = friendsLayout.getHeight();
                                     params.width = params.height;
                                     params.setMargins(10, 0, 10, 0);
+
+                                    Firebase ref = Network.find_user(friendId);
+                                    final ArrayList<User> theUser = new ArrayList<>();
+                                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot snapshot) {
+                                            theUser.add(snapshot.getValue(User.class));
+                                        }
+                                        @Override
+                                        public void onCancelled(FirebaseError firebaseError) {
+                                            Log.e("UserController", "onCancelled: " + firebaseError.getMessage());
+                                        }
+                                    });
+
                                     newItem.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            User friendUser = UserController.getInstance().getUser(friendId);
-                                            if (friendUser != null) {
-                                                Log.e("ProfileActy", "onClick, add: " + friendUser.getName());
+                                            if (theUser.size() > 0) {
                                                 Intent intent = new Intent(ProfileActivity.this, ProfileActivity.class);
                                                 Bundle b = new Bundle();
-                                                b.putSerializable("User", friendUser);
+                                                b.putSerializable("User", theUser.get(0));
                                                 intent.putExtras(b);
                                                 startActivity(intent);
                                             }

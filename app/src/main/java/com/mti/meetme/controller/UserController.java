@@ -36,17 +36,19 @@ public class UserController {
         //final User friend = ds.getValue(User.class);
         final ArrayList<User> theUser = new ArrayList<>();
 
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                theUser.add(snapshot.getValue(User.class));
-            }
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                Log.e("UserController", "onCancelled: " + firebaseError.getMessage());
-            }
-        });
 
-        return theUser.get(0);
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    theUser.add(snapshot.getValue(User.class));
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    Log.e("UserController", "onCancelled: " + firebaseError.getMessage());
+                }
+            });
+
+            return theUser.get(0);
     }
 }
