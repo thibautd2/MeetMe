@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.util.Log;
 
 import com.squareup.picasso.Transformation;
 
@@ -24,20 +25,29 @@ public class RoundedPicasso implements Transformation {
                 source.recycle();
             }
 
-            Bitmap bitmap = Bitmap.createBitmap(size, size, source.getConfig());
+            Bitmap bitmap;
+            try {
+                bitmap = Bitmap.createBitmap(size, size, source.getConfig());
+                Canvas canvas = new Canvas(bitmap);
 
-            Canvas canvas = new Canvas(bitmap);
-            Paint paint = new Paint();
-            BitmapShader shader = new BitmapShader(squaredBitmap,
-                    BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP);
-            paint.setShader(shader);
-            paint.setAntiAlias(true);
 
-            float r = size / 2f;
-            canvas.drawCircle(r, r, r, paint);
+                Paint paint = new Paint();
+                BitmapShader shader = new BitmapShader(squaredBitmap,
+                        BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP);
+                paint.setShader(shader);
+                paint.setAntiAlias(true);
 
-            squaredBitmap.recycle();
-            return bitmap;
+                float r = size / 2f;
+                canvas.drawCircle(r, r, r, paint);
+
+                squaredBitmap.recycle();
+
+                return bitmap;
+            }
+            catch (Exception e) {
+                Log.e("RoundedPicasso", "transform Error: " + e.getMessage());
+                return Bitmap.createBitmap(source);
+            }
         }
 
         @Override

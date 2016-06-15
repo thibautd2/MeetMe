@@ -24,6 +24,7 @@ import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.facebook.login.LoginManager;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -35,6 +36,7 @@ import com.mti.meetme.Tools.FacebookHandler;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
+import com.mti.meetme.controller.UserController;
 import com.mti.meetme.notifications.NotificationSender;
 import com.squareup.picasso.Picasso;
 
@@ -129,7 +131,8 @@ public class ProfileActivity extends AppCompatActivity{
                 return true;
             case R.id.menu_deco:
                 Network.bdd_connexion.unauth();
-                Intent decoIntent = new Intent(this, LoginActivity.class);
+                Intent decoIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                LoginManager.getInstance().logOut();
                 startActivity(decoIntent);
                 return true;
             default:
@@ -176,7 +179,7 @@ public class ProfileActivity extends AppCompatActivity{
         alert.show();
     }
 
-    private void setupActionBar() {
+  /*  private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
 
         actionBar.setDisplayShowTitleEnabled(false);
@@ -190,7 +193,7 @@ public class ProfileActivity extends AppCompatActivity{
 
        // actionBar.setCustomView(customNav, lp1);
     }
-
+*/
     private void bindViews()
     {
         nameTextView = (TextView) findViewById(R.id.name_textview);
@@ -324,36 +327,52 @@ public class ProfileActivity extends AppCompatActivity{
     {
         Bundle params = new Bundle();
         params.putBoolean("redirect", false);
-        if(idFriendsCount < currentUser.getFriendsID().size())
-        new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/" + currentUser.getFriendsID().get(idFriendsCount) + "/picture",
-                params,
-                HttpMethod.GET,
-                new GraphRequest.Callback()
-                {
-                    public void onCompleted(GraphResponse response) {
-                        try {
-                        ImageView newItem = new ImageView(ProfileActivity.this);
-                        String url = response.getJSONObject().getJSONObject("data").getString("url");
-                        if(url != null) {
-                            Picasso.with(ProfileActivity.this).load(url).transform(new RoundedPicasso()).into(newItem);
-                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                            params.height = friendsLayout.getHeight();
-                            params.width = params.height;
-                            params.setMargins(10, 0, 10, 0);
-                            friendsLayout.addView(newItem, params);
-                            idFriendsCount++;
+        if(idFriendsCount < currentUser.getFriendsID().size()) {
+            final String friendId = currentUser.getFriendsID().get(idFriendsCount);
+
+            new GraphRequest(
+                    AccessToken.getCurrentAccessToken(),
+                    "/" + currentUser.getFriendsID().get(idFriendsCount) + "/picture",
+                    params,
+                    HttpMethod.GET,
+                    new GraphRequest.Callback() {
+                        public void onCompleted(GraphResponse response) {
+                            try {
+                                ImageView newItem = new ImageView(ProfileActivity.this);
+                                String url = response.getJSONObject().getJSONObject("data").getString("url");
+                                if (url != null) {
+                                    Picasso.with(ProfileActivity.this).load(url).transform(new RoundedPicasso()).into(newItem);
+                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                    params.height = friendsLayout.getHeight();
+                                    params.width = params.height;
+                                    params.setMargins(10, 0, 10, 0);
+                                    newItem.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            User friendUser = UserController.getInstance().getUser(friendId);
+                                            if (friendUser != null) {
+                                                Log.e("ProfileActy", "onClick, add: " + friendUser.getName());
+                                                Intent intent = new Intent(ProfileActivity.this, ProfileActivity.class);
+                                                Bundle b = new Bundle();
+                                                b.putSerializable("User", friendUser);
+                                                intent.putExtras(b);
+                                                startActivity(intent);
+                                            }
+                                        }
+                                    });
+                                    friendsLayout.addView(newItem, params);
+                                    idFriendsCount++;
+                                }
+                                if (idFriendsCount < currentUser.getFriendsID().size()) {
+                                    getFriendsPictures();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
-                        if (idFriendsCount < currentUser.getFriendsID().size()) {
-                            getFriendsPictures();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
-                    }
-                }
-        ).executeAsync();
+            ).executeAsync();
+        }
     }
 
 
