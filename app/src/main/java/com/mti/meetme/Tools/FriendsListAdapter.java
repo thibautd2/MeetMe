@@ -103,6 +103,7 @@ public class FriendsListAdapter extends  RecyclerView.Adapter<FriendsListAdapter
         vh.user_image = (ImageView)v.findViewById(R.id.user_img_list);
         vh.user_name = (TextView)v.findViewById(R.id.user_name_list);
         vh.relativeLayout = (RelativeLayout) v.findViewById(R.id.list_user_relative);
+        vh.user_envie = (TextView)v.findViewById(R.id.friend_envie);
         return vh;
     }
 
@@ -113,6 +114,7 @@ public class FriendsListAdapter extends  RecyclerView.Adapter<FriendsListAdapter
             if (u != null) {
                 Picasso.with(acti).load(u.getPic1()).fit().centerCrop().transform(new RoundedPicasso()).into(holder.user_image);
                 holder.user_name.setText(u.getName());
+                holder.user_envie.setText(u.getEnvie());
                 holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
