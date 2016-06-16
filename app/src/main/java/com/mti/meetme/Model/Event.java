@@ -25,15 +25,10 @@ public class Event implements Serializable {
     public String categorie;
     @com.google.gson.annotations.SerializedName("date")
     public String date;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
+    @com.google.gson.annotations.SerializedName("participants")
+    public String participants;
+    @com.google.gson.annotations.SerializedName("type")
+    public String type;
     @com.google.gson.annotations.SerializedName("latitude")
     public Double latitude;
     @com.google.gson.annotations.SerializedName("longitude")
@@ -41,11 +36,10 @@ public class Event implements Serializable {
     @com.google.gson.annotations.SerializedName("invited")
     public String invited;
 
-
-
     public Event(){};
 
-    public Event(String name, String description, String adresse, String ownerid, String visibility, String categorie, String date, Double latitude, Double longitude, String username) {
+    public Event(String name, String description, String adresse, String ownerid, String visibility, String categorie,
+                 String date, Double latitude, Double longitude, String username, String type) {
         this.name = name;
         this.description = description;
         this.adresse = adresse;
@@ -55,6 +49,16 @@ public class Event implements Serializable {
         this.date = date;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.username = username;
+        this.participants = "";
+        this.type = type;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
         this.username = username;
     }
 
