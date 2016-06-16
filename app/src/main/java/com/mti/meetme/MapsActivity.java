@@ -489,7 +489,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         @Override
                         public void onCancelled(FirebaseError firebaseError) {
-
                         }
                     });
                 }
