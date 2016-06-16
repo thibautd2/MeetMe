@@ -42,7 +42,6 @@ public class EventListActivity extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         simpleItemTouchCallback = getNewItemTocuh();
-
         events = new ArrayList<>();
         getall_event();
         bindViews();

@@ -25,6 +25,23 @@ public class Event implements Serializable {
     public String categorie;
     @com.google.gson.annotations.SerializedName("date")
     public String date;
+
+    public String getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(String participants) {
+        this.participants = participants;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @com.google.gson.annotations.SerializedName("participants")
     public String participants;
     @com.google.gson.annotations.SerializedName("type")

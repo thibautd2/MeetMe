@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.mti.meetme.EventFicheActivity;
 import com.mti.meetme.Model.Event;
 import com.mti.meetme.R;
 import com.mti.meetme.Tools.Map.CalculateDistance;
@@ -88,6 +89,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>
             holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Intent intent = new Intent(acti, EventFicheActivity.class);
+                    Bundle b = new Bundle();
+                    b.putSerializable("Event",e);
+                    intent.putExtras(b);
+                    acti.startActivity(intent);
                 }
             });
         }
