@@ -25,6 +25,14 @@
     <string name="all">Tout le monde</string>
     <string name="title">Créer un nouvel évènement</string>
 
+    <!-- GameCreateActivity -->
+    <string name="sex_target">Ciblez vous les hommes ou les femmes ?</string>
+    <string name="male">Hommes</string>
+    <string name="female">Femmes</string>
+    <string name="game_type">Choisissez le mode de jeu :</string>
+    <string name="compass">Boussole</string>
+    <string name="temp">Chaud/Froid</string>
+
     <!-- ProfileActivity -->
     <string name="profile_title">Profil</string>
     <string name="likes_title">Likes :</string>
