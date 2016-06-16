@@ -63,4 +63,8 @@
     <!-- ChatActivity-->
     <string name="send">Envoyer</string>
     <string name="input_hint">Entrez votre message...</string>
+
+    <!-- Create Gam Activity -->
+    <string name="game_desc">Description de la creation de jeux !</string>
+
 </resources>

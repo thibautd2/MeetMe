@@ -86,7 +86,7 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
 
       //  adapter = new GooglePlacesAutocompleteAdapter(getApplicationContext(), R.layout.adresse_list_item);
 
-        final Calendar c = Calendar.getInstance();
+   /*     final Calendar c = Calendar.getInstance();
         year = c.get(Calendar.YEAR);
         month = c.get(Calendar.MONTH);
         day = c.get(Calendar.DAY_OF_MONTH);
@@ -96,8 +96,8 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
         type.setText(currentDesire.toString());
         final EditText name = (EditText) getView().findViewById(R.id.event_name);
         final EditText desc = (EditText) getView().findViewById(R.id.event_description);
-        final EditText adresse = (EditText) getView().findViewById(R.id.event_adresse);
-        date = (EditText) getView().findViewById(R.id.event_date);
+      //  final EditText adresse = (EditText) getView().findViewById(R.id.event_adresse);
+      //  date = (EditText) getView().findViewById(R.id.event_date);
         final RadioButton friend = (RadioButton) getView().findViewById(R.id.event_friends);
         final RadioButton all = (RadioButton) getView().findViewById(R.id.event_all);
         AutoCompleteTextView autoCompView = (AutoCompleteTextView) getView().findViewById(R.id.event_adresse);
@@ -161,13 +161,14 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
                 }
             }
         });
+        */
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.activity_event, container, false);
+        return inflater.inflate(R.layout.activity_create_game, container, false);
     }
 
     @Override
