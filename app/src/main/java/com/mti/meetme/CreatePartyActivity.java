@@ -19,6 +19,7 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -98,12 +99,15 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
         Button Create = (Button) getView().findViewById(R.id.event_create);
         TextView type = (TextView) getView().findViewById(R.id.event_type);
         type.setText(currentDesire.toString());
+
         final EditText name = (EditText) getView().findViewById(R.id.event_name);
         final EditText desc = (EditText) getView().findViewById(R.id.event_description);
         final EditText adresse = (EditText) getView().findViewById(R.id.event_adresse);
         date = (EditText) getView().findViewById(R.id.event_date);
         final RadioButton friend = (RadioButton) getView().findViewById(R.id.event_friends);
         final RadioButton all = (RadioButton) getView().findViewById(R.id.event_all);
+        final RadioButton selection = (RadioButton) getView().findViewById(R.id.event_friends_selection);
+        final LinearLayout friendSelectLayout = (LinearLayout) getView().findViewById(R.id.friendsSelectionLayout);
         AutoCompleteTextView autoCompView = (AutoCompleteTextView) getView().findViewById(R.id.event_adresse);
         adapter = new GooglePlacesAutocompleteAdapter(getContext(), R.layout.adresse_list_item);
         autoCompView.setAdapter(adapter);
@@ -122,6 +126,15 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
                 if(isChecked) {
                     all.setChecked(false);
                     friend.setChecked(false);
+
+                    if (selection.isChecked())
+                    {
+                        friendSelectLayout.setVisibility(View.INVISIBLE);
+                        selection.setChecked(false);
+                    }
+                    else if (buttonView == selection && !selection.isChecked())
+                        friendSelectLayout.setVisibility(View.VISIBLE);
+
                     buttonView.setChecked(true);
                 }
             }
@@ -129,6 +142,7 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
 
         friend.setOnCheckedChangeListener(change);
         all.setOnCheckedChangeListener(change);
+        selection.setOnCheckedChangeListener(change);
 
         Create.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,6 +181,8 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
                 }
             }
         });
+
+        //Selection d'amis
     }
 
     @Nullable

@@ -21,6 +21,7 @@
     <!-- EventActivity -->
     <string name="event_title">Evènement</string>
     <string name="visibilite">Qui souhaites-tu inviter?</string>
+    <string name="select_amis">Choisir des amis</string>
     <string name="amis">Tous mes amis</string>
     <string name="all">Tout le monde</string>
     <string name="title">Créer un nouvel évènement</string>
