@@ -145,7 +145,7 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
                     if (all.isChecked())
                         visibility = "all";
                     Event event = new Event(name.getText().toString(), desc.getText().toString(), adresse.getText().toString(),
-                            u.getUid(), visibility, u.getEnvie(), date.getText().toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), FacebookUser.getInstance().getName());
+                            u.getUid(), visibility, u.getEnvie(), date.getText().toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), FacebookUser.getInstance().getName(), "party");
                     adressevalid = true;
                     getLocationFromAddress(event);
                     if(!adressevalid)

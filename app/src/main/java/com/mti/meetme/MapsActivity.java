@@ -433,6 +433,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
+                //people
                 if (!key.startsWith("Event :")) {
                     Firebase ref = Network.find_user(key);
                     final String fKey = key;
@@ -471,13 +472,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         public void onCancelled(FirebaseError firebaseError) {
                         }
                     });
-                } else {
+                }
+                //events
+                else {
                     Firebase ref = Network.find_event(key);
                     final String fKey = key;
                     ref.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             Event event = dataSnapshot.getValue(Event.class);
+                            //todo change marker for game here
                             if(event.visibility.compareTo("all") == 0 || (event.getInvited()!=null && FacebookUser.getInstance().getMeetMeFriends().contains(event.ownerid)) || event.ownerid.compareTo(FacebookUser.getInstance().getUid()) == 0) {
                                 Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
                                         event.getLatitude(), event.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.paryt_marker)).snippet(String.valueOf("event " + all_event.size())));

@@ -77,16 +77,16 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ImageView img = (ImageView)  getView().findViewById(R.id.event_header);
+        ImageView img = (ImageView) getView().findViewById(R.id.event_header);
 
-        final User u  = FacebookUser.getInstance();
+        final User u = FacebookUser.getInstance();
         String currentDesire = "Let's play a game !";
 
         img.setBackgroundResource(R.drawable.finegames);
 
-        adapter = new GooglePlacesAutocompleteAdapter(getApplicationContext(), R.layout.adresse_list_item);
+      //  adapter = new GooglePlacesAutocompleteAdapter(getApplicationContext(), R.layout.adresse_list_item);
 
-        final Calendar c = Calendar.getInstance();
+   /*     final Calendar c = Calendar.getInstance();
         year = c.get(Calendar.YEAR);
         month = c.get(Calendar.MONTH);
         day = c.get(Calendar.DAY_OF_MONTH);
@@ -96,15 +96,15 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
         type.setText(currentDesire.toString());
         final EditText name = (EditText) getView().findViewById(R.id.event_name);
         final EditText desc = (EditText) getView().findViewById(R.id.event_description);
-        final EditText adresse = (EditText) getView().findViewById(R.id.event_adresse);
-        date = (EditText) getView().findViewById(R.id.event_date);
+      //  final EditText adresse = (EditText) getView().findViewById(R.id.event_adresse);
+      //  date = (EditText) getView().findViewById(R.id.event_date);
         final RadioButton friend = (RadioButton) getView().findViewById(R.id.event_friends);
         final RadioButton all = (RadioButton) getView().findViewById(R.id.event_all);
         AutoCompleteTextView autoCompView = (AutoCompleteTextView) getView().findViewById(R.id.event_adresse);
         adapter = new GooglePlacesAutocompleteAdapter(getContext(), R.layout.adresse_list_item);
         autoCompView.setAdapter(adapter);
         autoCompView.setOnItemClickListener(this);
-        dial =  new DatePickerDialog(getContext(), datePickerListener, year, month,day);
+        dial = new DatePickerDialog(getContext(), datePickerListener, year, month, day);
         date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,7 +115,7 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
         CompoundButton.OnCheckedChangeListener change = new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
+                if (isChecked) {
                     all.setChecked(false);
                     friend.setChecked(false);
                     buttonView.setChecked(true);
@@ -130,46 +130,45 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
             @Override
             public void onClick(View v) {
 
-                if(name.getText().toString().length() == 0 || desc.getText().toString().length() == 0 || adresse.getText().toString().length() == 0 ||
-                        date.getText().toString().length() == 0)
-                {
+                if (name.getText().toString().length() == 0 || desc.getText().toString().length() == 0 || adresse.getText().toString().length() == 0 ||
+                        date.getText().toString().length() == 0) {
                     Toast.makeText(getApplicationContext(), "Tu dois remplir toutes les informations", Toast.LENGTH_LONG).show();
                     return;
-                }
-                else {
+                } else {
                     String visibility = "friends";
                     if (all.isChecked())
                         visibility = "all";
                     Event event = new Event(name.getText().toString(), desc.getText().toString(), adresse.getText().toString(),
-                            u.getUid(), visibility, u.getEnvie(), date.getText().toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), FacebookUser.getInstance().getName());
+                            u.getUid(), visibility, u.getEnvie(), date.getText().toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), FacebookUser.getInstance().getName(), "game");
+
+                   //todo use Event for game
                     adressevalid = true;
                     getLocationFromAddress(event);
-                    if(!adressevalid)
-                    {
+                    if (!adressevalid) {
                         Toast.makeText(getApplicationContext(), "Merci de sélectionner une adresse proposée", Toast.LENGTH_LONG).show();
-                    }
-                    else {
+                    } else {
                         if (visibility.compareTo("friends") == 0)
                             event.setInvited(u.getMeetMeFriends());
+                        //todo folowing with game too
                         Firebase ref = Network.create_event("Event :" + name.getText().toString() + u.getUid());
                         ref.setValue(event);
                         GeoFire geoFire = new GeoFire(Network.geofire);
                         geoFire.setLocation("Event :" + name.getText().toString() + u.getUid(), new GeoLocation(event.getLatitude(), event.getLongitude()));
                         Toast.makeText(getApplicationContext(), "Evénement Créé !", Toast.LENGTH_LONG).show();
-                        //todo uncomment this
-                         Intent intent = new Intent(getContext(), MapsActivity.class);
+                        Intent intent = new Intent(getContext(), MapsActivity.class);
                         startActivity(intent);
                     }
                 }
             }
         });
+        */
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.activity_event, container, false);
+        return inflater.inflate(R.layout.activity_create_game, container, false);
     }
 
     @Override

@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:baselineAligned="false">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/create_game_activity"
+        android:requiresFadingEdge="horizontal|vertical"
+        android:background="#f7f7f7">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:id="@+id/event_header"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:background="#000000" />
+
+        <TextView
+            android:text="Type d'évènement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/event_type"
+            android:textColor="#ffffff"
+            android:textSize="22sp"
+            android:layout_marginTop="25dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/imageView"
+            android:background="@android:drawable/ic_media_play"
+            android:layout_marginEnd="31dp"
+            android:layout_alignBottom="@+id/event_type"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="15dp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/event_header">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/event_header"
+                android:id="@+id/relativeLayout"
+                android:alpha="1">
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:ems="10"
+                    android:padding="5dp"
+                    android:layout_below="@+id/event_name"
+                    android:id="@+id/event_description"
+                    android:hint="Description"
+                    android:layout_marginTop="5dp"
+                    android:minLines="2"
+                    android:background="@drawable/rounded_corners"
+                    android:layout_alignEnd="@+id/event_name"
+                    android:maxLines="2"
+                    android:layout_alignStart="@+id/event_name" />
+
+
+                <TextView
+                    android:text="@string/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/event_title"
+                    android:textSize="18sp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:ems="10"
+                    android:id="@+id/event_name"
+                    android:selectAllOnFocus="false"
+                    android:hint="Nom de l&apos;évènement"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginRight="40dp"
+                    android:elevation="0dp"
+                    android:padding="5dp"
+                    android:background="@drawable/rounded_corners"
+                    android:layout_below="@+id/event_title"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="20dp" />
+
+                <Button
+                    android:text="Créer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/event_create"
+                    android:background="@drawable/rounded_corners_event"
+                    android:layout_below="@+id/textView_desc"
+                    android:layout_marginTop="20dp"
+                    android:textColor="#ffffff"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="30dp" />
+
+                <RadioButton
+                    android:text="@string/all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/event_all"
+                    android:textColor="#2d2d2d"
+                    android:layout_marginRight="10dp"
+                    android:layout_alignBaseline="@+id/event_friends"
+                    android:layout_alignBottom="@+id/event_friends"
+                    android:layout_alignEnd="@+id/event_create" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView_invite"
+                    android:text="@string/visibilite"
+                    android:ems="10"
+                    android:textSize="17sp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentStart="true"
+                    android:gravity="center"
+                    android:layout_below="@+id/event_description"
+                    android:layout_marginTop="25dp"
+                    android:textStyle="bold" />
+
+                <RadioButton
+                    android:text="@string/amis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/event_friends"
+                    android:textColor="#2d2d2d"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_below="@+id/textView_invite"
+                    android:layout_alignStart="@+id/event_description"
+                    android:layout_marginStart="11dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView_genre"
+                    android:text="@string/sex_target"
+                    android:ems="10"
+                    android:textSize="17sp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentStart="true"
+                    android:gravity="center"
+                    android:layout_below="@+id/event_all"
+                    android:layout_marginTop="25dp"
+                    android:textStyle="bold" />
+
+                <CheckBox
+                    android:text="@string/male"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/sex_male"
+                    android:textColor="#2d2d2d"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_below="@+id/textView_genre"
+                    android:layout_alignStart="@+id/event_description" />
+
+                <CheckBox
+                    android:text="@string/female"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/sex_female"
+                    android:textColor="#2d2d2d"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_below="@+id/textView_genre"
+                    android:layout_alignStart="@+id/event_all" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView_gamemode"
+                    android:text="@string/game_type"
+                    android:ems="10"
+                    android:textSize="17sp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentStart="true"
+                    android:gravity="center"
+                    android:layout_below="@+id/sex_male"
+                    android:layout_marginTop="25dp"
+                    android:textStyle="bold" />
+
+                <RadioButton
+                    android:text="@string/compass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/game_type_compass"
+                    android:textColor="#2d2d2d"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_below="@+id/textView_gamemode"
+                    android:layout_alignStart="@+id/event_description" />
+
+                <RadioButton
+                    android:text="@string/temp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/game_type_temp"
+                    android:textColor="#2d2d2d"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_below="@+id/textView_gamemode"
+                    android:layout_alignStart="@+id/event_all" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView_desc"
+                    android:text="@string/game_desc"
+                    android:ems="10"
+                    android:textSize="17sp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentStart="true"
+                    android:gravity="center"
+                    android:layout_below="@+id/game_type_temp"
+                    android:layout_marginTop="25dp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+        </ScrollView>
+
+    </RelativeLayout>
+</LinearLayout>
