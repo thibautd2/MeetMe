@@ -587,6 +587,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         });
                         dialog.show();
                     }
+                    else
+                    {
+                        String token = "event ";
+                        String realid = marker.getSnippet().replace(token, "");
+                        int id = Integer.parseInt(realid);
+                        Log.e("MARKER ID", "MARKER ID : " + id);
+                        Event e = null;
+                        if (id < all_event.size()) {
+                            e = all_event.get(id);
+                            Intent intent = new Intent(MapsActivity.this, ProfileActivity.class);
+                            Bundle b = new Bundle();
+                            b.putSerializable("Event", e);
+                            intent.putExtras(b);
+                            startActivity(intent);
+                        }
+                    }
                 }
             });
 

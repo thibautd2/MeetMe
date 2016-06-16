@@ -91,7 +91,11 @@
             android:name=".ChatActivity"
             android:windowSoftInputMode="stateAlwaysVisible"
             android:label="Chat"/>
-
+        <activity
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:name=".EventFicheActivity"
+            android:label="Event"/>
         <activity
             android:configChanges="orientation"
             android:screenOrientation="portrait"

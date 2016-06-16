@@ -10,6 +10,7 @@ import com.firebase.client.Firebase;
 import com.mti.meetme.Model.Event;
 import com.mti.meetme.Model.User;
 import com.pubnub.api.Pubnub;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 
@@ -52,6 +53,6 @@ public class EventFicheActivity extends AppCompatActivity {
         adresse.setText(event.getAdresse());
         description.setText(event.getDescription());
         participants.setText("(15)");
-
+        image.setBackgroundResource(R.drawable.soiree2fine);
     }
 }
