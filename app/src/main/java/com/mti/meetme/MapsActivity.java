@@ -596,7 +596,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Event e = null;
                         if (id < all_event.size()) {
                             e = all_event.get(id);
-                            Intent intent = new Intent(MapsActivity.this, ProfileActivity.class);
+                            Intent intent = new Intent(MapsActivity.this, EventFicheActivity.class);
                             Bundle b = new Bundle();
                             b.putSerializable("Event", e);
                             intent.putExtras(b);
@@ -648,7 +648,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         distance.setText(String.format("%.1f", dist) + " km");
                         img.setBackgroundResource(R.drawable.paryt_marker);
                         name.setText(e.getName());
-                        age.setText(e.date.toString().substring(0,5));
+                       // age.setText(e.date.toString().substring(0,5));
                     }
                 }
                 return v;
