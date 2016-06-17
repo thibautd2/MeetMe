@@ -161,7 +161,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 startActivity(intent);
             }
         });
-    /* DEGUEU !!!!! */
+
+        /* DEGUEU !!!!! */
+        /* C'est toi qui ose me parler de degueu ?!?!?!?! */
+
         profileButton.getLayoutParams().height -= 30;
         profileButton.getLayoutParams().width -= 30;
 
@@ -421,7 +424,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public static void sendPosition() {
-        Log.e("SEND NEW POSITION", "SEND NEW POSITION :" + FacebookUser.getInstance().getLatitude().toString() + " " + FacebookUser.getInstance().getLongitude().toString());
         Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
         Map<String, Object> pos = new HashMap<String, Object>();
         pos.put("latitude", String.valueOf(FacebookUser.getInstance().getLatitude()));
@@ -445,6 +447,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     private void getAllUSerandEventPosition() {
+
+        /* C'est pas dégueu tout ça peut-être ?! */
+
         GeoLocation geoLocation = new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
         GeoQuery geoQuery = geoFire.queryAtLocation(geoLocation, rayon / 1000);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
