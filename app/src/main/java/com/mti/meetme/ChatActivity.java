@@ -302,7 +302,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (v == chatUserLayout)
         {
-            Intent intent = new Intent(this, ProfileActivity.class);
+            Intent intent = new Intent(ChatActivity.this, ProfileActivity.class);
             Bundle b = new Bundle();
             b.putSerializable("User", targetUser);
             intent.putExtras(b);
@@ -310,10 +310,17 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (v == mapsButton)
         {
-            Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            Intent intent = new Intent(ChatActivity.this, MapsActivity.class);
             startActivity(intent);
         }
     }
-
+    @Override
+    public void onBackPressed()
+    {
+        Intent intent = new Intent(ChatActivity.this, ProfileActivity.class);
+        Bundle b = new Bundle();
+        b.putSerializable("User", targetUser);
+        intent.putExtras(b);
+        startActivity(intent);
+    }
 }

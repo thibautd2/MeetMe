@@ -90,7 +90,7 @@
                     android:ems="10"
                     android:id="@+id/event_name"
                     android:selectAllOnFocus="false"
-                    android:hint="Prenom"
+                    android:hint="Titre"
                     android:layout_marginLeft="40dp"
                     android:layout_marginRight="40dp"
                     android:elevation="0dp"

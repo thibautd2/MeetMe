@@ -132,7 +132,7 @@ public class FacebookHandler
                                     fullLikes.getJSONArray("data").put(response.getJSONObject().getJSONArray("data").get(i));
                             }
 
-                            if (response.getJSONObject().getJSONArray("data").length()!=0 && !response.getJSONObject().getJSONObject("paging").isNull("next"))
+                            if ( response.getJSONObject() != null &&response.getJSONObject().getJSONArray("data").length()!=0 && !response.getJSONObject().getJSONObject("paging").isNull("next"))
                                 getUserLikes(response.getJSONObject().getJSONObject("paging").getJSONObject("cursors").getString("after"));
                             else {
                                 likesReady = true;
@@ -178,7 +178,7 @@ public class FacebookHandler
                                     fullFriends.getJSONArray("data").put(response.getJSONObject().getJSONArray("data").get(i));
                             }
 
-                            if (response.getJSONObject().getJSONArray("data").length()!=0 && !response.getJSONObject().getJSONObject("paging").isNull("next") && response.getJSONObject().getJSONObject("paging").has("cursors"))
+                            if (response.getJSONObject()!= null && response.getJSONObject().getJSONArray("data")!= null && response.getJSONObject().getJSONArray("data").length()!=0 && !response.getJSONObject().getJSONObject("paging").isNull("next") && response.getJSONObject().getJSONObject("paging").has("cursors"))
                                 getUserFriends(response.getJSONObject().getJSONObject("paging").getJSONObject("cursors").getString("after"));
                             else {
                                 friendsReady = true;
@@ -212,49 +212,51 @@ public class FacebookHandler
                 currentUser.getUid() + "/photos/uploaded",
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
-                        try {
-                            if (fullPictures == null)
-                                fullPictures = response.getJSONObject();
-                            else {
-                                JSONArray array = response.getJSONObject().getJSONArray("data");
+                        if (response != null) {
+                            try {
+                                if (fullPictures == null)
+                                    fullPictures = response.getJSONObject();
+                                else {
+                                    JSONArray array = response.getJSONObject().getJSONArray("data");
 
-                                for (int i = 0; i < array.length(); i++)
-                                    fullPictures.getJSONArray("data").put(response.getJSONObject().getJSONArray("data").get(i));
-                            }
-
-                            if (response.getJSONObject().getJSONArray("data").length()!=0 && !response.getJSONObject().getJSONObject("paging").isNull("next"))
-                                getUserProfilePics(response.getJSONObject().getJSONObject("paging").getJSONObject("cursors").getString("after"));
-                            else {
-                                int nbPics = 0;
-                                JSONArray array = fullPictures.getJSONArray("data");
-
-                                for (int i = 0; i < array.length() && nbPics < 5; i++)
-                                {
-                                    JSONObject picture = array.getJSONObject(i);
-                                    String album_name = picture.getJSONObject("album").optString("name");
-                                    if (album_name.compareTo("Profile Pictures") == 0) {
-                                        String url = picture.optString("source");
-
-                                        if (nbPics == 0)
-                                            currentUser.setPic1(url);
-                                        else if (nbPics == 1)
-                                            currentUser.setPic2(url);
-                                        else if (nbPics == 2)
-                                            currentUser.setPic3(url);
-                                        else if (nbPics == 3)
-                                            currentUser.setPic4(url);
-                                        else if (nbPics == 4)
-                                            currentUser.setPic5(url);
-                                        nbPics++;
-                                    }
+                                    for (int i = 0; i < array.length(); i++)
+                                        fullPictures.getJSONArray("data").put(response.getJSONObject().getJSONArray("data").get(i));
                                 }
-                                picturesReady = true;
-                                if (likesReady && friendsReady && picturesReady)
-                                    switchToMaps();
+
+                                if (response.getJSONObject()!=null && response.getJSONObject().getJSONArray("data").length() != 0 && !response.getJSONObject().getJSONObject("paging").isNull("next"))
+                                    getUserProfilePics(response.getJSONObject().getJSONObject("paging").getJSONObject("cursors").getString("after"));
+                                else {
+                                    int nbPics = 0;
+                                    JSONArray array = null;
+                                    if(fullPictures !=null)
+                                     array = fullPictures.getJSONArray("data");
+                                    if(array != null)
+                                    for (int i = 0; i < array.length() && nbPics < 5; i++) {
+                                        JSONObject picture = array.getJSONObject(i);
+                                        String album_name = picture.getJSONObject("album").optString("name");
+                                        if (album_name.compareTo("Profile Pictures") == 0) {
+                                            String url = picture.optString("source");
+
+                                            if (nbPics == 0)
+                                                currentUser.setPic1(url);
+                                            else if (nbPics == 1)
+                                                currentUser.setPic2(url);
+                                            else if (nbPics == 2)
+                                                currentUser.setPic3(url);
+                                            else if (nbPics == 3)
+                                                currentUser.setPic4(url);
+                                            else if (nbPics == 4)
+                                                currentUser.setPic5(url);
+                                            nbPics++;
+                                        }
+                                    }
+                                    picturesReady = true;
+                                    if (likesReady && friendsReady && picturesReady)
+                                        switchToMaps();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        }
-                        catch (JSONException e) {
-                            e.printStackTrace();
                         }
                     }
                 }
