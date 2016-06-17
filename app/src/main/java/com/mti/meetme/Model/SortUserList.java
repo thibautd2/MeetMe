@@ -41,7 +41,9 @@ public class SortUserList {
     }
 
     public double getDistToMe(User u1) {
-        LatLng latLng = new LatLng(u1.getLatitude(), u1.getLongitude());
+        LatLng latLng = null;
+        if(u1 != null && u1.getLongitude()!=null && u1.getLatitude() != null)
+             latLng = new LatLng(u1.getLatitude(), u1.getLongitude());
 
         User u2 = FacebookUser.getInstance();
         LatLng latLng2 = new LatLng(u2.getLatitude(), u2.getLongitude());
