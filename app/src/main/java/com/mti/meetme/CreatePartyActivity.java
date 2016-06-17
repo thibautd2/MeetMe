@@ -5,11 +5,13 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,14 +26,23 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.mti.meetme.Model.Event;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.Network.Network;
+import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.controller.TodayDesire;
+import com.squareup.picasso.Picasso;
 
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
@@ -39,15 +50,20 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONException;
+import org.w3c.dom.Text;
+
 import android.content.Context;
 
 import android.widget.ArrayAdapter;
@@ -79,9 +95,18 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
     private int day;
     private EditText date;
 
+    private LinearLayout friendSelectLayout;
+
+    private ArrayList<String> friendsPictures;
+    private ArrayList<String> friendsNames;
+    private ArrayList<String> friendsUids;
+
+    private HashMap<String, RadioButton> radioIds;
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         ImageView img = (ImageView)  getView().findViewById(R.id.event_header);
 
         final User u  = FacebookUser.getInstance();
@@ -107,7 +132,7 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
         final RadioButton friend = (RadioButton) getView().findViewById(R.id.event_friends);
         final RadioButton all = (RadioButton) getView().findViewById(R.id.event_all);
         final RadioButton selection = (RadioButton) getView().findViewById(R.id.event_friends_selection);
-        final LinearLayout friendSelectLayout = (LinearLayout) getView().findViewById(R.id.friendsSelectionLayout);
+        friendSelectLayout = (LinearLayout) getView().findViewById(R.id.friendsSelectionLayout);
         AutoCompleteTextView autoCompView = (AutoCompleteTextView) getView().findViewById(R.id.event_adresse);
         adapter = new GooglePlacesAutocompleteAdapter(getContext(), R.layout.adresse_list_item);
         autoCompView.setAdapter(adapter);
@@ -129,13 +154,14 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
 
                     if (selection.isChecked())
                     {
-                        friendSelectLayout.setVisibility(View.INVISIBLE);
+                        friendSelectLayout.setVisibility(View.GONE);
                         selection.setChecked(false);
                     }
-                    else if (buttonView == selection && !selection.isChecked())
-                        friendSelectLayout.setVisibility(View.VISIBLE);
 
                     buttonView.setChecked(true);
+
+                    if (selection.isChecked())
+                        friendSelectLayout.setVisibility(View.VISIBLE);
                 }
             }
         };
@@ -156,12 +182,18 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
                 }
                 else {
                     String visibility = "friends";
+
                     if (all.isChecked())
                         visibility = "all";
+                    else if (selection.isChecked())
+                        visibility = "friend_selection";
+
                     Event event = new Event(name.getText().toString(), desc.getText().toString(), adresse.getText().toString(),
                             u.getUid(), visibility, u.getEnvie(), date.getText().toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), FacebookUser.getInstance().getName(), "party");
+
                     adressevalid = true;
                     getLocationFromAddress(event);
+
                     if(!adressevalid)
                     {
                         Toast.makeText(getApplicationContext(), "Merci de sélectionner une adresse proposée", Toast.LENGTH_LONG).show();
@@ -169,11 +201,26 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
                     else {
                         if (visibility.compareTo("friends") == 0)
                             event.setInvited(u.getMeetMeFriends());
+                        else if (visibility.compareTo("friend_selection") == 0)
+                        {
+                            String invited = "";
+
+                            for(Map.Entry<String, RadioButton> e : radioIds.entrySet()) {
+                                String uid = e.getKey();
+                                RadioButton radio = e.getValue();
+
+                                if (radio.isChecked())
+                                    invited += uid + ";";
+                            }
+
+                            event.setInvited(invited);
+                        }
+
                         Firebase ref = Network.create_event("Event :" + name.getText().toString() + u.getUid());
                         ref.setValue(event);
                         GeoFire geoFire = new GeoFire(Network.geofire);
                         geoFire.setLocation("Event :" + name.getText().toString() + u.getUid(), new GeoLocation(event.getLatitude(), event.getLongitude()));
-                        Toast.makeText(getApplicationContext(), "Evénement Créé !", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Evènement créé !", Toast.LENGTH_LONG).show();
                         //todo uncomment this
                          Intent intent = new Intent(getContext(), MapsActivity.class);
                         startActivity(intent);
@@ -183,6 +230,14 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
         });
 
         //Selection d'amis
+        friendsNames = new ArrayList<>();
+        friendsPictures = new ArrayList<>();
+        friendsUids = new ArrayList<>();
+
+        radioIds = new HashMap<>();
+
+        if (!FacebookUser.getInstance().getMeetMeFriends().isEmpty())
+            fill(FacebookUser.getInstance().getMeetMeFriends().split(";"));
     }
 
     @Nullable
@@ -343,4 +398,61 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
             }
     };
 
+    private void fill(final String[] friendsIds)
+    {
+        for (int i = 0; i < friendsIds.length; i++)
+        {
+            Firebase ref = new Firebase("https://intense-fire-5226.firebaseio.com/users/" + friendsIds[i] );
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot)
+                {
+                    User friend = dataSnapshot.getValue(User.class);
+
+                    friendsNames.add(friend.getName());
+                    friendsPictures.add(friend.getPic1());
+                    friendsUids.add(friend.getUid());
+
+                    if (friendsNames.size() == friendsIds.length)
+                    {
+                        for (int i = 0; i < friendsNames.size(); i++)
+                        {
+                            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                            lp.setMargins(10, 10, 10, 10);
+                            LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(100, 100);
+
+
+                            LinearLayout layout = new LinearLayout(getView().getContext());
+                            layout.setLayoutParams(lp);
+                            layout.setOrientation(LinearLayout.HORIZONTAL);
+
+                            lp.gravity = Gravity.CENTER_VERTICAL;
+
+                            RadioButton radio = new RadioButton(getView().getContext());
+                            radio.setGravity(Gravity.CENTER_VERTICAL);
+                            radioIds.put(friendsUids.get(i), radio);
+
+                            ImageView profilePic = new ImageView(getView().getContext());
+                            Picasso.with(getView().getContext()).load(friendsPictures.get(i)).transform(new RoundedPicasso()).into(profilePic);
+
+                            TextView name = new TextView(getView().getContext());
+                            name.setText(friendsNames.get(i));
+
+                            layout.addView(radio, lp);
+                            layout.addView(profilePic, lp2);
+                            layout.addView(name, lp);
+
+                            friendSelectLayout.addView(layout, lp);
+                        }
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
+        }
+    }
 }

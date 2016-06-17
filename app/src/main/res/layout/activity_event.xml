@@ -149,7 +149,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/event_create"
                     android:background="@drawable/rounded_corners_event"
-                    android:layout_below="@+id/event_all"
+                    android:layout_below="@+id/friendsSelectionLayout"
                     android:layout_marginTop="20dp"
                     android:textColor="#ffffff"
                     android:layout_alignParentEnd="true"
@@ -195,96 +195,15 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="20dp"
-                    android:paddingStart="10dp"
+                    android:paddingStart="5dp"
                     android:paddingEnd="10dp"
                     android:paddingTop="5dp"
                     android:orientation="vertical"
                     android:background="@drawable/rounded_corners_friends_selection"
                     android:layout_below="@id/radioLayout"
-                    android:visibility="invisible">
+                    android:visibility="gone">
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
 
-                        <RadioButton
-                            android:id="@+id/radio0"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"/>
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_launcher" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal" >
-
-                        <RadioButton
-                            android:id="@+id/radio01"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:checked="true" />
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_launcher" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal" >
-
-                        <RadioButton
-                            android:id="@+id/radio02"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:checked="true" />
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_launcher" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal" >
-
-                        <RadioButton
-                            android:id="@+id/radio02"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:checked="true" />
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_launcher" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal" >
-
-                        <RadioButton
-                            android:id="@+id/radio02"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:checked="true" />
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_launcher" />
-                    </LinearLayout>
                 </LinearLayout>
             </RelativeLayout>
         </ScrollView>
