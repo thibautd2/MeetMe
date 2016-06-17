@@ -38,6 +38,7 @@ import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
+import com.mti.meetme.notifications.NotificationSender;
 import com.squareup.picasso.Picasso;
 
 import org.joda.time.LocalDate;
@@ -206,6 +207,8 @@ public class CreateSportActivity extends Fragment implements AdapterView.OnItemC
                             event.setInvited(invited);
                         }
 
+                        sendNotificationsToGuests(event.getInvited(), FacebookUser.getInstance().getName(), event.getName());
+                        
                         Firebase ref = Network.create_event("Event :" + name.getText().toString() + u.getUid());
                         ref.setValue(event);
                         GeoFire geoFire = new GeoFire(Network.geofire);
@@ -387,6 +390,29 @@ public class CreateSportActivity extends Fragment implements AdapterView.OnItemC
                         .append(""));
         }
     };
+
+    private void sendNotificationsToGuests(String invited, final String eventOwner, final String eventTitle)
+    {
+        String[] guestIds = invited.split(";");
+        for (int i = 0; i < guestIds.length; i++)
+        {
+            Firebase ref = new Firebase("https://intense-fire-5226.firebaseio.com/users/" + guestIds[i] + "/fcmID" );
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot)
+                {
+                    String fcmId = dataSnapshot.getValue().toString();
+
+                    new NotificationSender().execute(fcmId, "Nouvelle invitation reçue !", eventOwner + " vous invite à l'évènement " + eventTitle);
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
+        }
+    }
 
     private void fill(final String[] friendsIds)
     {
