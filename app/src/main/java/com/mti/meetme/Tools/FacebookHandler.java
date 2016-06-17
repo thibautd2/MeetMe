@@ -3,6 +3,7 @@ package com.mti.meetme.Tools;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 
 import com.firebase.client.Firebase;
@@ -91,9 +92,13 @@ public class FacebookHandler
 
     private void switchToMaps() throws JSONException {
         FacebookUser.setFacebookUser(currentUser);
+        Log.w("Current User", currentUser.toString());
 
-        FacebookUser.getInstance().setFriendsString(fullFriends.toString());
-        FacebookUser.getInstance().setLikesString(fullLikes.toString());
+        if (fullFriends != null)
+            FacebookUser.getInstance().setFriendsString(fullFriends.toString());
+
+        if (fullLikes != null)
+            FacebookUser.getInstance().setLikesString(fullLikes.toString());
 
         Firebase ref = Network.getAlluser;
         Firebase userRef = ref.child(currentUser.getUid());

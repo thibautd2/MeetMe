@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -156,7 +157,13 @@ public class LoginActivity extends Activity implements FacebookCallback<LoginRes
         if(progress != null)
             progress.dismiss();
 
-        currentUser.setUid(authData.getUid().split(":")[1]);
+        Log.w("uid", authData.getUid());
+
+        if (authData.getUid().split(":").length == 1)
+            currentUser.setUid(authData.getUid());
+        else
+            currentUser.setUid(authData.getUid().split(":")[1]);
+
         FacebookUser.setFacebookUser(currentUser);
 
         FacebookHandler handler = new FacebookHandler(this);

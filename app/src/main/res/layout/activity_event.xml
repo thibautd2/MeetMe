@@ -201,8 +201,6 @@
                     android:background="@drawable/rounded_corners_friends_selection"
                     android:layout_below="@id/radioLayout"
                     android:visibility="gone">
-
-
                 </LinearLayout>
             </RelativeLayout>
         </ScrollView>

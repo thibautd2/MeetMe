@@ -53,7 +53,11 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
 
     @Override
     public void onAuthenticated(AuthData authData) {
-        getUserFromFirebase(authData.getUid().split(":")[1]);
+        if (authData.getUid().split(":").length == 1)
+            getUserFromFirebase(authData.getUid());
+        else
+            getUserFromFirebase(authData.getUid().split(":")[1]);
+
     }
 
     @Override

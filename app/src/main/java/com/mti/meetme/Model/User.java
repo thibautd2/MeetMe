@@ -112,7 +112,6 @@ public class User implements Serializable, Parcelable {
         Longitude = null;
         Latitude = null;
         Envie = desire.toString();
-        friendRequestReceived = "";
         FcmID = fcmID;
     }
 
@@ -332,6 +331,7 @@ public class User implements Serializable, Parcelable {
     public String getMeetMeFriends() {
         if (MeetMeFriends == null)
             return "";
+
         return MeetMeFriends;
     }
 

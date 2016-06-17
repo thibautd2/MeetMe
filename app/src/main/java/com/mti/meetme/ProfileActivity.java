@@ -257,7 +257,7 @@ public class ProfileActivity extends AppCompatActivity{
 
         descriptionTextView.setText(currentUser.getDescription());
 
-        if (currentUser.getLikesID().size() > 0)
+        if (currentUser.getLikesID() != null && currentUser.getLikesID().size() > 0)
             getLikesPictures();
 
         if (currentUser.getMeetMeFriends() != null)
@@ -304,20 +304,22 @@ public class ProfileActivity extends AppCompatActivity{
 
     private void getLikesPictures()
     {
-        Bundle params = new Bundle();
-        params.putBoolean("redirect", false);
+        if (currentUser.getLikesID() != null)
+        {
+            Bundle params = new Bundle();
+            params.putBoolean("redirect", false);
 
-        new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/" + currentUser.getLikesID().get(idLikesCount) + "/picture",
-                params,
-                HttpMethod.GET,
-                new GraphRequest.Callback(){
+            new GraphRequest(
+                    AccessToken.getCurrentAccessToken(),
+                    "/" + currentUser.getLikesID().get(idLikesCount) + "/picture",
+                    params,
+                    HttpMethod.GET,
+                    new GraphRequest.Callback(){
                         public void onCompleted(GraphResponse response) {try {
                             ImageView newItem = new ImageView(ProfileActivity.this);
                             String url = "";
                             if(response != null) {
-                                 url = response.getJSONObject().getJSONObject("data").getString("url");
+                                url = response.getJSONObject().getJSONObject("data").getString("url");
                             }
                             Picasso.with(ProfileActivity.this).load(url).transform(new RoundedPicasso()).into(newItem);
 
@@ -330,21 +332,22 @@ public class ProfileActivity extends AppCompatActivity{
                             if (idLikesCount < currentUser.getLikesID().size()) {
                                 getLikesPictures();
                             }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         }
 
                     }
             ).executeAsync();
 
+        }
    }
 
     private void getFriendsPictures()
     {
         Bundle params = new Bundle();
         params.putBoolean("redirect", false);
-        if(idFriendsCount < currentUser.getFriendsID().size()) {
+        if(currentUser.getFriendsID() != null && idFriendsCount < currentUser.getFriendsID().size()) {
             final String friendId = currentUser.getFriendsID().get(idFriendsCount);
 
             new GraphRequest(
