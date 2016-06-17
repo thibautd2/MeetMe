@@ -161,17 +161,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 startActivity(intent);
             }
         });
-
+    /* DEGUEU !!!!! */
         profileButton.getLayoutParams().height -= 30;
         profileButton.getLayoutParams().width -= 30;
 
         profileButton.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+            Intent intent = new Intent(MapsActivity.this, ProfileActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }});
+
+        /* DEGUEU !!!!! */
 
         settingsButton.getLayoutParams().height -= 30;
         settingsButton.getLayoutParams().width -= 30;
@@ -259,6 +261,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onResume() {
         super.onResume();
+        eventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MapsActivity.this, CreateEventManager.class);
+                startActivity(intent);
+            }
+        });
+        listButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MapsActivity.this, EventUserFragmentActivity.class);
+                startActivity(intent);
+            }
+        });
         Firebase.setAndroidContext(getApplicationContext());
         backtwice = 0;
         followMeLocationSource.getBestAvailableProvider();
@@ -649,7 +665,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         distance.setText(String.format("%.1f", dist) + " km");
                         img.setBackgroundResource(R.drawable.paryt_marker);
                         name.setText(e.getName());
-                       // age.setText(e.date.toString().substring(0,5));
+                        String date = e.date;
+                        if(date.length()>5)
+                        date = date.substring(0,5);
+                        age.setText(date);
                     }
                 }
                 return v;
