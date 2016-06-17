@@ -74,18 +74,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>
             holder.event_username.setText(e.getUsername());
 
             String currentDesire = e.getCategorie();
-            if(currentDesire.compareTo(TodayDesire.Desire.play.toString())==0)
+            if(e.getType().compareTo("game")==0)
                 Picasso.with(acti).load(R.drawable.finegames).fit().centerCrop().into(holder.event_image);
-            if(currentDesire.compareTo(TodayDesire.Desire.party.toString())==0)
+            if(e.getType().compareTo("party")==0)
                 Picasso.with(acti).load(R.drawable.soiree2fine).fit().centerCrop().into(holder.event_image);
-            if(currentDesire.compareTo(TodayDesire.Desire.Drink.toString())==0)
-                Picasso.with(acti).load(R.drawable.drinkfine).fit().centerCrop().into(holder.event_image);
-            if(currentDesire.compareTo(TodayDesire.Desire.Date.toString())==0)
-                Picasso.with(acti).load(R.drawable.rencontrefine).fit().centerCrop().into(holder.event_image);
-            if(currentDesire.compareTo(TodayDesire.Desire.Sport.toString())==0)
-                Picasso.with(acti).load(R.drawable.finegames).fit().centerCrop().into(holder.event_image);
-            if(currentDesire.compareTo(TodayDesire.Desire.Everything.toString())==0)
-                Picasso.with(acti).load(R.drawable.allfine).fit().centerCrop().into(holder.event_image);
+            if(e.getType().compareTo("sport")==0)
+                Picasso.with(acti).load(R.drawable.finesport).fit().centerCrop().into(holder.event_image);
+
             holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

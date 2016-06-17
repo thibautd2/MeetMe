@@ -62,21 +62,43 @@ public class EventFicheActivity extends AppCompatActivity {
         adresse.setText(event.getAdresse());
         description.setText(event.getDescription());
         participants.setText("(15)");
-        image.setBackgroundResource(R.drawable.soiree2fine);
+        image.setBackgroundResource(R.drawable.allfine);
+        if(event!=null && event.getType()!=null) {
+            if (event.getType().compareTo("sport") == 0)
+                image.setBackgroundResource(R.drawable.finesport);
+            if (event.getType().compareTo("party") == 0)
+                image.setBackgroundResource(R.drawable.soiree2fine);
+            if (event.getType().compareTo("drink") == 0)
+                image.setBackgroundResource(R.drawable.drinkfine);
+        }
         date.setText(event.getDate());
         Firebase ref = Network.find_user(event.getOwnerid());
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 creator = dataSnapshot.getValue(User.class);
-                Picasso.with(getParent()).load(creator.getPic1()).fit().transform(new RoundedPicasso()).into(userimage);
+                Picasso.with(getParent()).load(creator.getPic1()).fit().centerCrop().transform(new RoundedPicasso()).into(userimage);
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
             }
         });
         if(event != null && event.getInvited()!= null && event.getInvited().length()>1)
-        {
+            getParticipants();
+
+    }
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+       // if(event != null && event.getInvited()!= null && event.getInvited().length()>1)
+         //   getParticipants();
+
+    }
+
+
+    public void getParticipants()
+    {
         String[] participent = event.getInvited().split(";");
         for (String e : participent) {
             Firebase user = Network.find_user(e);
@@ -93,12 +115,12 @@ public class EventFicheActivity extends AppCompatActivity {
                     imageParticipants.addView(newItem, params);
 
                 }
-
                 @Override
                 public void onCancelled(FirebaseError firebaseError) {
                 }
             });
         }
-        }
+
     }
+
 }
