@@ -70,13 +70,19 @@
         <activity
             android:configChanges="orientation"
             android:screenOrientation="portrait"
-            android:name=".EventUserFragmentActivity"
+            android:name=".Event.EventUserFragmentActivity"
             android:label="Recherche" />
 
         <activity
             android:configChanges="orientation"
             android:screenOrientation="portrait"
-            android:name=".CreateEventManager"
+            android:name=".Event.Game.GameParticipantsListActivity"
+            android:label="Liste des participants" />
+
+        <activity
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:name=".Event.EventCreation.CreateEventManager"
             android:label="@string/event_title" />
 
         <activity
@@ -96,7 +102,7 @@
         <activity
             android:configChanges="orientation"
             android:screenOrientation="portrait"
-            android:name=".EventFicheActivity"
+            android:name=".Event.EventFicheActivity"
             android:label="Event"/>
         <activity
             android:configChanges="orientation"
@@ -106,7 +112,7 @@
         <activity
             android:configChanges="orientation"
             android:screenOrientation="portrait"
-            android:name=".EventListActivity"
+            android:name=".Event.EventListActivity"
             android:label="Evenement"/>
 
         <activity

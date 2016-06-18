@@ -1,4 +1,4 @@
-package com.mti.meetme;
+package com.mti.meetme.Event;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +16,7 @@ import com.firebase.client.ValueEventListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.mti.meetme.Model.Event;
 import com.mti.meetme.Model.User;
+import com.mti.meetme.R;
 import com.mti.meetme.Tools.Event.EventAdapter;
 import com.mti.meetme.Tools.Map.CalculateDistance;
 import com.mti.meetme.Tools.Network.Network;

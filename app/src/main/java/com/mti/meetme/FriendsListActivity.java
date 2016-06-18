@@ -42,7 +42,6 @@ import java.util.Map;
  * Created by thiba_000 on 12/04/2016.
  */
 public class FriendsListActivity extends Fragment {
-
     LinearLayoutManager mLinearLayoutManager;
     RecyclerView mRecyclerView;
     RecyclerView mRecyclerViewNFriend;

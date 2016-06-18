@@ -1,4 +1,4 @@
-package com.mti.meetme;
+package com.mti.meetme.Event.EventCreation;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -33,8 +33,10 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
+import com.mti.meetme.MapsActivity;
 import com.mti.meetme.Model.Event;
 import com.mti.meetme.Model.User;
+import com.mti.meetme.R;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
@@ -52,8 +54,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +69,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
  * Created by thiba_000 on 04/06/2016.
  */
 
-public class CreateSportActivity extends Fragment implements AdapterView.OnItemClickListener {
+public class CreatePartyActivity extends Fragment implements AdapterView.OnItemClickListener {
 
     private static final String LOG_TAG = "ErreurApiGoogle";
     private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
@@ -97,9 +102,9 @@ public class CreateSportActivity extends Fragment implements AdapterView.OnItemC
         ImageView img = (ImageView)  getView().findViewById(R.id.event_header);
 
         final User u  = FacebookUser.getInstance();
-        String currentDesire = "Let's play a sport !";
+        String currentDesire = "Let's go to party !";
 
-        img.setBackgroundResource(R.drawable.finesport);
+        img.setBackgroundResource(R.drawable.soiree2fine);
 
         adapter = new GooglePlacesAutocompleteAdapter(getApplicationContext(), R.layout.adresse_list_item);
 
@@ -179,8 +184,13 @@ public class CreateSportActivity extends Fragment implements AdapterView.OnItemC
                     else if (selection.isChecked())
                         visibility = "friend_selection";
 
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    Date date = new Date();
+                    long oneHour = 3600 * 1000;
+                    Date endDate = new Date(date.getTime() + 12 * oneHour);
+
                     Event event = new Event(name.getText().toString(), desc.getText().toString(), adresse.getText().toString(),
-                            u.getUid(), visibility, u.getEnvie(), date.getText().toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), FacebookUser.getInstance().getName(), "sport");
+                            u.getUid(), visibility, u.getEnvie(), dateFormat.format(date).toString(), dateFormat.format(endDate).toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), FacebookUser.getInstance().getName(), "party");
 
                     adressevalid = true;
                     getLocationFromAddress(event);
@@ -208,14 +218,14 @@ public class CreateSportActivity extends Fragment implements AdapterView.OnItemC
                         }
 
                         sendNotificationsToGuests(event.getInvited(), FacebookUser.getInstance().getName(), event.getName());
-                        
+
                         Firebase ref = Network.create_event("Event :" + name.getText().toString() + u.getUid());
                         ref.setValue(event);
                         GeoFire geoFire = new GeoFire(Network.geofire);
                         geoFire.setLocation("Event :" + name.getText().toString() + u.getUid(), new GeoLocation(event.getLatitude(), event.getLongitude()));
                         Toast.makeText(getApplicationContext(), "Evènement créé !", Toast.LENGTH_LONG).show();
                         //todo uncomment this
-                        Intent intent = new Intent(getContext(), MapsActivity.class);
+                         Intent intent = new Intent(getContext(), MapsActivity.class);
                         startActivity(intent);
                     }
                 }
@@ -242,7 +252,7 @@ public class CreateSportActivity extends Fragment implements AdapterView.OnItemC
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+            super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -385,14 +395,16 @@ public class CreateSportActivity extends Fragment implements AdapterView.OnItemC
             if(eventDate.isBefore(now))
                 Toast.makeText(getApplicationContext(), "Merci de choisir une date valide", Toast.LENGTH_LONG).show();
             else
-                date.setText(new StringBuilder().append(month + 1)
+            date.setText(new StringBuilder().append(month + 1)
                         .append("/").append(day).append("/").append(year)
                         .append(""));
-        }
+            }
     };
 
     private void sendNotificationsToGuests(String invited, final String eventOwner, final String eventTitle)
     {
+        if (invited == null || invited == "")
+            return;
         String[] guestIds = invited.split(";");
         for (int i = 0; i < guestIds.length; i++)
         {

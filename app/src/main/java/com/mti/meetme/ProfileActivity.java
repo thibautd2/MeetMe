@@ -140,6 +140,7 @@ public class ProfileActivity extends AppCompatActivity{
     }
 
     private void unauthFacebook(){
+        //todo problem here, cant connect with another account after that
         Dialog d = new AlertDialog.Builder(this)
                 .setTitle("Déconnection")
                 .setMessage("Etes vous sur de vouloir vous déconnecter ?")

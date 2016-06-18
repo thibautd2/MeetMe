@@ -1,20 +1,20 @@
-package com.mti.meetme;
+package com.mti.meetme.Event;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CheckBox;
 import android.widget.SeekBar;
-import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.mti.meetme.FriendsListActivity;
 import com.mti.meetme.Interface.ContextDrawerAdapter;
-import com.mti.meetme.Model.Event;
+import com.mti.meetme.MapsActivity;
+import com.mti.meetme.R;
+import com.mti.meetme.UserListActivity;
 
 
 /**

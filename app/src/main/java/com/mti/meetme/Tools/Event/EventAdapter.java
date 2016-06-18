@@ -13,12 +13,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.mti.meetme.EventFicheActivity;
+import com.mti.meetme.Event.EventFicheActivity;
 import com.mti.meetme.Model.Event;
 import com.mti.meetme.R;
 import com.mti.meetme.Tools.Map.CalculateDistance;
 import com.mti.meetme.controller.FacebookUser;
-import com.mti.meetme.controller.TodayDesire;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

@@ -1,20 +1,17 @@
-package com.mti.meetme;
+package com.mti.meetme.Event.EventCreation;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.facebook.login.LoginManager;
+import com.mti.meetme.MapsActivity;
 import com.mti.meetme.R;
 import com.mti.meetme.Tools.MyPagerAdapter;
-import com.mti.meetme.Tools.Network.Network;
 
 import java.util.List;
 import java.util.Vector;

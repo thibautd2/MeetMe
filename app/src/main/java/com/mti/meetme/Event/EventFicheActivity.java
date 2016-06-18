@@ -1,9 +1,10 @@
-package com.mti.meetme;
+package com.mti.meetme.Event;
 
-import android.media.Image;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -12,14 +13,17 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.mti.meetme.MapsActivity;
 import com.mti.meetme.Model.Event;
 import com.mti.meetme.Model.User;
+import com.mti.meetme.R;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.RoundedPicasso;
-import com.pubnub.api.Pubnub;
+import com.mti.meetme.controller.FacebookUser;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by thiba_000 on 16/06/2016.
@@ -32,6 +36,7 @@ public class EventFicheActivity extends AppCompatActivity {
     Event event;
     User creator;
     LinearLayout imageParticipants;
+    Button participateBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +58,7 @@ public class EventFicheActivity extends AppCompatActivity {
         userimage = (ImageView) findViewById(R.id.event_fiche_user_photo);
         date = (TextView) findViewById(R.id.event_fiche_date);
         imageParticipants = (LinearLayout) findViewById(R.id.event_fiche_layout);
+        participateBtn = (Button) findViewById(R.id.button2);
     }
 
     private  void populateViews()
@@ -76,8 +82,9 @@ public class EventFicheActivity extends AppCompatActivity {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                creator = dataSnapshot.getValue(User.class);
-                Picasso.with(getParent()).load(creator.getPic1()).fit().centerCrop().transform(new RoundedPicasso()).into(userimage);
+                //todo uncommunt when this work..
+              //  creator = dataSnapshot.getValue(User.class);
+              //  Picasso.with(getParent()).load(creator.getPic1()).fit().centerCrop().transform(new RoundedPicasso()).into(userimage);
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
@@ -86,6 +93,22 @@ public class EventFicheActivity extends AppCompatActivity {
         if(event != null && event.getInvited()!= null && event.getInvited().length()>1)
             getParticipants();
 
+        //todo make invisible if already participant
+        if (event.ownerid.equals(FacebookUser.getInstance().getUid()))
+            participateBtn.setVisibility(View.INVISIBLE);
+        else {
+            participateBtn.setVisibility(View.VISIBLE);
+            participateBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Firebase ref = Network.find_event(event.receiveEventId());
+                    String str = event.getParticipants() + FacebookUser.getInstance().getUid() + ";";
+                    Map<String, Object> desc = new HashMap<>();
+                    desc.put("participants", str);
+                    ref.updateChildren(desc, null);
+                }
+            });
+        }
     }
     @Override
     public void onResume()
@@ -121,6 +144,13 @@ public class EventFicheActivity extends AppCompatActivity {
             });
         }
 
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
     }
 
 }

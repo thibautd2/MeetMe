@@ -1,7 +1,10 @@
 package com.mti.meetme.Tools.Network;
 
+import android.util.Log;
+
 import com.firebase.client.Firebase;
 import com.mti.meetme.Model.Event;
+import com.mti.meetme.controller.MyGame;
 
 import java.net.URI;
 
@@ -37,5 +40,11 @@ public class Network {
     public static  Firebase find_event(String event)
     {
         return new Firebase(connexion_to_event+"/"+event);
+    }
+
+    public static Firebase find_ParticipantsToMyGame() {
+        Event mygame = MyGame.getInstance().getGame();
+        Log.e("Network", "find_ParticipantsToMyGame: " + mygame.receiveEventId());
+        return new Firebase(connexion_to_event + "/" + mygame.receiveEventId() + "/participants");
     }
 }

@@ -2,6 +2,7 @@ package com.mti.meetme.Model;
 
 import java.io.Serializable;
 import java.io.StringReader;
+import java.util.ArrayList;
 
 /**
  * Created by thiba_000 on 05/06/2016.
@@ -25,23 +26,6 @@ public class Event implements Serializable {
     public String categorie;
     @com.google.gson.annotations.SerializedName("date")
     public String date;
-
-    public String getParticipants() {
-        return participants;
-    }
-
-    public void setParticipants(String participants) {
-        this.participants = participants;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     @com.google.gson.annotations.SerializedName("participants")
     public String participants;
     @com.google.gson.annotations.SerializedName("type")
@@ -52,11 +36,13 @@ public class Event implements Serializable {
     public Double longitude;
     @com.google.gson.annotations.SerializedName("invited")
     public String invited;
+    @com.google.gson.annotations.SerializedName("endDate")
+    public String endDate;
 
     public Event(){};
 
     public Event(String name, String description, String adresse, String ownerid, String visibility, String categorie,
-                 String date, Double latitude, Double longitude, String username, String type) {
+                 String date, String endDate, Double latitude, Double longitude, String username, String type) {
         this.name = name;
         this.description = description;
         this.adresse = adresse;
@@ -69,6 +55,25 @@ public class Event implements Serializable {
         this.username = username;
         this.participants = "";
         this.type = type;
+        this.endDate = endDate;
+    }
+
+    public String receiveEventId() {
+        return "Event :" + name + ownerid;
+    }
+
+    public ArrayList<String> receiveParticipants() {
+        ArrayList participantsTab = new ArrayList();
+
+        if (participants == null || participants.equals(""))
+            return null;
+
+        String str[] = participants.split(";");
+
+        for (String s: str)
+            participantsTab.add(s);
+
+        return participantsTab;
     }
 
     public String getUsername() {
@@ -157,5 +162,29 @@ public class Event implements Serializable {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public String getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(String participants) {
+        this.participants = participants;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 }
