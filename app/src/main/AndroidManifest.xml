@@ -82,6 +82,12 @@
         <activity
             android:configChanges="orientation"
             android:screenOrientation="portrait"
+            android:name=".Event.Game.GameCompassActivity"
+            android:label="Jeux - cache cache" />
+
+        <activity
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:name=".Event.EventCreation.CreateEventManager"
             android:label="@string/event_title" />
 

@@ -8,11 +8,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.mti.meetme.Event.EventCreation.CreateEventManager;
+import com.mti.meetme.Event.Game.GameCompassActivity;
 import com.mti.meetme.MapsActivity;
 import com.mti.meetme.Model.Event;
 import com.mti.meetme.Model.User;
@@ -106,10 +109,22 @@ public class EventFicheActivity extends AppCompatActivity {
                     Map<String, Object> desc = new HashMap<>();
                     desc.put("participants", str);
                     ref.updateChildren(desc, null);
-                }
+
+                    if (event.type.equals("compass")) {
+                        Intent intent = new Intent(EventFicheActivity.this, GameCompassActivity.class);
+                        startActivity(intent);
+                    }
+                  /*  else
+                    {
+                        Toast.makeText(this, "Vous participez mainenant a cet event", Toast.LENGTH_LONG);
+                        Intent intent = new Intent(MapsActivity.this, MapsActivity.class);
+                        startActivity(intent);
+                    }
+*/                }
             });
         }
     }
+
     @Override
     public void onResume()
     {
