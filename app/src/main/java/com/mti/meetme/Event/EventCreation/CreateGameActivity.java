@@ -77,7 +77,7 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
 
         img.setBackgroundResource(R.drawable.finegames);
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        SimpleDateFormat dateFormat = MyGame.getInstance().getDateFormat();
         final Date date = new Date();
         System.out.println(dateFormat.format(date));
 
@@ -93,17 +93,17 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
             visibility = "all";
 
         if (!men.isChecked())
-            visibility += ";women";
+            visibility += ";women;";
         else if (!women.isChecked())
-            visibility += ";men";
+            visibility += ";men;";
         else
-            visibility += ";all";
+            visibility += ";all;";
 
         String gameType = "compass";
         if (warmNcold.isChecked())
             gameType = "warmNcold";
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        SimpleDateFormat dateFormat = MyGame.getInstance().getDateFormat();
         Date date = new Date();
         long oneHour = 3600 * 1000;
         Date endDate = new Date(date.getTime() + oneHour);

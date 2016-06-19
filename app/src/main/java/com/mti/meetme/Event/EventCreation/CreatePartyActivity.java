@@ -40,6 +40,7 @@ import com.mti.meetme.R;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
+import com.mti.meetme.controller.MyGame;
 import com.mti.meetme.notifications.NotificationSender;
 import com.squareup.picasso.Picasso;
 
@@ -184,7 +185,7 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
                     else if (selection.isChecked())
                         visibility = "friend_selection";
 
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    SimpleDateFormat dateFormat = MyGame.getInstance().getDateFormat();
                     Date date = new Date();
                     long oneHour = 3600 * 1000;
                     Date endDate = new Date(date.getTime() + 12 * oneHour);

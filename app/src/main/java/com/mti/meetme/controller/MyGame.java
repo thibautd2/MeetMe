@@ -15,6 +15,7 @@ import java.util.Map;
  */
 public class MyGame {
     private Event game;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
     private static MyGame ourInstance = new MyGame();
 
@@ -37,7 +38,6 @@ public class MyGame {
         Event myEvent = MyGame.getInstance().getGame();
         Firebase ref = Network.find_event(myEvent.receiveEventId());
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
 
         Map<String, Object> desc = new HashMap<>();
@@ -46,5 +46,9 @@ public class MyGame {
 
         MyGame.getInstance().setGame(null);
         //Toast.makeText(getApplicationContext(), "Jeux terminé !", Toast.LENGTH_LONG).show();
+    }
+
+    public SimpleDateFormat getDateFormat() {
+        return dateFormat;
     }
 }
