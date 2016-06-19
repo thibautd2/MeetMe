@@ -164,7 +164,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MapsActivity.this, EventUserFragmentActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+               // intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
         });
@@ -181,8 +181,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         else
             gameButton.setVisibility(View.INVISIBLE);
 
-        /* DEGUEU !!!!! */
-        /* C'est toi qui ose me parler de degueu ?!?!?!?! */
+
 
         profileButton.getLayoutParams().height -= 30;
         profileButton.getLayoutParams().width -= 30;
@@ -194,8 +193,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }});
-
-        /* DEGUEU !!!!! */
 
         settingsButton.getLayoutParams().height -= 30;
         settingsButton.getLayoutParams().width -= 30;
@@ -664,8 +661,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             } catch (ParseException e1) {
                                 e1.printStackTrace();
                             }
-
-                            if (eventFinish != null && eventFinish.after(now)) {
+                            // Le marqueur ne devrai pas apparaitre si finis. Sinon on doit pouvoir cliquer dessus
+                          //  if (eventFinish != null && eventFinish.after(now)) {
                                 //todo change the layout for games
                                 if (e.getType().equals("game")) {
                                     Intent intent = new Intent(MapsActivity.this, EventFicheActivity.class);
@@ -680,7 +677,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     intent.putExtras(b);
                                     startActivity(intent);
                                 }
-                            }
+                          //  }
                         }
                     }
                 }

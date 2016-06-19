@@ -71,7 +71,7 @@ public class FacebookHandler
             if (currentUser.getLikes() != null)
                 currentUser.setLikesId(getLikesInCommonId(currentUser.getLikes()));
 
-            if (currentUser.getFriends() != null)
+            if (currentUser.getFriends() != null && getFriendsInCommonId(currentUser.getFriends())!=null)
                 currentUser.setFriendsId(getFriendsInCommonId(currentUser.getFriends()));
         }
         return currentUser;
@@ -327,6 +327,7 @@ public class FacebookHandler
             for (int i = 0; i < friendsArray.length(); i++) {
                 friendsId.add(friendsArray.getJSONObject(i).getString("id"));
             }
+            if(FacebookUser.getInstance()!=null && FacebookUser.getInstance().getFriends()!=null)
             for (int i = 0; i < FacebookUser.getInstance().getFriends().getJSONArray("data").length(); i++) {
                 friendsIdCurrent.add(FacebookUser.getInstance().getFriends().getJSONArray("data").getJSONObject(i).getString("id"));
             }
@@ -348,7 +349,7 @@ public class FacebookHandler
             for (int i = 0; i < likesArray.length(); i++) {
                 likesId.add(likesArray.getJSONObject(i).getString("id"));
             }
-
+            if(FacebookUser.getInstance() != null && FacebookUser.getInstance().getFriends()!=null)
             for (int i = 0; i < FacebookUser.getInstance().getFriends().length(); i++) {
                 likesIdCurrent.add(FacebookUser.getInstance().getLikes().getJSONArray("data").getJSONObject(i).getString("id"));
             }
