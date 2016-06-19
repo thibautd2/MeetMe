@@ -67,10 +67,12 @@ import com.mti.meetme.controller.TodayDesire;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -123,8 +125,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         backtwice = 0;
         setContentView(R.layout.activity_maps);
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         geoFire = new GeoFire(Network.geofire);
         all_user = new ArrayList<>();
@@ -301,7 +302,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             gameButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //todo go to list of game participants
                     Intent intent = new Intent(MapsActivity.this, GameParticipantsListActivity.class);
                     startActivity(intent);
                 }
@@ -319,6 +319,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             } else
                 mMap.setMyLocationEnabled(true);
 
+        updateMap();
     }
 
     private void setupActionBar() {
@@ -536,9 +537,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             Event event = dataSnapshot.getValue(Event.class);
                             //todo change marker for game here
-                            if(event != null && ((event.visibility != null && event.visibility.compareTo("all") == 0) ||
-                                    (event.getInvited()!=null && FacebookUser.getInstance().getMeetMeFriends().contains(event.ownerid)) ||
-                                    event.ownerid.compareTo(FacebookUser.getInstance().getUid()) == 0)) {
+                            if(checkEventVisibility(event)) {
+                                Log.e("mapsActy", "onDataChange: show a marker");
+                        //    if (event != null && event.visibility != null && event.getName().equals("Party hard")) {
                                 Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
                                         event.getLatitude(), event.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.paryt_marker)).snippet(String.valueOf("event " + all_event.size())));
                                 all_event.add(event);
@@ -610,7 +611,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                 @Override
                 public void onInfoWindowClick(Marker marker) {
-                    if (!marker.getSnippet().startsWith("event ")) {
+                    if (!marker.getSnippet().startsWith("event ")) { //User
                         final User user = all_user.get(Integer.parseInt(marker.getSnippet()));
                         final Dialog dialog = new Dialog(MapsActivity.this);
                         dialog.setContentView(R.layout.user_pop_up);
@@ -653,31 +654,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if (id < all_event.size()) {
                             e = all_event.get(id);
 
-                            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                            Date now = new Date();
-                            Date eventFinish = null;
-                            try {
-                                eventFinish = dateFormat.parse(e.getEndDate());
-                            } catch (ParseException e1) {
-                                e1.printStackTrace();
+                            //todo check visibility: all, friends, choising friends, then men / women
+
+                            //todo change the layout for games
+                            if (e.getType().equals("game")) {
+                                Intent intent = new Intent(MapsActivity.this, EventFicheActivity.class);
+                                Bundle b = new Bundle();
+                                b.putSerializable("Event", e);
+                                intent.putExtras(b);
+                                startActivity(intent);
+                            } else {
+                                Intent intent = new Intent(MapsActivity.this, EventFicheActivity.class);
+                                Bundle b = new Bundle();
+                                b.putSerializable("Event", e);
+                                intent.putExtras(b);
+                                startActivity(intent);
                             }
-                            // Le marqueur ne devrai pas apparaitre si finis. Sinon on doit pouvoir cliquer dessus
-                          //  if (eventFinish != null && eventFinish.after(now)) {
-                                //todo change the layout for games
-                                if (e.getType().equals("game")) {
-                                    Intent intent = new Intent(MapsActivity.this, EventFicheActivity.class);
-                                    Bundle b = new Bundle();
-                                    b.putSerializable("Event", e);
-                                    intent.putExtras(b);
-                                    startActivity(intent);
-                                } else {
-                                    Intent intent = new Intent(MapsActivity.this, EventFicheActivity.class);
-                                    Bundle b = new Bundle();
-                                    b.putSerializable("Event", e);
-                                    intent.putExtras(b);
-                                    startActivity(intent);
-                                }
-                          //  }
+
                         }
                     }
                 }
@@ -743,6 +736,55 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMap.setInfoWindowAdapter(adapt);
     }
 
+    //todo check all possibilities
+    private boolean checkEventVisibility(Event event) {
+        if (event == null || event.visibility == null)
+            return false;
+
+        try {
+            Date now = new Date();
+            Date eventFinish = null;
+            eventFinish = MyGame.getInstance().getDateFormat().parse(event.getEndDate());
+            if (eventFinish == null || eventFinish.before(now))
+                return false;
+        } catch (ParseException e1) {
+            e1.getStackTrace();
+        }
+
+        if (event.getOwnerid().equals(FacebookUser.getInstance().getUid()))
+            return true;
+
+        ArrayList<String> visibilityList;
+        if (event.getVisibility().contains(";")) {
+            String visible[] = event.getVisibility().split(";");
+            visibilityList = new ArrayList<>(Arrays.asList(visible));
+        }
+        else {
+            visibilityList = new ArrayList<>();
+            visibilityList.add(event.getVisibility());
+        }
+
+       if (visibilityList.get(0).equals("friend") && FacebookUser.getInstance().haveThisFriend(event.getOwnerid())) {
+           if (visibilityList.size() == 1)
+               return true;
+           if (visibilityList.size() > 1 && visibilityList.get(1).equals(FacebookUser.getInstance().getGender()))
+               return true;
+           return false;
+       }
+
+        if (visibilityList.get(0).equals("friend_selection") && event.getInvited() != null && event.getInvited().contains(FacebookUser.getInstance().getUid()))
+            return true;
+
+        if (visibilityList.get(0).equals("all")) {
+            if (visibilityList.size() == 1 || visibilityList.get(1).equals("all"))
+                return true;
+            if (visibilityList.size() > 1 && visibilityList.get(1).equals(FacebookUser.getInstance().getGender()))
+                return true;
+            return false;
+        }
+
+        return false;
+    }
 
     private class InfoWindowRefresher implements Callback {
         private Marker markerToRefresh;
