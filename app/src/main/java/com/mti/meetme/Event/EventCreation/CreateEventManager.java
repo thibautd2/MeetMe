@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.FacebookSdk;
+import com.firebase.client.Firebase;
 import com.mti.meetme.MapsActivity;
 import com.mti.meetme.R;
 import com.mti.meetme.Tools.MyPagerAdapter;
@@ -44,6 +46,14 @@ public class CreateEventManager extends AppCompatActivity {
         // Affectation de l'adapter au ViewPager
         pager.setAdapter(this.mPagerAdapter);
 
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        Firebase.setAndroidContext(this);
+        FacebookSdk.sdkInitialize(this);
     }
 
     @Override

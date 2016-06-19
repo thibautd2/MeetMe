@@ -155,7 +155,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         eventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MapsActivity.this, CreateEventManager.class);
+                Intent intent = new Intent(getApplicationContext(), CreateEventManager.class);
                 startActivity(intent);
             }
         });
@@ -164,7 +164,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         listButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MapsActivity.this, EventUserFragmentActivity.class);
+                Intent intent = new Intent(getApplicationContext(), EventUserFragmentActivity.class);
                // intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
@@ -175,7 +175,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 @Override
                 public void onClick(View view) {
                     //todo go to list of game participants
-                    Intent intent = new Intent(MapsActivity.this, GameParticipantsListActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), GameParticipantsListActivity.class);
                     startActivity(intent);
                 }
             });
@@ -190,7 +190,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         profileButton.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(MapsActivity.this, ProfileActivity.class);
+            Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }});
@@ -285,14 +285,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         eventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MapsActivity.this, CreateEventManager.class);
+                Intent intent = new Intent(getApplicationContext(), CreateEventManager.class);
                 startActivity(intent);
             }
         });
         listButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MapsActivity.this, EventUserFragmentActivity.class);
+                Intent intent = new Intent(getApplicationContext(), EventUserFragmentActivity.class);
                 startActivity(intent);
             }
         });
@@ -302,7 +302,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             gameButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(MapsActivity.this, GameParticipantsListActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), GameParticipantsListActivity.class);
                     startActivity(intent);
                 }
             });
@@ -663,13 +663,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             //todo change the layout for games
                             if (e.getType().equals("game")) {
-                                Intent intent = new Intent(MapsActivity.this, EventFicheActivity.class);
+                                Intent intent = new Intent(getApplicationContext(), EventFicheActivity.class);
                                 Bundle b = new Bundle();
                                 b.putSerializable("Event", e);
                                 intent.putExtras(b);
                                 startActivity(intent);
                             } else {
-                                Intent intent = new Intent(MapsActivity.this, EventFicheActivity.class);
+                                Intent intent = new Intent(getApplicationContext(), EventFicheActivity.class);
                                 Bundle b = new Bundle();
                                 b.putSerializable("Event", e);
                                 intent.putExtras(b);
