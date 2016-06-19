@@ -57,8 +57,12 @@ public class UserList {
         LatLng latLng = new LatLng(e1.getLatitude(), e1.getLongitude());
 
         User u2 = FacebookUser.getInstance();
-        LatLng latLng2 = new LatLng(u2.getLatitude(), u2.getLongitude());
+        if(u2 != null) {
+            LatLng latLng2 = new LatLng(u2.getLatitude(), u2.getLongitude());
 
-        return CalculateDistance.getDistance(latLng, latLng2);
+            return CalculateDistance.getDistance(latLng, latLng2);
+        }
+        else // erreur
+            return 10;
     }
 }

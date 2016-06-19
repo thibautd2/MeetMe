@@ -85,9 +85,10 @@ public class EventFicheActivity extends AppCompatActivity {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                //todo uncommunt when this work..
-              //  creator = dataSnapshot.getValue(User.class);
-              //  Picasso.with(getParent()).load(creator.getPic1()).fit().centerCrop().transform(new RoundedPicasso()).into(userimage);
+              if(getBaseContext() != null) {
+                  creator = dataSnapshot.getValue(User.class);
+                  Picasso.with(getBaseContext()).load(creator.getPic1()).fit().centerCrop().transform(new RoundedPicasso()).into(userimage);
+              }
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
