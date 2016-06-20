@@ -245,12 +245,12 @@ public class ProfileActivity extends AppCompatActivity{
             likesTextView.setText(getString(R.string.likes_common_title));
             friendsTextView.setText(getString(R.string.friends_common_title));
 
-            if (currentUser.getLikesID().size() == 0) {
+            if (currentUser.getLikesID()!=null && currentUser.getLikesID().size() == 0) {
                 likesTextView.setVisibility(View.GONE);
                 likesLayout.setVisibility(View.GONE);
             }
 
-            if (currentUser.getFriendsID().size() == 0) {
+            if (currentUser.getFriendsID()!=null && currentUser.getFriendsID().size() == 0) {
                 friendsTextView.setVisibility(View.GONE);
                 friendsLayout.setVisibility(View.GONE);
             }

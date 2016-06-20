@@ -156,7 +156,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         eventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MapsActivity.this, CreateEventManager.class);
+                Intent intent = new Intent(getApplicationContext(), CreateEventManager.class);
                 startActivity(intent);
             }
         });
@@ -165,11 +165,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         listButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent1 = new Intent(MapsActivity.this, EventUserFragmentActivity.class);
+                Intent intent = new Intent(getApplicationContext(), EventUserFragmentActivity.class);
                // intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent1);
+                startActivity(intent);
             }
         });
+
 
         if (MyGame.getInstance().getGame() != null) {
             if (MyGame.getInstance().getGame().getOwnerid().equals(FacebookUser.getInstance().getUid()))
@@ -200,7 +201,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         profileButton.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(MapsActivity.this, ProfileActivity.class);
+            Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }});
@@ -295,14 +296,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         eventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MapsActivity.this, CreateEventManager.class);
+                Intent intent = new Intent(getApplicationContext(), CreateEventManager.class);
                 startActivity(intent);
             }
         });
         listButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MapsActivity.this, EventUserFragmentActivity.class);
+                Intent intent = new Intent(getApplicationContext(), EventUserFragmentActivity.class);
                 startActivity(intent);
             }
         });
@@ -312,7 +313,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             gameButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(MapsActivity.this, GameParticipantsListActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), GameParticipantsListActivity.class);
                     startActivity(intent);
                 }
             });
@@ -489,131 +490,132 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void getAllUSerandEventPosition() {
-        /* C'est pas dégueu tout ça peut-être ?! */
-        GetCurrentLocation();
-        GeoLocation geoLocation = new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
-        GeoQuery geoQuery = geoFire.queryAtLocation(geoLocation, rayon / 1000);
-        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
-            @Override
-            public void onKeyEntered(String key, GeoLocation location) {
-                //people
-                if (!key.startsWith("Event :")) {
-                    Firebase ref = Network.find_user(key);
-                    final String fKey = key;
-                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot snapshot) {
-                            boolean userExist = false;
-                            if (snapshot != null) {
-                                User u = snapshot.getValue(User.class);
-                                if (u == null)
-                                    return;
-                                final String uid = FacebookUser.getInstance().getUid();
-                                if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(uid) != 0) {
-                                    Marker marker = null;
-                                    if (gender != Gender.WOMEN && u.getGender().compareTo("male") == 0) {
-                                        marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                                u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(all_user.size())));
-                                    } else if (gender != Gender.MEN && u.getGender().compareTo("male") != 0) {
-                                        marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                                u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(all_user.size())));
+        if(FacebookUser.getInstance() != null && FacebookUser.getInstance().getLatitude() != null &&  FacebookUser.getInstance().getLongitude()!=null) {
+            GeoLocation geoLocation = new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
+            GeoQuery geoQuery = geoFire.queryAtLocation(geoLocation, rayon / 1000);
+            geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+                @Override
+                public void onKeyEntered(String key, GeoLocation location) {
+                    //people
+                    if (!key.startsWith("Event :")) {
+                        Firebase ref = Network.find_user(key);
+                        final String fKey = key;
+                        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot snapshot) {
+                                boolean userExist = false;
+                                if (snapshot != null) {
+                                    User u = snapshot.getValue(User.class);
+                                    final String uid = FacebookUser.getInstance().getUid();
+                                    if (u != null && uid != null) {
+                                        if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(uid) != 0) {
+                                            Marker marker = null;
+                                            if (gender != Gender.WOMEN && u.getGender().compareTo("male") == 0) {
+                                                marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                                        u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.hmarker)).snippet(String.valueOf(all_user.size())));
+                                            } else if (gender != Gender.MEN && u.getGender().compareTo("male") != 0) {
+                                                marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                                        u.getLatitude(), u.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.fmarker)).snippet(String.valueOf(all_user.size())));
+                                            }
+                                            if (fKey != null && marker != null && markers.get(fKey) == null)
+                                                markers.put(fKey, marker);
+                                            for (int i = 0; i < all_user.size(); i++) {
+                                                if (all_user.get(i).getUid().compareTo(u.getUid()) == 0) {
+                                                    userExist = true;
+                                                    all_user.set(i, u);
+                                                }
+                                            }
+                                            if (!userExist)
+                                                all_user.add(u);
+                                        }
+                                        init_infos_window();
                                     }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(FirebaseError firebaseError) {
+                            }
+                        });
+                    }
+                    //events
+                    else {
+                        Firebase ref = Network.find_event(key);
+                        final String fKey = key;
+                        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Event event = dataSnapshot.getValue(Event.class);
+                                //todo change marker for game here
+                                if (checkEventVisibility(event)) {
+                                    Log.e("mapsActy", "onDataChange: show a marker");
+                                    //    if (event != null && event.visibility != null && event.getName().equals("Party hard")) {
+                                    Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
+                                            event.getLatitude(), event.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.paryt_marker)).snippet(String.valueOf("event " + all_event.size())));
+                                    all_event.add(event);
                                     if (fKey != null && marker != null && markers.get(fKey) == null)
                                         markers.put(fKey, marker);
-                                    for (int i = 0; i < all_user.size(); i++) {
-                                        if (all_user.get(i).getUid().compareTo(u.getUid()) == 0) {
-                                            userExist = true;
-                                            all_user.set(i, u);
-                                        }
-                                    }
-                                    if (!userExist)
-                                        all_user.add(u);
                                 }
-                                init_infos_window();
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(FirebaseError firebaseError) {
-                        }
-                    });
-                }
-                //events
-                else {
-                    Firebase ref = Network.find_event(key);
-                    final String fKey = key;
-                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            Event event = dataSnapshot.getValue(Event.class);
-                            //todo change marker for game here
-                            if(checkEventVisibility(event)) {
-                                Log.e("mapsActy", "onDataChange: show a marker");
-                        //    if (event != null && event.visibility != null && event.getName().equals("Party hard")) {
-                                Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(
-                                        event.getLatitude(), event.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.paryt_marker)).snippet(String.valueOf("event " + all_event.size())));
-                                all_event.add(event);
-                                if (fKey != null && marker != null && markers.get(fKey) == null)
-                                    markers.put(fKey, marker);
+                            @Override
+                            public void onCancelled(FirebaseError firebaseError) {
                             }
-                        }
+                        });
+                    }
 
-                        @Override
-                        public void onCancelled(FirebaseError firebaseError) {
-                        }
-                    });
                 }
-            }
 
-            @Override
-            public void onKeyExited(String key) {
-                markers.remove(key);
-                for (int i = 0; i < all_user.size(); i++) {
-                    if (all_user.get(i).getUid().compareTo(key) == 0)
-                        all_user.remove(i);
+                @Override
+                public void onKeyExited(String key) {
+                    markers.remove(key);
+                    for (int i = 0; i < all_user.size(); i++) {
+                        if (all_user.get(i).getUid().compareTo(key) == 0)
+                            all_user.remove(i);
+                    }
                 }
-            }
 
-            @Override
-            public void onKeyMoved(String key, GeoLocation location) {
-                final Marker marker = markers.get(key);
-                String k = key;
-                if (marker != null) {
-                    final Handler handler = new Handler();
-                    final long start = SystemClock.uptimeMillis();
-                    final long DURATION_MS = 2000;
-                    final Interpolator interpolator = new AccelerateDecelerateInterpolator();
-                    final LatLng startPosition = marker.getPosition();
-                    final double lat = location.latitude;
-                    final double lng = location.longitude;
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            float elapsed = SystemClock.uptimeMillis() - start;
-                            float t = elapsed / DURATION_MS;
-                            float v = interpolator.getInterpolation(t);
-                            double currentLat = (lat - startPosition.latitude) * v + startPosition.latitude;
-                            double currentLng = (lng - startPosition.longitude) * v + startPosition.longitude;
-                            marker.setPosition(new LatLng(currentLat, currentLng));
-                            if (t < 1) {
-                                handler.postDelayed(this, 16);
+                @Override
+                public void onKeyMoved(String key, GeoLocation location) {
+                    final Marker marker = markers.get(key);
+                    String k = key;
+                    if (marker != null) {
+                        final Handler handler = new Handler();
+                        final long start = SystemClock.uptimeMillis();
+                        final long DURATION_MS = 2000;
+                        final Interpolator interpolator = new AccelerateDecelerateInterpolator();
+                        final LatLng startPosition = marker.getPosition();
+                        final double lat = location.latitude;
+                        final double lng = location.longitude;
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                float elapsed = SystemClock.uptimeMillis() - start;
+                                float t = elapsed / DURATION_MS;
+                                float v = interpolator.getInterpolation(t);
+                                double currentLat = (lat - startPosition.latitude) * v + startPosition.latitude;
+                                double currentLng = (lng - startPosition.longitude) * v + startPosition.longitude;
+                                marker.setPosition(new LatLng(currentLat, currentLng));
+                                if (t < 1) {
+                                    handler.postDelayed(this, 16);
+                                }
                             }
-                        }
-                    });
-                } else {
-                    latLngCenter = new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
-                    updateMap();
+                        });
+                    } else {
+                        latLngCenter = new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
+                        updateMap();
+                    }
                 }
-            }
 
-            @Override
-            public void onGeoQueryReady() {
-            }
+                @Override
+                public void onGeoQueryReady() {
+                }
 
-            @Override
-            public void onGeoQueryError(FirebaseError error) {
-            }
-        });
+                @Override
+                public void onGeoQueryError(FirebaseError error) {
+                }
+            });
+        }
     }
 
     public void init_infos_window() {
@@ -670,6 +672,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             Bundle b = new Bundle();
                             b.putSerializable("Event", e);
                             intent.putExtras(b);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
                         }
                     }

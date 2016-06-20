@@ -99,8 +99,10 @@ public class EventListActivity extends Fragment {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 events.clear();
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                for (DataSnapshot postSnapshot : snapshot.getChildren())
+                {
                     Event event = postSnapshot.getValue(Event.class);
+
                     if(event.visibility.compareTo("all") == 0 || (event.getInvited()!=null && FacebookUser.getInstance().getMeetMeFriends().contains(event.ownerid)) || event.ownerid.compareTo(FacebookUser.getInstance().getUid()) == 0) {
                         events.add(event);}
                 }

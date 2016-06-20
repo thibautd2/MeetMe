@@ -184,6 +184,7 @@ public class EventFicheActivity extends AppCompatActivity {
     public void onBackPressed()
     {
         Intent intent = new Intent(this, MapsActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 }
