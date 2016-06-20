@@ -16,6 +16,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.mti.meetme.Event.EventCreation.CreateEventManager;
 import com.mti.meetme.Event.Game.GameCompassActivity;
+import com.mti.meetme.Event.Game.GameWarmNColdActivity;
 import com.mti.meetme.MapsActivity;
 import com.mti.meetme.Model.Event;
 import com.mti.meetme.Model.User;
@@ -23,6 +24,7 @@ import com.mti.meetme.R;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
+import com.mti.meetme.controller.MyGame;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -81,6 +83,7 @@ public class EventFicheActivity extends AppCompatActivity {
                 image.setBackgroundResource(R.drawable.drinkfine);
         }
         date.setText(event.getDate());
+
         Firebase ref = Network.find_user(event.getOwnerid());
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -111,8 +114,24 @@ public class EventFicheActivity extends AppCompatActivity {
                     desc.put("participants", str);
                     ref.updateChildren(desc, null);
 
+                    MyGame.getInstance().setGame(event);
+
                     if (event.type.equals("compass")) {
                         Intent intent = new Intent(EventFicheActivity.this, GameCompassActivity.class);
+                        Bundle b = new Bundle();
+                        b.putSerializable("UserCreator", creator);
+                        b.putSerializable("GameEvent", event);
+
+                        intent.putExtras(b);
+                        startActivity(intent);
+                    }
+                    else if (event.type.equals("warmNcold")) {
+                        Intent intent = new Intent(EventFicheActivity.this, GameWarmNColdActivity.class);
+                        Bundle b = new Bundle();
+                        b.putSerializable("UserCreator", creator);
+                        b.putSerializable("GameEvent", event);
+                        intent.putExtras(b);
+
                         startActivity(intent);
                     }
                   /*  else
@@ -133,8 +152,8 @@ public class EventFicheActivity extends AppCompatActivity {
        // if(event != null && event.getInvited()!= null && event.getInvited().length()>1)
          //   getParticipants();
 
+        populateViews();
     }
-
 
     public void getParticipants()
     {
@@ -159,7 +178,6 @@ public class EventFicheActivity extends AppCompatActivity {
                 }
             });
         }
-
     }
 
     @Override
@@ -168,5 +186,4 @@ public class EventFicheActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
     }
-
 }

@@ -57,7 +57,6 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
             getUserFromFirebase(authData.getUid());
         else
             getUserFromFirebase(authData.getUid().split(":")[1]);
-
     }
 
     @Override

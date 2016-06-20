@@ -181,12 +181,14 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
         desc = (EditText) getView().findViewById(R.id.event_description);
         friend = (RadioButton) getView().findViewById(R.id.event_friends);
         all = (RadioButton) getView().findViewById(R.id.event_all);
+        compass = (RadioButton) getView().findViewById(R.id.game_type_compass);
+        warmNcold = (RadioButton) getView().findViewById(R.id.game_type_temp);
 
         CompoundButton.OnCheckedChangeListener change = new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    all.setChecked(true);
+                    all.setChecked(false);
                     friend.setChecked(false);
                     buttonView.setChecked(true);
                 }
@@ -197,8 +199,20 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
         all.setOnCheckedChangeListener(change);
         all.setChecked(true);
 
-        compass = (RadioButton) getView().findViewById(R.id.game_type_compass);
-        warmNcold = (RadioButton) getView().findViewById(R.id.game_type_temp);
+        CompoundButton.OnCheckedChangeListener changeType = new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    compass.setChecked(false);
+                    warmNcold.setChecked(false);
+                    buttonView.setChecked(true);
+                }
+            }
+        };
+
+
+        compass.setOnCheckedChangeListener(changeType);
+        warmNcold.setOnCheckedChangeListener(changeType);
         compass.setChecked(true);
     }
 

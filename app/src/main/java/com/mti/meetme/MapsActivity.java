@@ -52,6 +52,7 @@ import com.mti.meetme.Event.EventFicheActivity;
 import com.mti.meetme.Event.EventUserFragmentActivity;
 import com.mti.meetme.Event.EventCreation.CreateEventManager;
 import com.mti.meetme.Event.Game.GameParticipantsListActivity;
+import com.mti.meetme.Event.Game.GameWarmNColdActivity;
 import com.mti.meetme.Interface.ContextDrawerAdapter;
 import com.mti.meetme.Model.Event;
 import com.mti.meetme.Model.User;
@@ -164,25 +165,34 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         listButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MapsActivity.this, EventUserFragmentActivity.class);
+                Intent intent1 = new Intent(MapsActivity.this, EventUserFragmentActivity.class);
                // intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                startActivity(intent1);
             }
         });
 
-        if (MyGame.getInstance().getGame() != null)
-            gameButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //todo go to list of game participants
-                    Intent intent = new Intent(MapsActivity.this, GameParticipantsListActivity.class);
-                    startActivity(intent);
-                }
-            });
+        if (MyGame.getInstance().getGame() != null) {
+            if (MyGame.getInstance().getGame().getOwnerid().equals(FacebookUser.getInstance().getUid()))
+                gameButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //todo go to list of game participants
+                        Intent intent2 = new Intent(MapsActivity.this, GameParticipantsListActivity.class);
+                        startActivity(intent2);
+                    }
+                });
+         /*   else
+                gameButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //todo go to list of game participants
+                        Intent intent3 = new Intent(MapsActivity.this, GameWarmNColdActivity.class);
+                        startActivity(intent3);
+                    }
+                });*/
+        }
         else
             gameButton.setVisibility(View.INVISIBLE);
-
-
 
         profileButton.getLayoutParams().height -= 30;
         profileButton.getLayoutParams().width -= 30;
@@ -478,11 +488,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         searchCircle.setStrokeColor(Color.argb(100, 0, 221, 255));
     }
 
-
     private void getAllUSerandEventPosition() {
-
         /* C'est pas dégueu tout ça peut-être ?! */
-
+        GetCurrentLocation();
         GeoLocation geoLocation = new GeoLocation(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude());
         GeoQuery geoQuery = geoFire.queryAtLocation(geoLocation, rayon / 1000);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
@@ -498,6 +506,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             boolean userExist = false;
                             if (snapshot != null) {
                                 User u = snapshot.getValue(User.class);
+                                if (u == null)
+                                    return;
                                 final String uid = FacebookUser.getInstance().getUid();
                                 if (u.getLatitude() != null && u.getLongitude() != null && u.getUid().compareTo(uid) != 0) {
                                     Marker marker = null;
@@ -654,23 +664,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if (id < all_event.size()) {
                             e = all_event.get(id);
 
-                            //todo check visibility: all, friends, choising friends, then men / women
-
                             //todo change the layout for games
-                            if (e.getType().equals("game")) {
-                                Intent intent = new Intent(MapsActivity.this, EventFicheActivity.class);
-                                Bundle b = new Bundle();
-                                b.putSerializable("Event", e);
-                                intent.putExtras(b);
-                                startActivity(intent);
-                            } else {
-                                Intent intent = new Intent(MapsActivity.this, EventFicheActivity.class);
-                                Bundle b = new Bundle();
-                                b.putSerializable("Event", e);
-                                intent.putExtras(b);
-                                startActivity(intent);
-                            }
 
+                            Intent intent = new Intent(MapsActivity.this, EventFicheActivity.class);
+                            Bundle b = new Bundle();
+                            b.putSerializable("Event", e);
+                            intent.putExtras(b);
+                            startActivity(intent);
                         }
                     }
                 }

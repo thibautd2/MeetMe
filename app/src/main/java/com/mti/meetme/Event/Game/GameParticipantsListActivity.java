@@ -59,6 +59,13 @@ public class GameParticipantsListActivity extends AppCompatActivity{
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        populate();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_game, menu);
         super.onCreateOptionsMenu(menu);
@@ -108,12 +115,9 @@ public class GameParticipantsListActivity extends AppCompatActivity{
                 String s = snapshot.getValue(String.class);
                 particiants.clear();
 
-                Log.e("GameparticipantActy", "onDataChange: " + s );
                 for (String id : s.split(";")) {
                     if (id.equals(""))
                         continue;
-
-                    Log.e("GameparticipantActy", "onDataChange, id: " + id );
 
                     final Firebase refFriends = Network.find_user(id);
                     refFriends.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -123,7 +127,6 @@ public class GameParticipantsListActivity extends AppCompatActivity{
                             UserList.getInstance().sortListUser(particiants);
                             //adapter.update(friends);
                             adapter.notifyDataSetChanged();
-                            Log.e("GameParticipantActy", "onDataChange: should work");
                         }
 
                         @Override

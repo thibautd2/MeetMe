@@ -43,7 +43,6 @@ public class CreateEventManager extends AppCompatActivity {
         ViewPager pager = (ViewPager) super.findViewById(R.id.event_viewpager);
         // Affectation de l'adapter au ViewPager
         pager.setAdapter(this.mPagerAdapter);
-
     }
 
     @Override

@@ -42,6 +42,10 @@ public class Network {
         return new Firebase(connexion_to_event+"/"+event);
     }
 
+    public static Firebase find_user_properties(String Uid, String properties) {
+        return new Firebase(connexion_to_user+"/"+Uid + "/" + properties);
+    }
+
     public static Firebase find_ParticipantsToMyGame() {
         Event mygame = MyGame.getInstance().getGame();
         Log.e("Network", "find_ParticipantsToMyGame: " + mygame.receiveEventId());

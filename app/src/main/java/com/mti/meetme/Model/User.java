@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import com.firebase.client.Firebase;
+import com.google.android.gms.maps.model.LatLng;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.controller.TodayDesire;
 
@@ -139,6 +140,8 @@ public class User implements Serializable, Parcelable {
         FriendRequestSend = in.readString();
         friendRequestReceived = in.readString();
         FcmID = in.readString();
+        Longitude = in.readDouble();
+        Latitude = in.readDouble();
     }
 
     @Override
@@ -164,6 +167,8 @@ public class User implements Serializable, Parcelable {
         dest.writeString(FriendRequestReceived);
         dest.writeString(FriendRequestSend);
         dest.writeString(FcmID);
+        dest.writeDouble(Longitude);
+        dest.writeDouble(Latitude);
     }
 
     @Override

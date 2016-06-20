@@ -116,7 +116,7 @@ public class ParticipantsListAdapter extends  RecyclerView.Adapter<ParticipantsL
         if (u != null) {
             Picasso.with(acti).load(u.getPic1()).fit().centerCrop().transform(new RoundedPicasso()).into(holder.user_image);
             holder.user_name.setText(u.getName());
-            holder.user_distance.setText(String.valueOf(UserList.getInstance().getDistToMe(u)) + " m");
+            holder.user_distance.setText(String.valueOf(Math.round(UserList.getInstance().getDistToMe(u))) + " m");
 
             holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -1,5 +1,6 @@
 package com.mti.meetme.Event.Game;
 
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -11,42 +12,71 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.mti.meetme.MapsActivity;
+import com.mti.meetme.Model.Event;
+import com.mti.meetme.Model.User;
 import com.mti.meetme.R;
+import com.mti.meetme.Tools.FacebookHandler;
+import com.mti.meetme.Tools.RoundedPicasso;
+import com.mti.meetme.controller.FacebookUser;
+import com.mti.meetme.controller.UserList;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by Alex on 19/06/2016.
  */
 
 public class GameCompassActivity extends AppCompatActivity implements SensorEventListener {
-    // define the display assembly compass picture
     private ImageView image;
+    private TextView stateTxt;
+    private ImageView stateImg;
+    private TextView title;
+    private ImageView pictureOwner;
+    private TextView desc;
 
-    // record the compass picture angle turned
     private float currentDegree = 0f;
 
-    // device sensor manager
     private SensorManager mSensorManager;
 
     TextView tvHeading;
+    User gameOwner;
+    Event game;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_compass);
 
-        //
+        this.gameOwner = (User) getIntent().getSerializableExtra("UserCreator");
+        this.game = (Event) getIntent().getSerializableExtra("GameEvent");
+
+        bindViews();
+        populate();
+    }
+
+    public void bindViews() {
         image = (ImageView) findViewById(R.id.imageViewCompass);
-
-        // TextView that will tell the user what degree is he heading
         tvHeading = (TextView) findViewById(R.id.textViewTitle);
-
-        // initialize your android device sensor capabilities
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+
+        stateTxt = (TextView) findViewById(R.id.textViewState);
+        stateImg = (ImageView) findViewById(R.id.imageViewState);
+        title = (TextView) findViewById(R.id.textViewTitle);
+        pictureOwner = (ImageView) findViewById(R.id.imageViewOwner);
+        desc = (TextView) findViewById(R.id.textViewDesc);
+    }
+
+    public void populate() {
+        title.setText(game.getName());
+        Picasso.with(getApplicationContext()).load(gameOwner.getPic1()).fit().centerCrop().transform(new RoundedPicasso()).into(pictureOwner);
+        desc.setText(game.getDescription());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        populate();
 
         // for the system's orientation sensor registered listeners
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
@@ -66,6 +96,8 @@ public class GameCompassActivity extends AppCompatActivity implements SensorEven
 
         // get the angle around the z-axis rotated
         float degree = Math.round(event.values[0]);
+
+        degree += Math.cos((gameOwner.getLongitude() - FacebookUser.getInstance().getLongitude()) / UserList.getInstance().getDistToMe(gameOwner));
 
         tvHeading.setText("Heading: " + Float.toString(degree) + " degrees");
 
@@ -92,5 +124,12 @@ public class GameCompassActivity extends AppCompatActivity implements SensorEven
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // not in use
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
     }
 }
