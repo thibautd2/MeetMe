@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.Animation;
@@ -95,13 +96,25 @@ public class GameCompassActivity extends AppCompatActivity implements SensorEven
         mSensorManager.unregisterListener(this);
     }
 
+    protected float getAngleFromNorth(double latitudeOrigine,double longitudeOrigne, double latitudeDest,double longitudeDest) {
+        double longDelta = longitudeDest - longitudeOrigne;
+        double y = Math.sin(longDelta) * Math.cos(latitudeDest);
+        double x = Math.cos(latitudeOrigine)*Math.sin(latitudeDest) -
+                Math.sin(latitudeOrigine)*Math.cos(latitudeDest)*Math.cos(longDelta);
+        double angle = Math.toDegrees(Math.atan2(y, x));
+        while (angle < 0) {
+            angle += 360;
+        }
+        return (float) angle % 360;
+    }
+
     @Override
     public void onSensorChanged(SensorEvent event) {
 
         // get the angle around the z-axis rotated
         float degree = Math.round(event.values[0]);
 
-        degree += Math.cos((gameOwner.getLongitude() - FacebookUser.getInstance().getLongitude()) / UserList.getInstance().getDistToMe(gameOwner));
+        degree += getAngleFromNorth(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), gameOwner.getLatitude(), gameOwner.getLongitude());
 
         tvHeading.setText("Heading: " + Float.toString(degree) + " degrees");
 

@@ -131,7 +131,7 @@ public class GameWarmNColdActivity extends AppCompatActivity {
         //red 255 green 0 -> 150
         //blue 255 green 255 -> 105
 
-        if (distance <= 300) //red
+        if (distance <= 200) //red
         {
             int green = (int)(distance / 2);
             stateImg.setBackgroundColor(Color.rgb(255, green, 0));
@@ -149,15 +149,15 @@ public class GameWarmNColdActivity extends AppCompatActivity {
     }
 
     private String getTextState() {
-        if (distance < 100)
+        if (distance < 50)
             return "Bouillant";
-        if (distance < 200)
+        if (distance < 100)
             return "Brulant";
-        if (distance < 300)
+        if (distance < 200)
             return "Chaud";
-        if (distance < 500)
+        if (distance < 300)
             return "Tiede";
-        if (distance < 700)
+        if (distance < 500)
             return "Froid";
 
         return "Glacial";
