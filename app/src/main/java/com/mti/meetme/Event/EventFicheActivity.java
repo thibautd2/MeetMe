@@ -84,6 +84,7 @@ public class EventFicheActivity extends AppCompatActivity {
         }
         date.setText(event.getDate());
 
+        Firebase.setAndroidContext(getApplicationContext());
         Firebase ref = Network.find_user(event.getOwnerid());
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -115,23 +116,14 @@ public class EventFicheActivity extends AppCompatActivity {
                     ref.updateChildren(desc, null);
 
                     MyGame.getInstance().setGame(event);
+                    MyGame.getInstance().setOwner(creator);
 
                     if (event.type.equals("compass")) {
                         Intent intent = new Intent(EventFicheActivity.this, GameCompassActivity.class);
-                        Bundle b = new Bundle();
-                        b.putSerializable("UserCreator", creator);
-                        b.putSerializable("GameEvent", event);
-
-                        intent.putExtras(b);
                         startActivity(intent);
                     }
                     else if (event.type.equals("warmNcold")) {
                         Intent intent = new Intent(EventFicheActivity.this, GameWarmNColdActivity.class);
-                        Bundle b = new Bundle();
-                        b.putSerializable("UserCreator", creator);
-                        b.putSerializable("GameEvent", event);
-                        intent.putExtras(b);
-
                         startActivity(intent);
                     }
                   /*  else

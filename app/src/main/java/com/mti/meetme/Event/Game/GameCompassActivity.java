@@ -7,10 +7,13 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mti.meetme.MapsActivity;
 import com.mti.meetme.Model.Event;
@@ -19,6 +22,7 @@ import com.mti.meetme.R;
 import com.mti.meetme.Tools.FacebookHandler;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
+import com.mti.meetme.controller.MyGame;
 import com.mti.meetme.controller.UserList;
 import com.squareup.picasso.Picasso;
 
@@ -47,8 +51,8 @@ public class GameCompassActivity extends AppCompatActivity implements SensorEven
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_compass);
 
-        this.gameOwner = (User) getIntent().getSerializableExtra("UserCreator");
-        this.game = (Event) getIntent().getSerializableExtra("GameEvent");
+        this.gameOwner = MyGame.getInstance().getOwner();
+        this.game = MyGame.getInstance().getGame();
 
         bindViews();
         populate();
@@ -131,5 +135,32 @@ public class GameCompassActivity extends AppCompatActivity implements SensorEven
     {
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_game, menu);
+        super.onCreateOptionsMenu(menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
+        switch (item.getItemId()) {
+            case R.id.menu_maps:
+                startActivity(intent);
+                return true;
+            case R.id.menu_end:
+                MyGame.getInstance().finishTheGame();
+                Toast.makeText(this, "Partie abandonnée", Toast.LENGTH_LONG);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

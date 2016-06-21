@@ -10,9 +10,12 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
@@ -60,8 +63,8 @@ public class GameWarmNColdActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.owner = (User) getIntent().getSerializableExtra("UserCreator");
-        this.event = (Event) getIntent().getSerializableExtra("GameEvent");
+        this.owner = MyGame.getInstance().getOwner();
+        this.event = MyGame.getInstance().getGame();
 
         color = new Color();
         distance = UserList.getInstance().getDistToMe(owner);
@@ -165,5 +168,32 @@ public class GameWarmNColdActivity extends AppCompatActivity {
     {
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_game, menu);
+        super.onCreateOptionsMenu(menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
+        switch (item.getItemId()) {
+            case R.id.menu_maps:
+                startActivity(intent);
+                return true;
+            case R.id.menu_end:
+                MyGame.getInstance().finishTheGame();
+                Toast.makeText(this, "Partie abandonnée", Toast.LENGTH_LONG);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

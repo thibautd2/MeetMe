@@ -2,6 +2,7 @@ package com.mti.meetme.controller;
 
 import com.firebase.client.Firebase;
 import com.mti.meetme.Model.Event;
+import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.Network.Network;
 
 import java.text.DateFormat;
@@ -15,6 +16,7 @@ import java.util.Map;
  */
 public class MyGame {
     private Event game;
+    private User owner;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
     private static MyGame ourInstance = new MyGame();
@@ -34,18 +36,37 @@ public class MyGame {
         this.game = game;
     }
 
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
     public void finishTheGame() {
-        Event myEvent = MyGame.getInstance().getGame();
-        Firebase ref = Network.find_event(myEvent.receiveEventId());
+        if (isOwner()) {
+            Event myEvent = MyGame.getInstance().getGame();
+            Firebase ref = Network.find_event(myEvent.receiveEventId());
 
-        Date date = new Date();
+            Date date = new Date();
 
-        Map<String, Object> desc = new HashMap<>();
-        desc.put("endDate", dateFormat.format(date).toString());
-        ref.updateChildren(desc, null);
+            Map<String, Object> desc = new HashMap<>();
+            desc.put("endDate", dateFormat.format(date).toString());
+            ref.updateChildren(desc, null);
 
-        MyGame.getInstance().setGame(null);
-        //Toast.makeText(getApplicationContext(), "Jeux terminé !", Toast.LENGTH_LONG).show();
+            MyGame.getInstance().setGame(null);
+         }
+        else
+        {
+            //todo Firebase -> not anymore participant
+            game = null;
+            owner = null;
+        }
+    }
+
+    public boolean isOwner() {
+        return game.getOwnerid().equals(FacebookUser.getInstance().getUid());
     }
 
     public SimpleDateFormat getDateFormat() {

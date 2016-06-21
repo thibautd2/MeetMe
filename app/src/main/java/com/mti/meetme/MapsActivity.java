@@ -51,6 +51,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.mti.meetme.Event.EventFicheActivity;
 import com.mti.meetme.Event.EventUserFragmentActivity;
 import com.mti.meetme.Event.EventCreation.CreateEventManager;
+import com.mti.meetme.Event.Game.GameCompassActivity;
 import com.mti.meetme.Event.Game.GameParticipantsListActivity;
 import com.mti.meetme.Event.Game.GameWarmNColdActivity;
 import com.mti.meetme.Interface.ContextDrawerAdapter;
@@ -139,6 +140,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         bindViews();
         populateViews();
+        setMenuBtnSize();
     }
 
     private void bindViews()
@@ -172,31 +174,40 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
 
+        gameButton.setOnClickListener(null);
         if (MyGame.getInstance().getGame() != null) {
+            gameButton.setVisibility(View.VISIBLE);
             if (MyGame.getInstance().getGame().getOwnerid().equals(FacebookUser.getInstance().getUid()))
                 gameButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //todo go to list of game participants
-                        Intent intent2 = new Intent(MapsActivity.this, GameParticipantsListActivity.class);
-                        startActivity(intent2);
+                        Intent intent = new Intent(MapsActivity.this, GameParticipantsListActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
                     }
                 });
-         /*   else
+            else if (MyGame.getInstance().getGame().type.equals("warmNcold"))
                 gameButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //todo go to list of game participants
-                        Intent intent3 = new Intent(MapsActivity.this, GameWarmNColdActivity.class);
-                        startActivity(intent3);
+                        Intent intent = new Intent(MapsActivity.this, GameWarmNColdActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
                     }
-                });*/
+                });
+            else if (MyGame.getInstance().getGame().type.equals("compass"))
+                gameButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(MapsActivity.this, GameCompassActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    }
+                });
         }
         else
             gameButton.setVisibility(View.INVISIBLE);
 
-        profileButton.getLayoutParams().height -= 30;
-        profileButton.getLayoutParams().width -= 30;
 
         profileButton.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -206,8 +217,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             startActivity(intent);
         }});
 
-        settingsButton.getLayoutParams().height -= 30;
-        settingsButton.getLayoutParams().width -= 30;
 
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -217,6 +226,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 else
                     mDrawerLayout.openDrawer(mDrawerPane);
             }});
+    }
+
+    public void setMenuBtnSize() {
+        profileButton.getLayoutParams().height -= 30;
+        profileButton.getLayoutParams().width -= 30;
+        settingsButton.getLayoutParams().height -= 30;
+        settingsButton.getLayoutParams().width -= 30;
     }
 
     public void init_menu() {
@@ -293,7 +309,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onResume() {
         super.onResume();
 
-        eventButton.setOnClickListener(new View.OnClickListener() {
+        populateViews();
+       /*eventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), CreateEventManager.class);
@@ -308,6 +325,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        //todo button participate
         if (MyGame.getInstance().getGame() != null) {
             gameButton.setVisibility(View.VISIBLE);
             gameButton.setOnClickListener(new View.OnClickListener() {
@@ -319,7 +337,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             });
         }
         else
-            gameButton.setVisibility(View.INVISIBLE);
+            gameButton.setVisibility(View.INVISIBLE);*/
 
         Firebase.setAndroidContext(getApplicationContext());
         backtwice = 0;
