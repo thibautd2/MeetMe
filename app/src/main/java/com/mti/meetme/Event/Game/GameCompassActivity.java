@@ -16,11 +16,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.mti.meetme.MapsActivity;
 import com.mti.meetme.Model.Event;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.R;
 import com.mti.meetme.Tools.FacebookHandler;
+import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.controller.MyGame;
@@ -57,6 +62,7 @@ public class GameCompassActivity extends AppCompatActivity implements SensorEven
 
         bindViews();
         populate();
+        setListener();
     }
 
     public void bindViews() {
@@ -113,8 +119,11 @@ public class GameCompassActivity extends AppCompatActivity implements SensorEven
 
         // get the angle around the z-axis rotated
         float degree = Math.round(event.values[0]);
+        float diffAngle = Math.round(getAngleFromNorth(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), gameOwner.getLatitude(), gameOwner.getLongitude()));
 
-        degree += getAngleFromNorth(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), gameOwner.getLatitude(), gameOwner.getLongitude());
+       // Log.e("gameCompass", "onSensorChanged, degree : " + degree + ", diffANgle: " + diffAngle);
+
+        degree = (degree + diffAngle) % 360;
 
         tvHeading.setText("Heading: " + Float.toString(degree) + " degrees");
 
@@ -175,5 +184,37 @@ public class GameCompassActivity extends AppCompatActivity implements SensorEven
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+
+    private void setListener() {
+        //maybe souhld update my pos too (facebookUser)
+        Firebase refUser = Network.find_user(gameOwner.getUid());
+        refUser.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot != null)
+                    gameOwner = dataSnapshot.getValue(User.class);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+        Firebase refEvent = Network.find_event(game.receiveEventId());
+        refEvent.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot != null)
+                    game = dataSnapshot.getValue(Event.class);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
     }
 }

@@ -1,5 +1,6 @@
 package com.mti.meetme.Model;
 
+import android.hardware.camera2.params.Face;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -7,6 +8,7 @@ import android.util.Log;
 import com.firebase.client.Firebase;
 import com.google.android.gms.maps.model.LatLng;
 import com.mti.meetme.Tools.Network.Network;
+import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.controller.TodayDesire;
 
 import org.joda.time.LocalDate;
@@ -94,6 +96,9 @@ public class User implements Serializable, Parcelable {
     @com.google.gson.annotations.SerializedName("FcmID")
     private String FcmID;
 
+    @com.google.gson.annotations.SerializedName("ParticiateTo")
+    private String ParticipateTo;
+
     private JSONObject Likes;
     private JSONObject Friends;
 
@@ -112,6 +117,7 @@ public class User implements Serializable, Parcelable {
         AgeRange = ageRange;
         Longitude = null;
         Latitude = null;
+        ParticipateTo = "";
         Envie = desire.toString();
         FcmID = fcmID;
     }
@@ -142,6 +148,7 @@ public class User implements Serializable, Parcelable {
         FcmID = in.readString();
         Longitude = in.readDouble();
         Latitude = in.readDouble();
+        ParticipateTo = in.readString();
     }
 
     @Override
@@ -169,6 +176,7 @@ public class User implements Serializable, Parcelable {
         dest.writeString(FcmID);
         dest.writeDouble(Longitude);
         dest.writeDouble(Latitude);
+        dest.writeString(ParticipateTo);
     }
 
     @Override
@@ -290,6 +298,18 @@ public class User implements Serializable, Parcelable {
         return false;
     }
 
+    public Boolean isParticipatingTo(String id) {
+        if (ParticipateTo == null || ParticipateTo.equals(""))
+            return false;
+
+        String[] participating = ParticipateTo.split(";");
+        for (String s: participating)
+            if (s.equals(id))
+                return true;
+
+
+        return false;
+    }
 
     public ArrayList<String> receiveMeetMeFriendsTab() {
         ArrayList friendsTab = new ArrayList();
@@ -524,5 +544,25 @@ public class User implements Serializable, Parcelable {
 
     public void setFriendRequestSend(String friendRequestsend) {
         FriendRequestSend = friendRequestsend;
+    }
+
+    public String getParticipateTo() {
+        return ParticipateTo;
+    }
+
+    public void setParticipateTo(String participateTo) {
+        ParticipateTo = participateTo;
+    }
+
+    //todo put in on a controller
+    public void addParticipateTo (String idEvent) {
+        if (ParticipateTo == null)
+            ParticipateTo = "";
+
+        String strUser = getParticipateTo() + idEvent + ";";
+        Firebase refUser = Network.find_user(getUid());
+        Map<String, Object> descUser = new HashMap<>();
+        descUser.put("participateTo", strUser);
+        refUser.updateChildren(descUser, null);
     }
 }

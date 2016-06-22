@@ -106,34 +106,39 @@ public class EventFicheActivity extends AppCompatActivity {
             participateBtn.setVisibility(View.INVISIBLE);
         else {
             participateBtn.setVisibility(View.VISIBLE);
-            participateBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Firebase ref = Network.find_event(event.receiveEventId());
-                    String str = event.getParticipants() + FacebookUser.getInstance().getUid() + ";";
-                    Map<String, Object> desc = new HashMap<>();
-                    desc.put("participants", str);
-                    ref.updateChildren(desc, null);
 
-                    MyGame.getInstance().setGame(event);
-                    MyGame.getInstance().setOwner(creator);
+                participateBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (!FacebookUser.getInstance().isParticipatingTo(event.receiveEventId())) {
+                            Firebase ref = Network.find_event(event.receiveEventId());
+                            String strEvent = event.getParticipants() + FacebookUser.getInstance().getUid() + ";";
+                            Map<String, Object> descEvent = new HashMap<>();
+                            descEvent.put("participants", strEvent);
+                            ref.updateChildren(descEvent, null);
 
-                    if (event.type.equals("compass")) {
-                        Intent intent = new Intent(EventFicheActivity.this, GameCompassActivity.class);
-                        startActivity(intent);
-                    }
-                    else if (event.type.equals("warmNcold")) {
-                        Intent intent = new Intent(EventFicheActivity.this, GameWarmNColdActivity.class);
-                        startActivity(intent);
-                    }
+                            FacebookUser.getInstance().addParticipateTo(event.receiveEventId());
+                        }
+
+                        MyGame.getInstance().setGame(event);
+                        MyGame.getInstance().setOwner(creator);
+
+                        if (event.type.equals("compass")) {
+                            Intent intent = new Intent(EventFicheActivity.this, GameCompassActivity.class);
+                            startActivity(intent);
+                        } else if (event.type.equals("warmNcold")) {
+                            Intent intent = new Intent(EventFicheActivity.this, GameWarmNColdActivity.class);
+                            startActivity(intent);
+                        }
                   /*  else
                     {
                         Toast.makeText(this, "Vous participez mainenant a cet event", Toast.LENGTH_LONG);
                         Intent intent = new Intent(MapsActivity.this, MapsActivity.class);
                         startActivity(intent);
                     }
-*/                }
-            });
+*/
+                    }
+                });
         }
     }
 
