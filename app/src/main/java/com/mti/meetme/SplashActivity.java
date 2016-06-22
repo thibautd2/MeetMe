@@ -16,6 +16,7 @@ import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.FacebookHandler;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.controller.FacebookUser;
+import com.mti.meetme.controller.MyGame;
 
 import org.json.JSONObject;
 
@@ -78,6 +79,8 @@ public class SplashActivity extends Activity implements Firebase.AuthResultHandl
 
         if (currentUser != null && launcher == false) {
             FacebookUser.setFacebookUser(currentUser);
+            MyGame.getInstance().initMyGame();
+
             launcher = true;
 
             FacebookHandler handler = new FacebookHandler(this);

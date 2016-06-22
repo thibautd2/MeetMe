@@ -188,6 +188,7 @@ public class GameWarmNColdActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.menu_end:
+                FacebookUser.getInstance().removeParticipation(MyGame.getInstance().getGame().receiveEventId());
                 MyGame.getInstance().finishTheGame();
                 Toast.makeText(this, "Partie abandonnée", Toast.LENGTH_LONG);
                 startActivity(intent);

@@ -307,7 +307,6 @@ public class User implements Serializable, Parcelable {
             if (s.equals(id))
                 return true;
 
-
         return false;
     }
 
@@ -428,6 +427,15 @@ public class User implements Serializable, Parcelable {
 
     public String getGender() {
         return Gender;
+    }
+
+    public String receiveGoodGender() {
+        if (Gender.equals("male"))
+            return "men";
+        if (Gender.equals("female"))
+            return "women";
+
+        return "badType - Unknow";
     }
 
     public void setGender(String gender) {
@@ -564,5 +572,26 @@ public class User implements Serializable, Parcelable {
         Map<String, Object> descUser = new HashMap<>();
         descUser.put("participateTo", strUser);
         refUser.updateChildren(descUser, null);
+    }
+
+    public void removeParticipation(String idEvent) {
+        if (ParticipateTo == null || ParticipateTo == "")
+            return;
+
+        String participate[] = ParticipateTo.split(";");
+        String result = "";
+
+        for (String s: participate)
+            if (!s.equals(idEvent))
+                result += s + ";";
+
+        if (ParticipateTo != result) {
+            ParticipateTo = result;
+
+            Firebase refUser = Network.find_user(getUid());
+            Map<String, Object> descUser = new HashMap<>();
+            descUser.put("participateTo", result);
+            refUser.updateChildren(descUser, null);
+        }
     }
 }

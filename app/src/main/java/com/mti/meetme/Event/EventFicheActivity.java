@@ -98,14 +98,13 @@ public class EventFicheActivity extends AppCompatActivity {
             public void onCancelled(FirebaseError firebaseError) {
             }
         });
-        if(event != null && event.getInvited()!= null && event.getInvited().length()>1)
+
+        participateBtn.setVisibility(View.INVISIBLE);
+        if(event != null && event.getInvited()!= null && event.getInvited().length()>1) {
             getParticipants();
 
-        //todo make invisible if already participant
-        if (event.ownerid.equals(FacebookUser.getInstance().getUid()))
-            participateBtn.setVisibility(View.INVISIBLE);
-        else {
-            participateBtn.setVisibility(View.VISIBLE);
+            if (!event.ownerid.equals(FacebookUser.getInstance().getUid())) {
+                participateBtn.setVisibility(View.VISIBLE);
 
                 participateBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -120,13 +119,14 @@ public class EventFicheActivity extends AppCompatActivity {
                             FacebookUser.getInstance().addParticipateTo(event.receiveEventId());
                         }
 
-                        MyGame.getInstance().setGame(event);
-                        MyGame.getInstance().setOwner(creator);
-
                         if (event.type.equals("compass")) {
+                            MyGame.getInstance().setGame(event);
+                            MyGame.getInstance().setOwner(creator);
                             Intent intent = new Intent(EventFicheActivity.this, GameCompassActivity.class);
                             startActivity(intent);
                         } else if (event.type.equals("warmNcold")) {
+                            MyGame.getInstance().setGame(event);
+                            MyGame.getInstance().setOwner(creator);
                             Intent intent = new Intent(EventFicheActivity.this, GameWarmNColdActivity.class);
                             startActivity(intent);
                         }
@@ -139,6 +139,7 @@ public class EventFicheActivity extends AppCompatActivity {
 */
                     }
                 });
+            }
         }
     }
 

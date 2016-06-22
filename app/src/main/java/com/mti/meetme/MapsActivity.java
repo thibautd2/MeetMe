@@ -762,15 +762,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (event == null || event.visibility == null)
             return false;
 
-        try {
-            Date now = new Date();
-            Date eventFinish = null;
-            eventFinish = MyGame.getInstance().getDateFormat().parse(event.getEndDate());
-            if (eventFinish == null || eventFinish.before(now))
-                return false;
-        } catch (ParseException e1) {
-            e1.getStackTrace();
-        }
+       if (!MyGame.getInstance().isNotFinished(event))
+           return false;
 
         if (event.getOwnerid().equals(FacebookUser.getInstance().getUid()))
             return true;
@@ -785,10 +778,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             visibilityList.add(event.getVisibility());
         }
 
-       if (visibilityList.get(0).equals("friend") && FacebookUser.getInstance().haveThisFriend(event.getOwnerid())) {
+       if ((visibilityList.get(0).equals("friend") || visibilityList.get(0).equals("friends")) && FacebookUser.getInstance().haveThisFriend(event.getOwnerid())) {
            if (visibilityList.size() == 1)
                return true;
-           if (visibilityList.size() > 1 && visibilityList.get(1).equals(FacebookUser.getInstance().getGender()))
+           if (visibilityList.size() > 1 && (visibilityList.get(1).equals(FacebookUser.getInstance().receiveGoodGender()) ||  visibilityList.get(1).equals("all")))
                return true;
            return false;
        }

@@ -87,7 +87,13 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
     }
 
     private void sendEventToFirebase() {
-        final User u = FacebookUser.getInstance();
+        User u = FacebookUser.getInstance();
+
+        if (MyGame.getInstance().getGame() != null) {
+            u.removeParticipation(MyGame.getInstance().getGame().receiveEventId());
+            MyGame.getInstance().finishTheGame();
+        }
+
         String visibility = "friends";
         if (all.isChecked())
             visibility = "all";
@@ -122,12 +128,11 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
         geoFire.setLocation("Event :" + name.getText().toString() + u.getUid(), new GeoLocation(event.getLatitude(), event.getLongitude()));
         Toast.makeText(getApplicationContext(), "Evénement de jeux Créé !", Toast.LENGTH_LONG).show();
 
-
-        //todo if a game is played by someone he shouldnt create a new game
         name.setText("");
         desc.setText("");
 
         MyGame.getInstance().setGame(event);
+        u.addParticipateTo(event.receiveEventId());
 
         Intent intent = new Intent(getContext(), MapsActivity.class);
         startActivity(intent);
@@ -162,7 +167,6 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        MyGame.getInstance().finishTheGame();
                         sendEventToFirebase();
                     }
                 })
