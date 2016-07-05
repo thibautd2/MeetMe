@@ -41,6 +41,7 @@ import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.controller.MyGame;
+import com.mti.meetme.controller.TodayDesire;
 import com.mti.meetme.notifications.NotificationSender;
 import com.squareup.picasso.Picasso;
 
@@ -191,7 +192,7 @@ public class CreateSportActivity extends Fragment implements AdapterView.OnItemC
                     Date endDate = new Date(date.getTime() + 12 * oneHour);
 
                     Event event = new Event(name.getText().toString(), desc.getText().toString(), adresse.getText().toString(),
-                            u.getUid(), visibility, u.getEnvie(),dateFormat.format(date).toString(), dateFormat.format(endDate).toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), FacebookUser.getInstance().getName(), "sport");
+                            u.getUid(), visibility, TodayDesire.Desire.Sport.toString(),dateFormat.format(date).toString(), dateFormat.format(endDate).toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), FacebookUser.getInstance().getName(), "sport");
 
                     adressevalid = true;
                     getLocationFromAddress(event);

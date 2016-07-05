@@ -37,6 +37,7 @@ import com.mti.meetme.R;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.controller.MyGame;
+import com.mti.meetme.controller.TodayDesire;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -115,7 +116,7 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
         Date endDate = new Date(date.getTime() + oneHour);
 
         Event event = new Event(name.getText().toString(), desc.getText().toString(), "not so far",
-                u.getUid(), visibility, "game", dateFormat.format(date).toString(), dateFormat.format(endDate).toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), FacebookUser.getInstance().getName(), gameType);
+                u.getUid(), visibility, TodayDesire.Desire.play.toString(), dateFormat.format(date).toString(), dateFormat.format(endDate).toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), FacebookUser.getInstance().getName(), gameType);
 
         adressevalid = true;
 

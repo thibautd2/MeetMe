@@ -21,9 +21,13 @@ import com.mti.meetme.Tools.Event.EventAdapter;
 import com.mti.meetme.Tools.Map.CalculateDistance;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.controller.FacebookUser;
+import com.mti.meetme.controller.MyGame;
+import com.mti.meetme.controller.TodayDesire;
 import com.mti.meetme.controller.UserList;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -103,7 +107,7 @@ public class EventListActivity extends Fragment {
                 {
                     Event event = postSnapshot.getValue(Event.class);
 
-                    if(event.visibility.compareTo("all") == 0 || (event.getInvited()!=null && FacebookUser.getInstance().getMeetMeFriends().contains(event.ownerid)) || event.ownerid.compareTo(FacebookUser.getInstance().getUid()) == 0) {
+                    if(checkEventVisibility(event)) {
                         events.add(event);}
                 }
 
@@ -114,6 +118,52 @@ public class EventListActivity extends Fragment {
             public void onCancelled(FirebaseError firebaseError) {
             }
         });
+    }
+
+    //todo fucking doublon on MapsActivity -> put it on a eventTools or something
+    private boolean checkEventVisibility(Event event) {
+        if (event == null || event.visibility == null)
+            return false;
+
+        if (!MyGame.getInstance().isNotFinished(event))
+            return false;
+
+        if (event.getOwnerid().equals(FacebookUser.getInstance().getUid()))
+            return true;
+
+        if (FacebookUser.getInstance().getEnvie() != TodayDesire.Desire.Everything.toString() && !event.getCategorie().equals(FacebookUser.getInstance().getEnvie()))
+            return false;
+
+        ArrayList<String> visibilityList;
+        if (event.getVisibility().contains(";")) {
+            String visible[] = event.getVisibility().split(";");
+            visibilityList = new ArrayList<>(Arrays.asList(visible));
+        }
+        else {
+            visibilityList = new ArrayList<>();
+            visibilityList.add(event.getVisibility());
+        }
+
+        if ((visibilityList.get(0).equals("friend") || visibilityList.get(0).equals("friends")) && FacebookUser.getInstance().haveThisFriend(event.getOwnerid())) {
+            if (visibilityList.size() == 1)
+                return true;
+            if (visibilityList.size() > 1 && (visibilityList.get(1).equals(FacebookUser.getInstance().receiveGoodGender()) ||  visibilityList.get(1).equals("all")))
+                return true;
+            return false;
+        }
+
+        if (visibilityList.get(0).equals("friend_selection") && event.getInvited() != null && event.getInvited().contains(FacebookUser.getInstance().getUid()))
+            return true;
+
+        if (visibilityList.get(0).equals("all")) {
+            if (visibilityList.size() == 1 || visibilityList.get(1).equals("all"))
+                return true;
+            if (visibilityList.size() > 1 && visibilityList.get(1).equals(FacebookUser.getInstance().getGender()))
+                return true;
+            return false;
+        }
+
+        return false;
     }
 
     private double getDistToMe(User u1) {

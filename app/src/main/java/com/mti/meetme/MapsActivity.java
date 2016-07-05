@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.hardware.camera2.params.Face;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -221,8 +222,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mDrawerLayout.isDrawerOpen(mDrawerPane))
+                if (mDrawerLayout.isDrawerOpen(mDrawerPane)) {
                     mDrawerLayout.closeDrawer(mDrawerPane);
+                }
                 else
                     mDrawerLayout.openDrawer(mDrawerPane);
             }});
@@ -239,6 +241,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //todo singleton on drawerAdapter then us it in listacty
         MenuSlideItems.add(new MenuSlideItem("Distance", " km", R.drawable.radar, new MenuSlideItem.MySeekBar(0, 10, 10)));
         MenuSlideItems.add(new MenuSlideItem("Genre", R.drawable.gender, new MenuSlideItem.MyCheckBox("Men", true), new MenuSlideItem.MyCheckBox("Women", true), null, null));
+        MenuSlideItems.add(new MenuSlideItem("Changer de preference", 0, "trouvez d'autres types d'evennement !"));
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
         mDrawerList = (ListView) findViewById(R.id.navList);
@@ -248,6 +251,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectItemFromDrawer(position);
+
+                if (position == 2) { //todo do it better
+                    init_envie_du_jour();
+                }
             }
         });
     }
@@ -267,6 +274,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
                 update_TodayDesire(v, dialog);
+                updateMap();
             }
         };
 
@@ -767,6 +775,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (event.getOwnerid().equals(FacebookUser.getInstance().getUid()))
             return true;
+
+        if (FacebookUser.getInstance().getEnvie() != TodayDesire.Desire.Everything.toString() && !event.getCategorie().equals(FacebookUser.getInstance().getEnvie()))
+            return false;
 
         ArrayList<String> visibilityList;
         if (event.getVisibility().contains(";")) {
