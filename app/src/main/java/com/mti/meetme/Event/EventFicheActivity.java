@@ -3,6 +3,7 @@ package com.mti.meetme.Event;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -25,6 +26,7 @@ import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.controller.MyGame;
+import com.mti.meetme.controller.TodayDesire;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -72,18 +74,20 @@ public class EventFicheActivity extends AppCompatActivity {
         title.setText(event.getName());
         adresse.setText(event.getAdresse());
         description.setText(event.getDescription());
-        participants.setText("(15)");
+        if(event.getInvited()!= null && event.getInvited().length() >0)
+        participants.setText("("+event.getInvited().split(";").length+")");
         image.setBackgroundResource(R.drawable.allfine);
         if(event!=null && event.getType()!=null) {
-            if (event.getType().compareTo("sport") == 0)
+            if (event.getCategorie().compareTo(TodayDesire.Desire.Sport.toString()) == 0)
                 image.setBackgroundResource(R.drawable.finesport);
-            if (event.getType().compareTo("party") == 0)
+            if (event.getCategorie().compareTo(TodayDesire.Desire.party.toString()) == 0)
                 image.setBackgroundResource(R.drawable.soiree2fine);
-            if (event.getType().compareTo("drink") == 0)
+            if (event.getCategorie().compareTo(TodayDesire.Desire.Drink.toString()) == 0)
                 image.setBackgroundResource(R.drawable.drinkfine);
+            if (event.getCategorie().compareTo(TodayDesire.Desire.play.toString()) == 0)
+                image.setBackgroundResource(R.drawable.finegames);
         }
         date.setText(event.getDate());
-
         Firebase.setAndroidContext(getApplicationContext());
         Firebase ref = Network.find_user(event.getOwnerid());
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -100,13 +104,13 @@ public class EventFicheActivity extends AppCompatActivity {
         });
 
         participateBtn.setVisibility(View.INVISIBLE);
+
         if(event != null && event.getInvited()!= null && event.getInvited().length()>1) {
             getParticipants();
         }
 
-            if (!event.ownerid.equals(FacebookUser.getInstance().getUid())) {
+            if (!event.ownerid.equals(FacebookUser.getInstance().getUid()) && !event.getParticipants().contains(FacebookUser.getInstance().getUid())) {
                 participateBtn.setVisibility(View.VISIBLE);
-
                 participateBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -116,8 +120,9 @@ public class EventFicheActivity extends AppCompatActivity {
                             Map<String, Object> descEvent = new HashMap<>();
                             descEvent.put("participants", strEvent);
                             ref.updateChildren(descEvent, null);
-
                             FacebookUser.getInstance().addParticipateTo(event.receiveEventId());
+                            Toast.makeText(getApplicationContext(), "Vous étes inscrit à l'évènement !", Toast.LENGTH_LONG).show();
+                            startActivity(new Intent(getApplicationContext(), MapsActivity.class));
                         }
 
                         if (event.type.equals("compass")) {
@@ -148,42 +153,36 @@ public class EventFicheActivity extends AppCompatActivity {
     public void onResume()
     {
         super.onResume();
-       // if(event != null && event.getInvited()!= null && event.getInvited().length()>1)
-         //   getParticipants();
-
-        populateViews();
     }
 
-    public void getParticipants()
-    {
-        String[] participent = event.getInvited().split(";");
-        for (String e : participent) {
+    public void getParticipants() {
+        String[] guests = event.getInvited().split(";");
+
+        Log.w("GUESTS", event.getInvited());
+
+        for (String e : guests) {
             Firebase user = Network.find_user(e);
             user.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    User u = dataSnapshot.getValue(User.class);
+                    User userInvited = dataSnapshot.getValue(User.class);
+
                     ImageView newItem = new ImageView(EventFicheActivity.this);
-                    Picasso.with(getApplicationContext()).load(u.getPic1()).fit().centerCrop().transform(new RoundedPicasso()).into(newItem);
+                    Picasso.with(getApplicationContext()).load(userInvited.getPic1()).fit().centerCrop().transform(new RoundedPicasso()).into(newItem);
+
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                     params.height = imageParticipants.getHeight();
                     params.width = params.height;
                     params.setMargins(10, 0, 10, 0);
+
                     imageParticipants.addView(newItem, params);
 
                 }
+
                 @Override
                 public void onCancelled(FirebaseError firebaseError) {
                 }
             });
         }
-    }
-
-    @Override
-    public void onBackPressed()
-    {
-        Intent intent = new Intent(this, MapsActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
     }
 }

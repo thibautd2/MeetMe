@@ -111,7 +111,8 @@
                     android:layout_marginTop="20dp"
                     android:textColor="#ffffff"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginRight="30dp" />
+                    android:layout_marginRight="30dp"
+                    android:layout_marginBottom="10dp" />
 
                 <RadioButton
                     android:text="@string/all"

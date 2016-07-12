@@ -71,8 +71,7 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
                 double dist =  CalculateDistance.getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(u.getLatitude(), u.getLongitude()));
 
                 holder.user_dist.setText(String.format("%.1f",dist )+ " km");
-
-                if (u.getGender().compareTo("male")==0) {
+                if (!(u.getName().compareTo("Alexandre")==0)) {
                     holder.user_image.getLayoutParams().height = originalImageHeight -70;
                     holder.relativeLayout.getLayoutParams().height = originalLayoutHeight -70;
                 }
