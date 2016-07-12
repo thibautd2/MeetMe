@@ -26,6 +26,7 @@ import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.controller.MyGame;
+import com.mti.meetme.controller.TodayDesire;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -73,18 +74,20 @@ public class EventFicheActivity extends AppCompatActivity {
         title.setText(event.getName());
         adresse.setText(event.getAdresse());
         description.setText(event.getDescription());
-        participants.setText("(15)");
+        if(event.getInvited()!= null && event.getInvited().length() >0)
+        participants.setText("("+event.getInvited().split(";").length+")");
         image.setBackgroundResource(R.drawable.allfine);
         if(event!=null && event.getType()!=null) {
-            if (event.getType().compareTo("sport") == 0)
+            if (event.getCategorie().compareTo(TodayDesire.Desire.Sport.toString()) == 0)
                 image.setBackgroundResource(R.drawable.finesport);
-            if (event.getType().compareTo("party") == 0)
+            if (event.getCategorie().compareTo(TodayDesire.Desire.party.toString()) == 0)
                 image.setBackgroundResource(R.drawable.soiree2fine);
-            if (event.getType().compareTo("drink") == 0)
+            if (event.getCategorie().compareTo(TodayDesire.Desire.Drink.toString()) == 0)
                 image.setBackgroundResource(R.drawable.drinkfine);
+            if (event.getCategorie().compareTo(TodayDesire.Desire.play.toString()) == 0)
+                image.setBackgroundResource(R.drawable.finegames);
         }
         date.setText(event.getDate());
-
         Firebase.setAndroidContext(getApplicationContext());
         Firebase ref = Network.find_user(event.getOwnerid());
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -106,9 +109,8 @@ public class EventFicheActivity extends AppCompatActivity {
             getParticipants();
         }
 
-            if (!event.ownerid.equals(FacebookUser.getInstance().getUid())) {
+            if (!event.ownerid.equals(FacebookUser.getInstance().getUid()) && !event.getParticipants().contains(FacebookUser.getInstance().getUid())) {
                 participateBtn.setVisibility(View.VISIBLE);
-
                 participateBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -118,8 +120,9 @@ public class EventFicheActivity extends AppCompatActivity {
                             Map<String, Object> descEvent = new HashMap<>();
                             descEvent.put("participants", strEvent);
                             ref.updateChildren(descEvent, null);
-
                             FacebookUser.getInstance().addParticipateTo(event.receiveEventId());
+                            Toast.makeText(getApplicationContext(), "Vous étes inscrit à l'évènement !", Toast.LENGTH_LONG).show();
+                            startActivity(new Intent(getApplicationContext(), MapsActivity.class));
                         }
 
                         if (event.type.equals("compass")) {
