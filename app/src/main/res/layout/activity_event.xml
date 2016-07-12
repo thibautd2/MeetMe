@@ -58,7 +58,6 @@
                 <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
                     android:ems="10"
                     android:padding="5dp"
                     android:layout_below="@+id/event_name"
@@ -86,7 +85,6 @@
                 <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
                     android:ems="10"
                     android:id="@+id/event_name"
                     android:hint="Titre de l'évènement"

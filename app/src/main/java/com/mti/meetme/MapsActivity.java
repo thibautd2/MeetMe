@@ -233,8 +233,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void setMenuBtnSize() {
         profileButton.getLayoutParams().height -= 30;
         profileButton.getLayoutParams().width -= 30;
-        settingsButton.getLayoutParams().height -= 30;
-        settingsButton.getLayoutParams().width -= 30;
+        settingsButton.getLayoutParams().height -= 15;
+        settingsButton.getLayoutParams().width -= 15;
     }
 
     public void init_menu() {
