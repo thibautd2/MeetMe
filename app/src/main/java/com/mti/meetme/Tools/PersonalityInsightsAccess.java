@@ -135,6 +135,9 @@ public class PersonalityInsightsAccess {
     //call this function with the text of the user messages to update his profile on firebase
     public void updatePersonality(final String text)
     {
+        if (text == null || text.equals("") || !text.contains(" ") || text.split(" ").length < 25)
+            return;
+
         Thread thread = new Thread(new Runnable(){
             public void run() {
                 try {

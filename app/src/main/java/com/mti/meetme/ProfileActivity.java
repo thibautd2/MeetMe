@@ -287,6 +287,8 @@ public class ProfileActivity extends AppCompatActivity{
 
                 if (u.getInterest() != null && !u.getInterest().equals(""))
                     interest.setText("Caracteristique principale: " + u.getInterest());
+                else
+                    interest.setText("");
 
                 if (u.getUid().equals(currentUser.getUid()))
                     imageButton.setVisibility(View.INVISIBLE);
