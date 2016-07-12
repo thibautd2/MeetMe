@@ -99,6 +99,9 @@ public class User implements Serializable, Parcelable {
     @com.google.gson.annotations.SerializedName("ParticiateTo")
     private String ParticipateTo;
 
+    @com.google.gson.annotations.SerializedName("Interest")
+    private String Interest;
+
     private JSONObject Likes;
     private JSONObject Friends;
 
@@ -120,6 +123,7 @@ public class User implements Serializable, Parcelable {
         ParticipateTo = "";
         Envie = desire.toString();
         FcmID = fcmID;
+        Interest = null;
     }
 
     public User() {}
@@ -149,6 +153,7 @@ public class User implements Serializable, Parcelable {
         Longitude = in.readDouble();
         Latitude = in.readDouble();
         ParticipateTo = in.readString();
+        Interest = in.readString();
     }
 
     @Override
@@ -177,6 +182,7 @@ public class User implements Serializable, Parcelable {
         dest.writeDouble(Longitude);
         dest.writeDouble(Latitude);
         dest.writeString(ParticipateTo);
+        dest.writeString(Interest);
     }
 
     @Override
@@ -357,6 +363,14 @@ public class User implements Serializable, Parcelable {
             return "";
 
         return MeetMeFriends;
+    }
+
+    public String getInterest() {
+        return Interest;
+    }
+
+    public void setInterest(String interest) {
+        Interest = interest;
     }
 
     public void setMeetMeFriends(String meetMeFriends) {

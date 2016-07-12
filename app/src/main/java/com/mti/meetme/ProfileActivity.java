@@ -190,6 +190,8 @@ public class ProfileActivity extends AppCompatActivity{
                 ref.updateChildren(desc, null);
 
                 descriptionTextView.setText(input.getText().toString());
+
+                PersonalityInsightsAccess.getInstance().updatePersonality(input.getText().toString());
             }
         });
 
