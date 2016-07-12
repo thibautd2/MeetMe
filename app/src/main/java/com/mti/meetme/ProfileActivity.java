@@ -272,11 +272,12 @@ public class ProfileActivity extends AppCompatActivity{
             getFriendsPictures();
 
         setFriendBtn();
+        updateMyInformation();
     }
 
-    //this function update the profile page when firebase is updated on this profile (not only set friends, interest to)
-    public void setFriendBtn() {
-        Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
+    //todo update all information from the user of this profil
+    private void updateMyInformation() {
+        Firebase ref = Network.find_user(currentUser.getUid());
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -286,9 +287,26 @@ public class ProfileActivity extends AppCompatActivity{
                 imageButton.setOnClickListener(null);
 
                 if (u.getInterest() != null && !u.getInterest().equals(""))
-                    interest.setText("Caracteristique principale: " + u.getInterest());
+                    interest.setText("Caractéristique principale: " + u.getInterest());
                 else
                     interest.setText("");
+            }
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+
+    public void setFriendBtn() {
+        Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                User u = snapshot.getValue(User.class);
+
+                ImageButton imageButton = (ImageButton) findViewById(R.id.add_friends_btn);
+                imageButton.setOnClickListener(null);
 
                 if (u.getUid().equals(currentUser.getUid()))
                     imageButton.setVisibility(View.INVISIBLE);
