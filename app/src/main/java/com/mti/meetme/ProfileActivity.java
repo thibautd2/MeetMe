@@ -62,6 +62,7 @@ public class ProfileActivity extends AppCompatActivity{
     private TextView  likesTextView;
     private TextView  friendsTextView;
     private TextView  descriptionTextView;
+    private TextView interest;
 
     private User user;
     private User currentUser;
@@ -195,7 +196,6 @@ public class ProfileActivity extends AppCompatActivity{
             }
         });
 
-
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
             }
@@ -228,6 +228,7 @@ public class ProfileActivity extends AppCompatActivity{
         friendsLayout = (LinearLayout) findViewById(R.id.friends_layout);
         pager = (ViewPager) findViewById(R.id.user_img_list);
         descriptionTextView = (TextView) findViewById(R.id.description_text);
+        interest = (TextView) findViewById(R.id.interest_textview);
     }
 
     private void populateViews() throws JSONException, InterruptedException {
@@ -273,6 +274,7 @@ public class ProfileActivity extends AppCompatActivity{
         setFriendBtn();
     }
 
+    //this function update the profile page when firebase is updated on this profile (not only set friends, interest to)
     public void setFriendBtn() {
         Firebase ref = Network.find_user(FacebookUser.getInstance().getUid());
         ref.addValueEventListener(new ValueEventListener() {
@@ -282,6 +284,9 @@ public class ProfileActivity extends AppCompatActivity{
 
                 ImageButton imageButton = (ImageButton) findViewById(R.id.add_friends_btn);
                 imageButton.setOnClickListener(null);
+
+                if (u.getInterest() != null && !u.getInterest().equals(""))
+                    interest.setText("Caracteristique principale: " + u.getInterest());
 
                 if (u.getUid().equals(currentUser.getUid()))
                     imageButton.setVisibility(View.INVISIBLE);

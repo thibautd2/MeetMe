@@ -114,13 +114,13 @@ public class PersonalityInsightsAccess {
 
     public enum Interest
     {
-        Artist ("Artist"),
-        Adventure ("Adventure"),
-        Emotional ("Emotional"),
-        Imagination ("Imagination"),
-        Intellect ("Intellect"),
-        Liberalism ("Liberalism"),
-        Openness ("Openness");
+        Artist ("Artiste"),
+        Adventure ("Aventurié"),
+        Emotional ("Sensible"),
+        Imagination ("Imaginatif"),
+        Intellect ("Intellectuelle"),
+        Liberalism ("Tolérant"),
+        Openness ("Ouvert d'esprit");
 
         private String interest = "";
         Interest(String name){
