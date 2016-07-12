@@ -241,7 +241,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //todo singleton on drawerAdapter then us it in listacty
         MenuSlideItems.add(new MenuSlideItem("Distance", " km", R.drawable.radar, new MenuSlideItem.MySeekBar(0, 10, 10)));
         MenuSlideItems.add(new MenuSlideItem("Genre", R.drawable.gender, new MenuSlideItem.MyCheckBox("Men", true), new MenuSlideItem.MyCheckBox("Women", true), null, null));
-        MenuSlideItems.add(new MenuSlideItem("Changer de preference", 0, "trouvez d'autres types d'evennement !"));
+        MenuSlideItems.add(new MenuSlideItem("Changer de preference", R.drawable.choose_event, "trouvez d'autres types d'evennement !"));
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
         mDrawerList = (ListView) findViewById(R.id.navList);

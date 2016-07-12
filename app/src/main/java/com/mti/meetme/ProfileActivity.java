@@ -31,7 +31,10 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.ibm.watson.developer_cloud.personality_insights.v2.PersonalityInsights;
+import com.ibm.watson.developer_cloud.personality_insights.v2.model.Profile;
 import com.mti.meetme.Model.User;
+import com.mti.meetme.Tools.PersonalityInsightsAccess;
 import com.mti.meetme.Tools.Profil.CarousselPager;
 import com.mti.meetme.Tools.FacebookHandler;
 import com.mti.meetme.Tools.Network.Network;
@@ -43,6 +46,7 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

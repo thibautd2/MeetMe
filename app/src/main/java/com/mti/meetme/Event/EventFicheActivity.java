@@ -102,6 +102,7 @@ public class EventFicheActivity extends AppCompatActivity {
         participateBtn.setVisibility(View.INVISIBLE);
         if(event != null && event.getInvited()!= null && event.getInvited().length()>1) {
             getParticipants();
+        }
 
             if (!event.ownerid.equals(FacebookUser.getInstance().getUid())) {
                 participateBtn.setVisibility(View.VISIBLE);
@@ -140,7 +141,7 @@ public class EventFicheActivity extends AppCompatActivity {
                     }
                 });
             }
-        }
+
     }
 
     @Override
