@@ -271,8 +271,8 @@ public class ProfileActivity extends AppCompatActivity{
         if (currentUser.getMeetMeFriends() != null)
             getFriendsPictures();
 
-        setFriendBtn();
         updateMyInformation();
+        setFriendBtn();
     }
 
     //todo update all information from the user of this profil
@@ -282,9 +282,6 @@ public class ProfileActivity extends AppCompatActivity{
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 User u = snapshot.getValue(User.class);
-
-                ImageButton imageButton = (ImageButton) findViewById(R.id.add_friends_btn);
-                imageButton.setOnClickListener(null);
 
                 if (u.getInterest() != null && !u.getInterest().equals(""))
                     interest.setText("Caractéristique principale: " + u.getInterest());
