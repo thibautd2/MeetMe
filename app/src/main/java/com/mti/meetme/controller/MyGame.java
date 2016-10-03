@@ -150,6 +150,7 @@ public class MyGame {
         try {
             Date now = new Date();
             Date eventFinish = null;
+            if(e.endDate != null && e.endDate.compareTo("")!=0)
             eventFinish = MyGame.getInstance().getDateFormat().parse(e.getEndDate());
             if (eventFinish == null || eventFinish.before(now))
                 return false;

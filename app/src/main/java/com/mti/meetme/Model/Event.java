@@ -39,6 +39,36 @@ public class Event implements Serializable {
     @com.google.gson.annotations.SerializedName("endDate")
     public String endDate;
 
+    public String getBaniere() {
+        return baniere;
+    }
+
+    public void setBaniere(String baniere) {
+        this.baniere = baniere;
+    }
+
+    @com.google.gson.annotations.SerializedName("baniere")
+    public String baniere;
+
+
+    public Event(String name, String description, String adresse, String ownerid, String username, String visibility, String categorie, String date, String participants, String type, Double latitude, Double longitude, String invited, String endDate, String baniere) {
+        this.name = name;
+        this.description = description;
+        this.adresse = adresse;
+        this.ownerid = ownerid;
+        this.username = username;
+        this.visibility = visibility;
+        this.categorie = categorie;
+        this.date = date;
+        this.participants = participants;
+        this.type = type;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.invited = invited;
+        this.endDate = endDate;
+        this.baniere = baniere;
+    }
+
     public Event(){};
 
     public Event(String name, String description, String adresse, String ownerid, String visibility, String categorie,
@@ -57,6 +87,8 @@ public class Event implements Serializable {
         this.type = type;
         this.endDate = endDate;
     }
+
+
 
     public String receiveEventId() {
         return "Event :" + name + ownerid;

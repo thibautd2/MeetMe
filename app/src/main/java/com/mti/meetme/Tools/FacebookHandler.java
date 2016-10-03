@@ -7,8 +7,11 @@ import android.util.Log;
 
 
 import com.firebase.client.Firebase;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.mti.meetme.ChatActivity;
 import com.mti.meetme.MapsActivity;
+import com.mti.meetme.Model.Event;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.controller.FacebookUser;
@@ -140,9 +143,19 @@ public class FacebookHandler
                                String name =  obj.optString("name");
                                 String description =  obj.optString("description");
                                 String cover = obj.getJSONObject("cover").optString("source");
-                                String place =  obj.optString("place");
+                                String place =  obj.getJSONObject("place").optString("name");
                                 String start_time = obj.optString("start_time");
                                 String owner_name = obj.getJSONObject("owner").optString("name");
+                                String end_time = obj.optString("end_time");
+                                String visibility =  "all"; // "all
+                                String owner =  FacebookUser.getInstance().getUid();
+                                String participants  = obj.optString("attending_count");
+                                Event event = new Event(description,description, place, owner, owner_name,visibility, "Soirée", start_time, participants, "party", 2.5, 2.6, "", end_time, cover);
+                                GooglePlacesAutocompleteAdapter.getLocationFromAddress(event);
+                                Firebase ref = Network.create_event("Event :" + name + owner);
+                                ref.setValue(event);
+                                GeoFire geoFire = new GeoFire(Network.geofire);
+                                geoFire.setLocation("Event :" + name + owner, new GeoLocation(event.getLatitude(), event.getLongitude()));
 
                             }
                         }
@@ -152,7 +165,7 @@ public class FacebookHandler
                         }
                     }});
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "cover,category,name,description, place, start_time, ticket_uri, videos, live_videos, owner");
+        parameters.putString("fields", "cover,category,name,description, place, attending_count,start_time,end_time, ticket_uri, videos, live_videos, owner");
         request.setParameters(parameters);
         request.executeAsync();
     }

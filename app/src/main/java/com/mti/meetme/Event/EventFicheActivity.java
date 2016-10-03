@@ -75,7 +75,9 @@ public class EventFicheActivity extends AppCompatActivity {
         adresse.setText(event.getAdresse());
         description.setText(event.getDescription());
         if(event.getInvited()!= null && event.getInvited().length() >0)
-        participants.setText("("+event.getInvited().split(";").length+")");
+        participants.setText("("+event.getInvited().split(";").length+") participants");
+        if(participants.getText().length() < 1)
+            participants.setText("("+event.participants+") participants");
         image.setBackgroundResource(R.drawable.allfine);
         if(event!=null && event.getType()!=null) {
             if (event.getCategorie().compareTo(TodayDesire.Desire.Sport.toString()) == 0)
@@ -87,6 +89,8 @@ public class EventFicheActivity extends AppCompatActivity {
             if (event.getCategorie().compareTo(TodayDesire.Desire.play.toString()) == 0)
                 image.setBackgroundResource(R.drawable.finegames);
         }
+        if(event.baniere != null && event.baniere.compareTo("")!=0)
+            Picasso.with(this).load(event.baniere).fit().centerCrop().into(image);
         date.setText(event.getDate());
         Firebase.setAndroidContext(getApplicationContext());
         Firebase ref = Network.find_user(event.getOwnerid());

@@ -125,7 +125,7 @@ public class EventListActivity extends Fragment {
         if (event == null || event.visibility == null)
             return false;
 
-        if (!MyGame.getInstance().isNotFinished(event))
+        if (!MyGame.getInstance().isNotFinished(event) && event.endDate.compareTo("")!=0)
             return false;
 
         if (event.getOwnerid().equals(FacebookUser.getInstance().getUid()))

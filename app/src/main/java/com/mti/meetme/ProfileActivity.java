@@ -3,6 +3,7 @@ package com.mti.meetme;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -18,8 +19,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
@@ -76,9 +79,7 @@ public class ProfileActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
         Firebase.setAndroidContext(this);
-
         user = (User) getIntent().getSerializableExtra("User");
         pubnub = new Pubnub(getResources().getString(R.string.PublishKey), getResources().getString(R.string.PublishKey));
 
@@ -229,6 +230,14 @@ public class ProfileActivity extends AppCompatActivity{
         pager = (ViewPager) findViewById(R.id.user_img_list);
         descriptionTextView = (TextView) findViewById(R.id.description_text);
         interest = (TextView) findViewById(R.id.interest_textview);
+       /* VideoView video = (VideoView) findViewById(R.id.videoView3);
+        String vidAddress = "https://archive.org/download/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4";
+        Uri vidUri = Uri.parse(vidAddress);
+        video.setVideoURI(vidUri);
+        MediaController vidControl = new MediaController(ProfileActivity.this);
+        vidControl.setAnchorView(video);
+        video.setMediaController(vidControl);
+        video.start();*/
     }
 
     private void populateViews() throws JSONException, InterruptedException {
@@ -290,7 +299,6 @@ public class ProfileActivity extends AppCompatActivity{
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-
             }
         });
     }

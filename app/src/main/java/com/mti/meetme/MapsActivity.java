@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.hardware.camera2.params.Face;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -26,10 +27,12 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -690,18 +693,48 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         String realid = marker.getSnippet().replace(token, "");
                         int id = Integer.parseInt(realid);
                         Log.e("MARKER ID", "MARKER ID : " + id);
-                        Event e = null;
+
                         if (id < all_event.size()) {
-                            e = all_event.get(id);
+                            final Event e = all_event.get(id);
+                            final Dialog dialog = new Dialog(MapsActivity.this);
+                            dialog.setContentView(R.layout.event_pop_up);
+                            TextView accept = (TextView) dialog.findViewById(R.id.interessé);
+                            TextView cancel = (TextView) dialog.findViewById(R.id.pasinteressé);
+                            try {
+                                VideoView video = (VideoView) dialog.findViewById(R.id.videoView);
+                                String vidAddress = "https://archive.org/download/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4";
+                                Uri vidUri = Uri.parse(vidAddress);
+                                video.setVideoURI(vidUri);
+                                video.requestFocus();
+                                video.start();
+                            }
+                             catch (Exception f) {
+                                // TODO: handle exception
+                                Toast.makeText(getApplicationContext(), "Error connecting", Toast.LENGTH_SHORT).show();
+                            }
+                            accept.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
 
-                            //todo change the layout for games
+                                    Intent intent = new Intent(MapsActivity.this, EventFicheActivity.class);
+                                    Bundle b = new Bundle();
+                                    b.putSerializable("Event", e);
+                                    intent.putExtras(b);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(intent);
+                                }
+                            });
 
-                            Intent intent = new Intent(MapsActivity.this, EventFicheActivity.class);
-                            Bundle b = new Bundle();
-                            b.putSerializable("Event", e);
-                            intent.putExtras(b);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
+                            cancel.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            dialog.show();
+
+
                         }
                     }
                 }
@@ -772,7 +805,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (event == null || event.visibility == null)
             return false;
 
-       if (!MyGame.getInstance().isNotFinished(event))
+       if (!MyGame.getInstance().isNotFinished(event) && event.endDate.compareTo("")!=0)
            return false;
 
         if (event.getOwnerid().equals(FacebookUser.getInstance().getUid()))

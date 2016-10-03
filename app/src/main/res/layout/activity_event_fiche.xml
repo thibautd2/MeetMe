@@ -11,7 +11,6 @@
 
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/event_fiche_img"
         android:id="@+id/event_fiche_titre"
         android:layout_alignParentStart="true"
@@ -19,137 +18,165 @@
         android:background="#ffffff"
         android:alpha="0.8"
         android:gravity="center"
-        android:textSize="18sp" />
-
-    <TextView
-        android:text="Super déscription fun ....."
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView13"
-        android:layout_alignStart="@+id/textView13"
-        android:layout_marginTop="5dp"
-        android:id="@+id/event_fiche_description"
-        android:layout_marginLeft="10dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView18"
-        android:layout_toEndOf="@+id/textView18"
-        android:id="@+id/event_fiche_nb_participants"
-        android:layout_marginLeft="5dp" />
-
-    <TextView
-        android:text="Description:"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView13"
-        android:layout_below="@+id/event_fiche_user_photo"
         android:textSize="14sp"
-        android:textStyle="normal|bold"
-        android:layout_marginLeft="10dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp" />
+        android:layout_height="60px" />
 
-    <TextView
-        android:text="TextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:id="@+id/event_fiche_adresse"
-        android:layout_below="@+id/textView16"
-        android:layout_alignStart="@+id/textView16"
-        android:layout_marginLeft="5dp" />
-
-    <TextView
-        android:text="Adresse:"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView16"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:layout_below="@+id/event_fiche_description"
-        android:layout_alignStart="@+id/textView13"
-        android:layout_marginTop="10dp" />
-
-    <TextView
-        android:text="Participants"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:id="@+id/textView18"
-        android:textStyle="bold"
-        android:textSize="14sp"
-        android:layout_below="@+id/event_fiche_adresse"
-        android:layout_alignStart="@+id/textView16" />
-
-    <TextView
-        android:text="Organisateur:"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView2"
-        android:layout_below="@+id/event_fiche_img"
-        android:layout_alignStart="@+id/event_fiche_owner"
-        android:layout_marginTop="10dp"
-        android:textStyle="bold" />
-
-    <ImageView
-        android:layout_width="80dp"
-        android:layout_height="60dp"
-        android:id="@+id/event_fiche_user_photo"
-        android:layout_below="@+id/event_fiche_img"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/event_fiche_owner"
-        android:text="thibaut"
-        android:textSize="14sp"
-        android:layout_below="@+id/textView2"
-        android:layout_toEndOf="@+id/event_fiche_user_photo" />
-
-    <HorizontalScrollView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_below="@+id/event_fiche_nb_participants"
-        android:layout_alignStart="@+id/textView18"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:id="@+id/horizontalScrollView">
-
+        android:layout_height="match_parent"
+        android:layout_below="@+id/event_fiche_img"
+        android:layout_marginLeft="5dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:id="@+id/event_fiche_layout">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:text="Date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView10"
+                android:textStyle="normal|bold" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/event_fiche_nb_participants"
+                    android:layout_marginLeft="5dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toEndOf="@+id/event_fiche_date"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:text="TextView"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/event_fiche_date"
+                    android:layout_marginRight="10dp"
+                    android:textSize="12sp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentStart="true" />
+            </RelativeLayout>
+
+            <TextView
+                android:text="Adresse:"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView16"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_below="@+id/event_fiche_description"
+                android:layout_alignStart="@+id/textView13"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                android:text="TextView"
+                android:layout_width="192dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:id="@+id/event_fiche_adresse"
+                android:layout_below="@+id/textView16"
+                android:layout_alignStart="@+id/textView16"
+                android:layout_marginLeft="10dp" />
+
+            <TextView
+                android:text="Description:"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView13"
+                android:layout_below="@+id/event_fiche_user_photo"
+                android:textSize="14sp"
+                android:textStyle="normal|bold"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                android:text="Super déscription fun ....."
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView13"
+                android:layout_alignStart="@+id/textView13"
+                android:layout_marginTop="5dp"
+                android:id="@+id/event_fiche_description"
+                android:layout_marginLeft="10dp" />
+
+            <TextView
+                android:text="Participants sur Meetme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:id="@+id/textView18"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:layout_below="@+id/event_fiche_adresse"
+                android:layout_alignStart="@+id/textView16" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_below="@+id/event_fiche_nb_participants"
+                android:layout_alignStart="@+id/textView18"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:id="@+id/horizontalScrollView"
+                android:layout_height="60px">
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:id="@+id/event_fiche_layout">
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <TextView
+                android:text="Organisateur:"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView2"
+                android:layout_below="@+id/event_fiche_img"
+                android:layout_alignStart="@+id/event_fiche_owner"
+                android:layout_marginTop="10dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/event_fiche_owner"
+                android:text="thibaut"
+                android:textSize="14sp"
+                android:layout_below="@+id/textView2"
+                android:layout_toEndOf="@+id/event_fiche_user_photo"
+                android:layout_marginLeft="10dp" />
+
+            <ImageView
+                android:layout_width="80dp"
+                android:id="@+id/event_fiche_user_photo"
+                android:layout_below="@+id/event_fiche_img"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="10dp"
+                android:layout_height="80dp" />
+
+            <Button
+                android:text="Je participe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/button2"
+                android:background="@drawable/rounded_corners_event"
+                android:textColor="#ffffff"
+                android:padding="5dp"
+                android:layout_marginBottom="16dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignEnd="@+id/horizontalScrollView" />
+
         </LinearLayout>
-    </HorizontalScrollView>
-
-    <TextView
-        android:text="TextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/event_fiche_date"
-        android:layout_marginRight="10dp"
-        android:layout_alignBaseline="@+id/textView2"
-        android:layout_alignBottom="@+id/textView2"
-        android:layout_alignEnd="@+id/horizontalScrollView"
-        android:layout_marginEnd="10dp" />
-
-    <Button
-        android:text="Je participe"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button2"
-        android:background="@drawable/rounded_corners_event"
-        android:textColor="#ffffff"
-        android:padding="5dp"
-        android:layout_marginBottom="16dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignEnd="@+id/horizontalScrollView" />
+    </ScrollView>
 
 </RelativeLayout>

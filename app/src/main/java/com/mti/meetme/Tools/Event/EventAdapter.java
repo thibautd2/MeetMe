@@ -55,6 +55,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>
         vh.event_heure = (TextView) v.findViewById(R.id.event_date_list);
         vh.relativeLayout = (RelativeLayout) v.findViewById(R.id.list_event_relative);
         vh.event_username = (TextView) v.findViewById(R.id.event_user);
+        vh.event_participant = (TextView) v.findViewById(R.id.participants);
         originalLayoutHeight = vh.relativeLayout.getLayoutParams().height;
         originalImageHeight = vh.event_image.getLayoutParams().height;
         return vh;
@@ -65,11 +66,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>
         final Event e = events.get(position);
         if (e != null) {
 
-
+            holder.event_participant.setText(e.getParticipants() +" participants");
             holder.event_name.setText(e.getName());
             holder.event_adresse.setText(e.getAdresse());
             double dist =  CalculateDistance.getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(e.getLatitude(), e.getLongitude()));
             holder.event_heure.setText(e.getDate());
+            if (e.date.length()>16)
+                holder.event_heure.setText(e.getDate().substring(0,16));
+
             holder.event_dist.setText(String.format("%.1f",dist )+ " km");
             holder.event_username.setText(e.getUsername());
 
@@ -81,6 +85,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>
                     Picasso.with(acti).load(R.drawable.drinkfine).fit().centerCrop().into(holder.event_image);
                 if (e.getCategorie().compareTo(TodayDesire.Desire.play.toString()) == 0)
                     Picasso.with(acti).load(R.drawable.finegames).fit().centerCrop().into(holder.event_image);
+
+                if(e.baniere!=null && e.baniere.compareTo("")!=0)
+                    Picasso.with(acti).load(e.baniere).fit().centerCrop().into(holder.event_image);
 
 
 
@@ -113,6 +120,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>
         public TextView event_heure;
         public TextView event_username;
         public RelativeLayout relativeLayout;
+        public TextView event_participant;
         public ViewHolder(View itemView) {
             super(itemView);
         }
