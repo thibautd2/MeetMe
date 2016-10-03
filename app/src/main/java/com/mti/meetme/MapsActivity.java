@@ -59,6 +59,7 @@ import com.mti.meetme.Interface.ContextDrawerAdapter;
 import com.mti.meetme.Model.Event;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.DrawerListAdapter;
+import com.mti.meetme.Tools.FacebookHandler;
 import com.mti.meetme.Tools.Map.CalculateDistance;
 import com.mti.meetme.Tools.Map.FollowMeLocationSource;
 import com.mti.meetme.Tools.MenuSlideItem;

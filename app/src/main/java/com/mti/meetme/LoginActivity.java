@@ -74,7 +74,7 @@ public class LoginActivity extends Activity implements FacebookCallback<LoginRes
 
         //Facebook login handling (see method implementations)
         LoginManager.getInstance().registerCallback(callbackManager, this);
-        loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_friends, user_likes, user_photos"));
+        loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_friends, user_likes, user_photos, user_events"));
     }
 
     //Facebook login callbacks
@@ -116,7 +116,7 @@ public class LoginActivity extends Activity implements FacebookCallback<LoginRes
         GraphRequest request = GraphRequest.newMeRequest(result.getAccessToken(), this);
 
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "id,picture.height(300),name,email,gender,birthday,age_range");
+        parameters.putString("fields", "id,picture.height(300),name,email,gender,birthday,age_range,events");
         request.setParameters(parameters);
         request.executeAsync();
     }
