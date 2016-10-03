@@ -33,6 +33,7 @@ public class FacebookHandler
     private JSONObject fullLikes;
     private JSONObject fullFriends;
     private JSONObject fullPictures;
+    private JSONObject events;
 
     private boolean likesReady;
     private boolean friendsReady;
@@ -89,6 +90,7 @@ public class FacebookHandler
         getUserLikes("");
         getUserFriends("");
         getUserProfilePics("");
+        getUserEvents();
     }
 
     private void switchToMaps() throws JSONException {
@@ -119,6 +121,41 @@ public class FacebookHandler
     *       CURRENT USER DATA
     *
      ***************************************/
+
+    private void getUserEvents()
+    {
+        GraphRequest request = new GraphRequest(
+                AccessToken.getCurrentAccessToken(),
+                "/" + currentUser.getUid() + "/events",
+                null,
+                HttpMethod.GET,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                        try {
+                            events = response.getJSONObject();
+                            JSONArray array = response.getJSONObject().getJSONArray("data");
+                            for (int i = 0; i < array.length(); i++)
+                            {
+                              JSONObject obj  = (JSONObject) array.get(i);
+                               String name =  obj.optString("name");
+                                String description =  obj.optString("description");
+                                String cover = obj.getJSONObject("cover").optString("source");
+                                String place =  obj.optString("place");
+                                String start_time = obj.optString("start_time");
+                                String owner_name = obj.getJSONObject("owner").optString("name");
+
+                            }
+                        }
+                        catch(JSONException e) {
+                            e.printStackTrace();
+
+                        }
+                    }});
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "cover,category,name,description, place, start_time, ticket_uri, videos, live_videos, owner");
+        request.setParameters(parameters);
+        request.executeAsync();
+    }
 
     private void getUserLikes(String next)
     {
