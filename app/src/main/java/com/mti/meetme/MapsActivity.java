@@ -702,7 +702,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             TextView cancel = (TextView) dialog.findViewById(R.id.pasinteressé);
                             try {
                                 VideoView video = (VideoView) dialog.findViewById(R.id.videoView);
-                                String vidAddress = "https://archive.org/download/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4";
+                                String vidAddress = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
                                 Uri vidUri = Uri.parse(vidAddress);
                                 video.setVideoURI(vidUri);
                                 video.requestFocus();
@@ -783,8 +783,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         img.setBackgroundResource(R.drawable.paryt_marker);
                         name.setText(e.getName());
                         String date = e.date;
-                        if(date.length()>5)
-                        date = date.substring(0,5);
+                        if(date.length()>8)
+                        date = date.substring(0,8);
                         age.setText(date);
                     }
                 }

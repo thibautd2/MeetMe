@@ -5,48 +5,50 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp">
+        android:layout_height="200dp">
 
         <VideoView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="200dp"
             android:id="@+id/videoView" />
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true">
+
+            <TextView
+                android:layout_height="50dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Annuler"
+                android:id="@+id/pasinteressé"
+                android:gravity="center"
+                android:textSize="20dp"
+                android:layout_alignTop="@+id/interessé"
+                android:layout_alignParentEnd="true"
+                android:layout_weight="0.5"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                android:layout_weight="0.5"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Voir l'évènement"
+                android:id="@+id/interessé"
+                android:layout_alignParentStart="true"
+                android:gravity="center"
+                android:textSize="20dp"
+                android:layout_below="@+id/user_informations"
+                android:layout_marginTop="10dp"
+                android:layout_toStartOf="@+id/pasinteressé"
+                android:layout_marginRight="10dp" />
+
+        </LinearLayout>
+
     </RelativeLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_height="50dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Annuler"
-            android:id="@+id/pasinteressé"
-            android:gravity="center"
-            android:textSize="20dp"
-            android:layout_alignTop="@+id/interessé"
-            android:layout_alignParentEnd="true"
-            android:layout_weight="0.5"
-            android:layout_width="wrap_content"
-            android:layout_marginTop="10dp" />
-
-        <TextView
-            android:layout_weight="0.5"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Voir l'évènement"
-            android:id="@+id/interessé"
-            android:layout_alignParentStart="true"
-            android:gravity="center"
-            android:textSize="20dp"
-            android:layout_below="@+id/user_informations"
-            android:layout_marginTop="10dp"
-            android:layout_toStartOf="@+id/pasinteressé"
-            android:layout_marginRight="10dp" />
-
-    </LinearLayout>
 
 </LinearLayout>
