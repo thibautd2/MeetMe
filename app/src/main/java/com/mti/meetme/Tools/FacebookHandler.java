@@ -93,7 +93,7 @@ public class FacebookHandler
         getUserLikes("");
         getUserFriends("");
         getUserProfilePics("");
-        getUserEvents();
+      //  getUserEvents();
     }
 
     private void switchToMaps() throws JSONException {
