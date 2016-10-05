@@ -37,6 +37,7 @@ public class FacebookHandler
     private JSONObject fullFriends;
     private JSONObject fullPictures;
     private JSONObject events;
+    private JSONObject event_lives;
 
     private boolean likesReady;
     private boolean friendsReady;
@@ -125,6 +126,42 @@ public class FacebookHandler
     *
      ***************************************/
 
+
+    public void  getEventLive(String id)
+    {
+        if(id.compareTo("") == 0)
+            return;
+        else
+        {
+            GraphRequest request = new GraphRequest(
+                    AccessToken.getCurrentAccessToken(),
+                    id+ "/videos",
+                    null,
+                    HttpMethod.GET,
+                    new GraphRequest.Callback() {
+                        public void onCompleted(GraphResponse response) {
+                            try {
+                                JSONArray array = response.getJSONObject().getJSONArray("data");
+                                for (int i = 0; i < array.length(); i++)
+                                {
+                                    JSONObject obj  = (JSONObject) array.get(i);
+                                }
+                            }
+                            catch(JSONException e) {
+                                e.printStackTrace();
+
+                            }
+                        }});
+//            Bundle parameters = new Bundle();
+//            parameters.putString("fields", "cover,category,name,description, place, attending_count,start_time,end_time, ticket_uri, videos, live_videos, owner");
+//            request.setParameters(parameters);
+            request.executeAsync();
+
+        }
+
+    }
+
+
     private void getUserEvents()
     {
         GraphRequest request = new GraphRequest(
@@ -135,7 +172,7 @@ public class FacebookHandler
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
                         try {
-                            events = response.getJSONObject();
+
                             JSONArray array = response.getJSONObject().getJSONArray("data");
                             for (int i = 0; i < array.length(); i++)
                             {
@@ -150,13 +187,14 @@ public class FacebookHandler
                                 String visibility =  "all"; // "all
                                 String owner =  FacebookUser.getInstance().getUid();
                                 String participants  = obj.optString("attending_count");
-                                Event event = new Event(description,description, place, owner, owner_name,visibility, "Soirée", start_time, participants, "party", 2.5, 2.6, "", end_time, cover);
+                                String id = obj.optString("id");
+                                Event event = new Event(description,description, place, owner, owner_name,visibility, "Soirée", start_time, participants, "party", 2.5, 2.6, "", end_time, cover, id);
                                 GooglePlacesAutocompleteAdapter.getLocationFromAddress(event);
                                 Firebase ref = Network.create_event("Event :" + name + owner);
                                 ref.setValue(event);
                                 GeoFire geoFire = new GeoFire(Network.geofire);
                                 geoFire.setLocation("Event :" + name + owner, new GeoLocation(event.getLatitude(), event.getLongitude()));
-
+                               // getEventLive(id);
                             }
                         }
                         catch(JSONException e) {
@@ -214,6 +252,8 @@ public class FacebookHandler
             request.executeAsync();
         }
     }
+
+
 
     private void getUserFriends(String next)
     {
