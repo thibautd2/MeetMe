@@ -8,6 +8,8 @@ import com.google.android.gms.maps.model.LatLng;
 public class CalculateDistance {
 
     public static double getDistance(LatLng oldPos, LatLng newPos) {
+        if(oldPos == null || newPos == null)
+            return 0;
         double lat1 = oldPos.latitude;
         double lng1 = oldPos.longitude;
         double lat2 = newPos.latitude;

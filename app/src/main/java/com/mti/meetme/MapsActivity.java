@@ -86,6 +86,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import static android.R.attr.id;
+
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, ContextDrawerAdapter {
 
     public GoogleMap mMap;
@@ -698,6 +700,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             final Event e = all_event.get(id);
                             final Dialog dialog = new Dialog(MapsActivity.this);
                             dialog.setContentView(R.layout.event_pop_up);
+                            dialog.setTitle("Live vidéo !!");
                             TextView accept = (TextView) dialog.findViewById(R.id.interessé);
                             TextView cancel = (TextView) dialog.findViewById(R.id.pasinteressé);
                             try {

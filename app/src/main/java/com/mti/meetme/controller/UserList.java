@@ -45,6 +45,8 @@ public class UserList {
     }
 
     public double getDistToMe(User u1) {
+        if(u1 == null || u1.getLatitude() == null || u1.getLongitude() == null)
+            return 0;
         LatLng latLng = new LatLng(u1.getLatitude(), u1.getLongitude());
 
         User u2 = FacebookUser.getInstance();
@@ -54,6 +56,8 @@ public class UserList {
     }
 
     public double getDistToMe(Event e1) {
+        if(e1 == null)
+            return 0;
         LatLng latLng = new LatLng(e1.getLatitude(), e1.getLongitude());
 
         User u2 = FacebookUser.getInstance();

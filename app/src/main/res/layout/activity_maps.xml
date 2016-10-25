@@ -28,45 +28,43 @@
             android:layout_height="match_parent">
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab_event"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="60dp"
+                app:fabSize="normal"
+                app:srcCompat="@drawable/ic_game_center"
+                android:id="@+id/fab_play_game"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="10dp"
-                app:elevation="7dp"
-                android:src="@drawable/drink2"
-                app:backgroundTint="?attr/colorAccent" />
+                android:layout_marginBottom="180dp"
+                android:visibility="invisible"
+                />
 
             <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                app:fabSize="normal"
+                app:srcCompat="@drawable/ic_list"
                 android:id="@+id/fab_list"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:layout_above="@+id/fab_event"
+                android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
                 android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_list" />
+                android:layout_marginBottom="110dp" />
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab_play_game"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                android:layout_above="@+id/fab_list"
+                app:fabSize="normal"
+                app:srcCompat="@drawable/drink2"
+                android:id="@+id/fab_event"
+                android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
                 android:layout_marginEnd="10dp"
-                app:elevation="7dp"
-                android:src="@drawable/ic_game_center" />
-
+                android:layout_marginBottom="40dp"
+               />
         </RelativeLayout>
 
 
