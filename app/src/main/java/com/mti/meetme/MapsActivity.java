@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.AdapterView;
@@ -108,6 +109,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private FloatingActionButton eventButton;
     private FloatingActionButton listButton;
     private FloatingActionButton gameButton;
+    private FloatingActionButton newFriendRequest;
 
     private enum Gender {
         MEN,
@@ -156,6 +158,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         listButton = (FloatingActionButton) findViewById(R.id.fab_list);
         gameButton = (FloatingActionButton) findViewById(R.id.fab_play_game);
 
+        newFriendRequest = (FloatingActionButton) findViewById(R.id.fab_new_friend_req);
+
         profileButton = (ImageButton) findViewById(R.id.mapsProfileButton);
         settingsButton = (ImageButton) findViewById(R.id.mapsSettingsButton);
     }
@@ -185,6 +189,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         gameButton.setOnClickListener(null);
         if (MyGame.getInstance().getGame() != null) {
             gameButton.setVisibility(View.VISIBLE);
+
             if (MyGame.getInstance().getGame().getOwnerid().equals(FacebookUser.getInstance().getUid()))
                 gameButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -213,8 +218,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
         }
-        else
+        else {
             gameButton.setVisibility(View.INVISIBLE);
+        }
+
+        newFriendRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+             //   FriendsListActivity
+                Intent intent = new Intent(MapsActivity.this, EventUserFragmentActivity.class);
+                intent.putExtra("tab", 2); //select the new friend tab fragment
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        });
+
+        if (FacebookUser.getInstance().getFriendRequestReceived() != null && FacebookUser.getInstance().getFriendRequestReceived() != "")
+            newFriendRequest.setVisibility(View.VISIBLE);
+        else
+            newFriendRequest.setVisibility(View.INVISIBLE);
 
 
         profileButton.setOnClickListener(new View.OnClickListener() {

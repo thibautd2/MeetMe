@@ -27,6 +27,7 @@ public class EventUserFragmentActivity extends AppCompatActivity implements Cont
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.event_user_activity);
         tabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         tabHost.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
@@ -37,6 +38,9 @@ public class EventUserFragmentActivity extends AppCompatActivity implements Cont
                 UserListActivity.class, null);
         tabHost.addTab(tabHost.newTabSpec("Third Tab").setIndicator("Amis"),
                 FriendsListActivity.class, null);
+
+        if (getIntent().getSerializableExtra("tab") != null)
+            tabHost.setCurrentTab((int)getIntent().getSerializableExtra("tab"));
     }
 
     @Override

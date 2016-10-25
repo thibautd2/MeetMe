@@ -172,6 +172,9 @@ public class LoginActivity extends Activity implements FacebookCallback<LoginRes
 
     @Override
     public void onAuthenticationError(FirebaseError firebaseError) {
+        Log.e("LoginAtivity", "onAuthenticationError: " + firebaseError.getDetails());
+        Log.e("LoginAtivity", "onAuthenticationError: " + firebaseError.getMessage());
+
         if(progress != null)
             progress.dismiss();
     }
