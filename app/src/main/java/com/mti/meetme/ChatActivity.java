@@ -123,9 +123,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private void populateViews()
     {
-        userImage.getLayoutParams().height -= 30;
-        userImage.getLayoutParams().width -= 30;
-        userImage.setPadding(0, 30, 0, 0);
+
         Picasso.with(ChatActivity.this).load(targetUser.getPic1()).transform(new RoundedPicasso()).into(userImage);
 
         userName.setText(targetUser.getName());

@@ -155,7 +155,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void bindViews()
     {
         eventButton = (FloatingActionButton) findViewById(R.id.fab_event);
-        listButton = (FloatingActionButton) findViewById(R.id.fab_list);
         gameButton = (FloatingActionButton) findViewById(R.id.fab_play_game);
 
         newFriendRequest = (FloatingActionButton) findViewById(R.id.fab_new_friend_req);
@@ -176,14 +175,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
 
-        listButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), EventUserFragmentActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-            }
-        });
+
 
 
         gameButton.setOnClickListener(null);
@@ -242,8 +234,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         profileButton.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            Intent intent = new Intent(getApplicationContext(),  EventUserFragmentActivity.class);
             startActivity(intent);
         }});
 
@@ -271,6 +262,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         MenuSlideItems.add(new MenuSlideItem("Distance", " km", R.drawable.radar, new MenuSlideItem.MySeekBar(0, 10, 10)));
         MenuSlideItems.add(new MenuSlideItem("Genre", R.drawable.gender, new MenuSlideItem.MyCheckBox("Men", true), new MenuSlideItem.MyCheckBox("Women", true), null, null));
         MenuSlideItems.add(new MenuSlideItem("Changer de preference", R.drawable.choose_event, "trouvez d'autres types d'evennement !"));
+        MenuSlideItems.add(new MenuSlideItem("Mon compte", R.drawable.home, "Gestion du profil"));
+
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
         mDrawerList = (ListView) findViewById(R.id.navList);
@@ -280,9 +273,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectItemFromDrawer(position);
-
                 if (position == 2) { //todo do it better
                     init_envie_du_jour();
+                }
+                if(position == 3)
+                {
+                    Intent intent =  new Intent(getApplicationContext(), ProfileActivity.class);
+                     startActivity(intent);
                 }
             }
         });
