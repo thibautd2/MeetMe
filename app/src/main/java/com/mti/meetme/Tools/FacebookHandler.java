@@ -172,7 +172,8 @@ public class FacebookHandler
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
                         try {
-
+                            if(response == null || response.getJSONObject() == null ||  response.getJSONObject().getJSONArray("data") == null)
+                                return;
                             JSONArray array = response.getJSONObject().getJSONArray("data");
                             for (int i = 0; i < array.length(); i++)
                             {

@@ -63,7 +63,6 @@
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:name=".ProfileActivity"
-            android:noHistory="true"
             android:label="@string/profile_title" />
         <activity
             android:configChanges="orientation"
