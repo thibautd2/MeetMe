@@ -59,9 +59,9 @@ public class FriendsListActivity extends Fragment {
         //todo list with sending invitation
         //todo title of user lists
         getfriends();
-        getNewfriends();
         bindViews();
         populate();
+        getNewfriends();
     }
 
     @Nullable
@@ -174,9 +174,11 @@ public class FriendsListActivity extends Fragment {
                             adapterNFriend.notifyDataSetChanged();
 
 
-                            ((TextView) getView().findViewById(R.id.demande)).setVisibility(View.VISIBLE);
-                            if (friends.size() != 0)
+
+                            if (friends.size() != 0) {
                                 ((TextView) getView().findViewById(R.id.friendsTxt)).setVisibility(View.VISIBLE);
+                                ((TextView) getView().findViewById(R.id.demande)).setVisibility(View.VISIBLE);
+                            }
                         }
 
                         @Override

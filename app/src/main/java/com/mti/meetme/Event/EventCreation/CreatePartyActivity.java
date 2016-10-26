@@ -46,6 +46,7 @@ import com.mti.meetme.notifications.NotificationSender;
 import com.squareup.picasso.Picasso;
 
 import org.joda.time.LocalDate;
+import org.joda.time.Months;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -129,12 +130,19 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
         autoCompView.setAdapter(adapter);
         autoCompView.setOnItemClickListener(this);
         dial =  new DatePickerDialog(getContext(), datePickerListener, year, month,day);
+        date.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                dial.show();
+            }
+        });
+                /*
         date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dial.show();
             }
-        });
+        });*/
 
         CompoundButton.OnCheckedChangeListener change = new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -169,6 +177,9 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
             @Override
             public void onClick(View v) {
 
+                //verif date is  valid
+
+                //todo check all field there
                 if(name.getText().toString().length() == 0 || desc.getText().toString().length() == 0 || adresse.getText().toString().length() == 0 ||
                         date.getText().toString().length() == 0)
                 {
@@ -184,12 +195,21 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
                         visibility = "friend_selection";
 
                     SimpleDateFormat dateFormat = MyGame.getInstance().getDateFormat();
-                    Date date = new Date();
+                    Date dateNow = new Date();
                     long oneHour = 3600 * 1000;
-                    Date endDate = new Date(date.getTime() + 12 * oneHour);
+                    Date endDate = new Date(dateNow.getTime() + 12 * oneHour);
+                    Date beginDate = null;
+                    try {
+                        String thedate = date.getText().toString();
+                         beginDate = MyGame.getInstance().getDateFormat().parse(thedate);
+                    }
+                    catch (Exception e) {
+                        Toast.makeText(getApplicationContext(), "Le format de la date est incorrect", Toast.LENGTH_LONG).show();
+                        return;
+                    }
 
                     Event event = new Event(name.getText().toString(), desc.getText().toString(), adresse.getText().toString(),
-                            u.getUid(), visibility, TodayDesire.Desire.party.toString(), dateFormat.format(date).toString(), dateFormat.format(endDate).toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), FacebookUser.getInstance().getName(), "party");
+                            u.getUid(), visibility, TodayDesire.Desire.party.toString(), dateFormat.format(beginDate).toString(), dateFormat.format(endDate).toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), FacebookUser.getInstance().getName(), "party");
 
                     adressevalid = true;
                     adressevalid = getLocationFromAddress(event);
@@ -283,9 +303,9 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
             if(eventDate.isBefore(now))
                 Toast.makeText(getApplicationContext(), "Merci de choisir une date valide", Toast.LENGTH_LONG).show();
             else
-            date.setText(new StringBuilder().append(month + 1)
-                        .append("/").append(day).append("/").append(year)
-                        .append(""));
+                date.setText(new StringBuilder().append(day)
+                        .append("/").append(month).append("/").append(year)
+                        .append(" 00:00:00"));
             }
     };
 
