@@ -68,6 +68,7 @@ import java.util.Map;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.mti.meetme.Tools.GooglePlacesAutocompleteAdapter.getLocationFromAddress;
+import static com.mti.meetme.Tools.GooglePlacesAutocompleteAdapter.getLocationFromEvent;
 
 /**
  * Created by thiba_000 on 04/06/2016.
@@ -193,7 +194,7 @@ public class CreateSportActivity extends Fragment implements AdapterView.OnItemC
                             u.getUid(), visibility, TodayDesire.Desire.Sport.toString(),dateFormat.format(date).toString(), dateFormat.format(endDate).toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), FacebookUser.getInstance().getName(), "sport");
 
                      adressevalid = true;
-                     adressevalid = getLocationFromAddress(event);
+                     adressevalid = getLocationFromEvent(event);
 
                     if(!adressevalid)
                     {

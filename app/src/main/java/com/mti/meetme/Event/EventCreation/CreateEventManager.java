@@ -33,9 +33,15 @@ public class CreateEventManager extends AppCompatActivity {
         // Création de la liste de Fragments que fera défiler le PagerAdapter
         List fragments = new Vector();
 
+        Bundle bundSport = new Bundle();
+        Bundle bundparty = new Bundle();
+
+        bundparty.putString("type", "party");
+        bundSport.putString("type", "sport");
+
         // Ajout des Fragments dans la liste
-        fragments.add(Fragment.instantiate(this,CreatePartyActivity.class.getName()));
-        fragments.add(Fragment.instantiate(this,CreateSportActivity.class.getName()));
+        fragments.add(Fragment.instantiate(this,CreatePartyActivity.class.getName(), bundSport));
+        fragments.add(Fragment.instantiate(this,CreatePartyActivity.class.getName(), bundparty));
         fragments.add(Fragment.instantiate(this,CreateGameActivity.class.getName()));
 
         // Création de l'adapter qui s'occupera de l'affichage de la liste de
