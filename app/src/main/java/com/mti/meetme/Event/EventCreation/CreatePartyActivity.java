@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -131,13 +132,15 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
                     Date beginDate = null;
                     try {
                         String thedate = date.getText().toString();
+                        if (thedate.length() > MyGame.getInstance().getDateFormat().toPattern().length())
+                            throw new Exception ();
+
                         beginDate = MyGame.getInstance().getDateFormat().parse(thedate);
                     }
                     catch (Exception e) {
                         Toast.makeText(getApplicationContext(), "Le format de la date est incorrect", Toast.LENGTH_LONG).show();
                         return;
                     }
-
 
                     Address address = getLocationFromAddress(adresse.getText().toString());
 
@@ -215,13 +218,14 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
         autoCompView.setAdapter(adapter);
         autoCompView.setOnItemClickListener(this);
         dial = new DatePickerDialog(getContext(), datePickerListener, year, month,day);
-        date.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+        date.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
+            public boolean onTouch(View v, MotionEvent event) {
                 dial.show();
+                return true;
             }
         });
-
 
         checkboxSelection();
 
