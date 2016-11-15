@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -174,10 +175,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-
-
-
-
         gameButton.setOnClickListener(null);
         if (MyGame.getInstance().getGame() != null) {
             gameButton.setVisibility(View.VISIBLE);
@@ -211,7 +208,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 });
         }
         else {
-            gameButton.setVisibility(View.INVISIBLE);
+            gameButton.setVisibility(View.GONE);
         }
 
         newFriendRequest.setOnClickListener(new View.OnClickListener() {
@@ -228,7 +225,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (FacebookUser.getInstance().getFriendRequestReceived() != null && FacebookUser.getInstance().getFriendRequestReceived() != "")
             newFriendRequest.setVisibility(View.VISIBLE);
         else
-            newFriendRequest.setVisibility(View.INVISIBLE);
+            newFriendRequest.setVisibility(View.GONE);
 
 
         profileButton.setOnClickListener(new View.OnClickListener() {

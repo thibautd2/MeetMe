@@ -10,6 +10,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -178,6 +180,11 @@ public class ProfileActivity extends AppCompatActivity{
         alert.setTitle(getResources().getString(R.string.description_popup_title));
 
         final EditText input = new EditText(this);
+
+        int maxLength = 250;
+        input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
+
+
         alert.setView(input);
 
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {

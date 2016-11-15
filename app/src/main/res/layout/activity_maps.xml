@@ -27,35 +27,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <android.support.design.widget.FloatingActionButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                app:fabSize="normal"
-                app:srcCompat="@drawable/ic_new_friend"
-                android:id="@+id/fab_new_friend_req"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="180dp"
-                android:visibility="invisible"
-                />
-
-
-            <android.support.design.widget.FloatingActionButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                app:fabSize="normal"
-                app:srcCompat="@drawable/ic_game_center"
-                android:id="@+id/fab_play_game"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="110dp"
-                android:visibility="invisible"
-                />
-
 
             <android.support.design.widget.FloatingActionButton
                 android:layout_width="wrap_content"
@@ -66,9 +37,34 @@
                 android:id="@+id/fab_event"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
+                android:layout_marginBottom="10dp"
                 android:layout_marginEnd="10dp"
-                android:layout_marginBottom="40dp"
+                android:layout_marginTop="10dp"
                />
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                app:fabSize="normal"
+                app:srcCompat="@drawable/ic_game_center"
+                android:id="@+id/fab_play_game"
+                android:visibility="gone"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_above="@+id/fab_event"
+                android:layout_alignStart="@+id/fab_event" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                app:fabSize="normal"
+                app:srcCompat="@drawable/ic_new_friend"
+                android:id="@+id/fab_new_friend_req"
+                android:visibility="gone"
+                android:layout_above="@+id/fab_play_game"
+                android:layout_alignStart="@+id/fab_play_game" />
 
         </RelativeLayout>
 
