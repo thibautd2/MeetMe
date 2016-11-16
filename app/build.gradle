@@ -56,7 +56,6 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:9.0.0'
     compile 'com.ibm.watson.developer_cloud:java-sdk:3.0.1'
     compile 'com.android.support:multidex:1.0.1'
-
 }
 
 apply plugin: 'com.google.gms.google-services'

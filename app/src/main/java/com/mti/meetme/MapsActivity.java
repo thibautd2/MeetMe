@@ -104,7 +104,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public static int backtwice = 0;
 
     private ImageButton settingsButton;
-    private ImageButton profileButton;
+    private ImageView profileButton;
 
     private FloatingActionButton eventButton;
     private FloatingActionButton listButton;
@@ -159,7 +159,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         newFriendRequest = (FloatingActionButton) findViewById(R.id.fab_new_friend_req);
 
-        profileButton = (ImageButton) findViewById(R.id.mapsProfileButton);
+        profileButton = (ImageView) findViewById(R.id.mapsProfileButton);
         settingsButton = (ImageButton) findViewById(R.id.mapsSettingsButton);
     }
 
