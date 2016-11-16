@@ -11,10 +11,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/videoView"
-            android:layout_weight="0.5"
-            android:layout_above="@+id/linearLayout" />
+            android:layout_above="@+id/popupLayout" />
 
         <LinearLayout
+            android:id="@+id/popupLayout"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
