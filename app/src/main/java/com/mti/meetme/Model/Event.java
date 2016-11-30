@@ -41,17 +41,6 @@ public class Event implements Serializable {
     @com.google.gson.annotations.SerializedName("streamUrl")
     public String streamUrl;
 
-    public String getStreamUrl() {
-        return streamUrl;
-    }
-
-    public void setStreamUrl(String streamUrl) {
-        this.streamUrl = streamUrl;
-    }
-
-    @com.google.gson.annotations.SerializedName("streamUrl")
-    public String streamUrl;
-
     public String getId() {
         return id;
     }
@@ -73,7 +62,6 @@ public class Event implements Serializable {
 
     @com.google.gson.annotations.SerializedName("baniere")
     public String baniere;
-
 
     public Event(String name, String description, String adresse, String ownerid,
                  String username, String visibility, String categorie, String date, String participants,
