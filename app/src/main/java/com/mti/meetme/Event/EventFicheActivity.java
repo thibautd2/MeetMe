@@ -1,9 +1,13 @@
 package com.mti.meetme.Event;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -32,18 +36,24 @@ import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.kickflip.sdk.Kickflip;
+import io.kickflip.sdk.api.json.Stream;
+import io.kickflip.sdk.av.BroadcastListener;
+import io.kickflip.sdk.exception.KickflipException;
+
 /**
  * Created by thiba_000 on 16/06/2016.
  */
 
-public class EventFicheActivity extends AppCompatActivity {
+public class EventFicheActivity extends AppCompatActivity implements BroadcastListener {
 
-    TextView owner, title, adresse, date, hour, description, participants;
-    ImageView image, userimage;
-    Event event;
-    User creator;
-    LinearLayout imageParticipants;
-    Button participateBtn;
+    private TextView owner, title, adresse, date, hour, description, participants;
+    private ImageView image, userimage;
+    private Event event;
+    private User creator;
+    private LinearLayout imageParticipants;
+    private Button participateBtn;
+    private MenuItem liveButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +62,34 @@ public class EventFicheActivity extends AppCompatActivity {
         event = (Event) getIntent().getSerializableExtra("Event");
         bindViews();
         populateViews();
+
+        Kickflip.setup(this, "IZlHgUfY?vAgt.T-mUcp3soIJym3GZOn;spLQvR!",
+                "__2e:TcsfhuPmKWs4bs7QL3E4l75ev7Pmlg@XDPql@az-gK!QtAxtdhadsgxg@Gb4zRtIJ4Ju@.SBxA-aS.Gg!iBcNsJxeV:g1:C5saccdMzOeTmm-6qLc-qLvJ@pIl1");
+
+        if (event.getStreamUrl() != null && event.getStreamUrl().compareTo("has started") != 0 && !event.getStreamUrl().isEmpty())
+            Kickflip.startMediaPlayerActivity(EventFicheActivity.this,
+                    event.getStreamUrl(), false);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_event, menu);
+
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_live:
+                Kickflip.startBroadcastActivity(this, this);
+                return true;
+        }
+
+        return true;
     }
 
     private void bindViews()
@@ -140,13 +178,6 @@ public class EventFicheActivity extends AppCompatActivity {
                             Intent intent = new Intent(EventFicheActivity.this, GameWarmNColdActivity.class);
                             startActivity(intent);
                         }
-                  /*  else
-                    {
-                        Toast.makeText(this, "Vous participez mainenant a cet event", Toast.LENGTH_LONG);
-                        Intent intent = new Intent(MapsActivity.this, MapsActivity.class);
-                        startActivity(intent);
-                    }
-*/
                     }
                 });
             }
@@ -188,5 +219,41 @@ public class EventFicheActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    public void onBroadcastStart()
+    {
+        Firebase ref = Network.find_event(event.receiveEventId());
+        Map<String, Object> streamUrl = new HashMap<>();
+        streamUrl.put("streamUrl", "has started");
+        ref.updateChildren(streamUrl, null);
+    }
+
+    @Override
+    public void onBroadcastLive(Stream stream)
+    {
+        Firebase ref = Network.find_event(event.receiveEventId());
+        Map<String, Object> streamUrl = new HashMap<>();
+        streamUrl.put("streamUrl", stream.getStreamUrl());
+        ref.updateChildren(streamUrl, null);
+
+        Log.w("LIVE USABLE URL", stream.getKickflipUrl());
+        Log.w("LIVE URL", stream.getStreamUrl());
+    }
+
+    @Override
+    public void onBroadcastStop()
+    {
+        Firebase ref = Network.find_event(event.receiveEventId());
+        Map<String, Object> streamUrl = new HashMap<>();
+        streamUrl.put("streamUrl", "");
+        ref.updateChildren(streamUrl, null);
+    }
+
+    @Override
+    public void onBroadcastError(KickflipException error)
+    {
+
     }
 }
