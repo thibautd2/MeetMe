@@ -21,6 +21,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +30,7 @@ import com.facebook.login.LoginManager;
 import com.firebase.client.Firebase;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
+import com.mti.meetme.Event.EventCreation.Tools.Tools;
 import com.mti.meetme.LoginActivity;
 import com.mti.meetme.MapsActivity;
 import com.mti.meetme.Model.Event;
@@ -54,12 +56,6 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class CreateGameActivity extends Fragment implements AdapterView.OnItemClickListener {
 
-    public boolean adressevalid = true;
-    DatePickerDialog dial;
-    private int year;
-    private int month;
-    private int day;
-
     private CheckBox men;
     private CheckBox women;
     private Button create;
@@ -70,6 +66,10 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
     private RadioButton all;
     private RadioButton compass;
     private RadioButton warmNcold;
+    private RadioButton selection;
+    private LinearLayout friendSelectLayout;
+
+    private HashMap<String, RadioButton> radioIds;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -84,6 +84,14 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
 
         setItems();
         setGenreCheckBox();
+
+        checkboxSelection();
+
+        radioIds = new HashMap<>();
+
+        if (!FacebookUser.getInstance().getMeetMeFriends().isEmpty())
+                Tools.fill(FacebookUser.getInstance().getMeetMeFriends().split(";"), radioIds, this.getView(), friendSelectLayout);
+
         setOnClickCreation();
     }
 
@@ -98,6 +106,9 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
         String visibility = "friends";
         if (all.isChecked())
             visibility = "all";
+
+        else if (selection.isChecked())
+            visibility = "friend_selection";
 
         if (!men.isChecked())
             visibility += ";women;";
@@ -118,10 +129,22 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
         Event event = new Event(name.getText().toString(), desc.getText().toString(), "not so far",
                 u.getUid(), visibility, TodayDesire.Desire.play.toString(), dateFormat.format(date).toString(), dateFormat.format(endDate).toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), FacebookUser.getInstance().getName(), gameType);
 
-        adressevalid = true;
-
         if (visibility.compareTo("friends") == 0)
             event.setInvited(u.getMeetMeFriends());
+        else if (visibility.compareTo("friend_selection") == 0)
+        {
+            String invited = "";
+
+            for(Map.Entry<String, RadioButton> e : radioIds.entrySet()) {
+                String uid = e.getKey();
+                RadioButton radio = e.getValue();
+
+                if (radio.isChecked())
+                    invited += uid + ";";
+            }
+
+            event.setInvited(invited);
+        }
 
         Firebase ref = Network.create_event("Event :" + name.getText().toString() + u.getUid());
         ref.setValue(event);
@@ -160,6 +183,42 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
         });
     }
 
+    private void checkboxSelection()
+    {
+        final RadioButton friend = (RadioButton) getView().findViewById(R.id.event_friends2);
+        final RadioButton all = (RadioButton) getView().findViewById(R.id.event_all2);
+        final RadioButton selection = (RadioButton) getView().findViewById(R.id.event_friends_selection2);
+
+        CompoundButton.OnCheckedChangeListener change = new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    all.setChecked(false);
+                    friend.setChecked(false);
+
+                    if (selection.isChecked())
+                    {
+                        for(Map.Entry<String, RadioButton> e : radioIds.entrySet()) {
+                            e.getValue().setChecked(false);
+                        }
+
+                        friendSelectLayout.setVisibility(View.GONE);
+                        selection.setChecked(false);
+                    }
+
+                    buttonView.setChecked(true);
+
+                    if (selection.isChecked())
+                        friendSelectLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        };
+
+        friend.setOnCheckedChangeListener(change);
+        all.setOnCheckedChangeListener(change);
+        selection.setOnCheckedChangeListener(change);
+    }
+
     private void warningDialogNewEvent() {
         Dialog d = new AlertDialog.Builder(getContext())
                 .setTitle("Attention")
@@ -184,10 +243,13 @@ public class CreateGameActivity extends Fragment implements AdapterView.OnItemCl
         type.setText(currentDesire.toString());
         name = (EditText) getView().findViewById(R.id.event_name);
         desc = (EditText) getView().findViewById(R.id.event_description);
-        friend = (RadioButton) getView().findViewById(R.id.event_friends);
-        all = (RadioButton) getView().findViewById(R.id.event_all);
+        friend = (RadioButton) getView().findViewById(R.id.event_friends2);
+        all = (RadioButton) getView().findViewById(R.id.event_all2);
         compass = (RadioButton) getView().findViewById(R.id.game_type_compass);
         warmNcold = (RadioButton) getView().findViewById(R.id.game_type_temp);
+        selection = (RadioButton) getView().findViewById(R.id.event_friends_selection2);
+        friendSelectLayout = (LinearLayout) getView().findViewById(R.id.friendsSelectionLayout2);
+
 
         CompoundButton.OnCheckedChangeListener change = new CompoundButton.OnCheckedChangeListener() {
             @Override

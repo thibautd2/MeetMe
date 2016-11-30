@@ -39,6 +39,17 @@ public class Event implements Serializable {
     @com.google.gson.annotations.SerializedName("endDate")
     public String endDate;
 
+    public String getStreamUrl() {
+        return streamUrl;
+    }
+
+    public void setStreamUrl(String streamUrl) {
+        this.streamUrl = streamUrl;
+    }
+
+    @com.google.gson.annotations.SerializedName("streamUrl")
+    public String streamUrl;
+
     public String getId() {
         return id;
     }
@@ -79,6 +90,7 @@ public class Event implements Serializable {
         this.endDate = endDate;
         this.baniere = baniere;
         this.id = id;
+        this.streamUrl = "";
     }
 
     public Event(){};
@@ -98,6 +110,7 @@ public class Event implements Serializable {
         this.participants = "";
         this.type = type;
         this.endDate = endDate;
+        this.streamUrl= "";
     }
 
 

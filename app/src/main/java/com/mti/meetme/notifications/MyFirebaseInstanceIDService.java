@@ -22,8 +22,8 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService
         if(refreshedToken != null && updatedUser != null)
         updatedUser.setFcmID(refreshedToken);
 
-        Firebase ref = Network.getAlluser;
-        Firebase userRef = ref.child(FacebookUser.getInstance().getUid());
-        userRef.setValue(updatedUser);
+            Firebase ref = Network.getAlluser;
+            Firebase userRef = ref.child(FacebookUser.getInstance().getUid());
+            userRef.setValue(updatedUser);
     }
 }

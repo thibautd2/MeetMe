@@ -33,6 +33,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
+import com.mti.meetme.Event.EventCreation.Tools.Tools;
 import com.mti.meetme.MapsActivity;
 import com.mti.meetme.Model.Event;
 import com.mti.meetme.Model.User;
@@ -86,10 +87,6 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
 
     private String currentDesire;
     private LinearLayout friendSelectLayout;
-
-    private ArrayList<String> friendsPictures;
-    private ArrayList<String> friendsNames;
-    private ArrayList<String> friendsUids;
 
     private HashMap<String, RadioButton> radioIds;
 
@@ -229,15 +226,10 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
 
         checkboxSelection();
 
-        //Selection d'amis
-        friendsNames = new ArrayList<>();
-        friendsPictures = new ArrayList<>();
-        friendsUids = new ArrayList<>();
-
         radioIds = new HashMap<>();
 
         if (!FacebookUser.getInstance().getMeetMeFriends().isEmpty())
-            fill(FacebookUser.getInstance().getMeetMeFriends().split(";"));
+           Tools.fill(FacebookUser.getInstance().getMeetMeFriends().split(";"), radioIds, this.getView(), friendSelectLayout);
 
         initCreatAction();
     }
@@ -260,6 +252,10 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
 
     private void checkboxSelection()
     {
+        final RadioButton friend = (RadioButton) getView().findViewById(R.id.event_friends);
+        final RadioButton all = (RadioButton) getView().findViewById(R.id.event_all);
+        final RadioButton selection = (RadioButton) getView().findViewById(R.id.event_friends_selection);
+
         CompoundButton.OnCheckedChangeListener change = new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -357,81 +353,5 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
         }
     }
 
-    private void fill(final String[] friendsIds)
-    {
-        for (int i = 0; i < friendsIds.length; i++)
-        {
-            Firebase ref = new Firebase("https://intense-fire-5226.firebaseio.com/users/" + friendsIds[i] );
-            ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot)
-                {
-                    User friend = dataSnapshot.getValue(User.class);
 
-                    friendsNames.add(friend.getName());
-                    friendsPictures.add(friend.getPic1());
-                    friendsUids.add(friend.getUid());
-
-                    if (friendsNames.size() == friendsIds.length)
-                    {
-                        for (int i = 0; i < friendsNames.size(); i++)
-                        {
-                            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                            lp.setMargins(10, 10, 10, 10);
-
-                            LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(100, 100);
-
-
-                            LinearLayout layout = new LinearLayout(getView().getContext());
-                            layout.setLayoutParams(lp);
-                            layout.setOrientation(LinearLayout.HORIZONTAL);
-
-                            lp.gravity = Gravity.CENTER_VERTICAL;
-
-                            final RadioButton radio = new RadioButton(getView().getContext());
-                            radio.setGravity(Gravity.CENTER_VERTICAL);
-                            radioIds.put(friendsUids.get(i), radio);
-
-                            ImageView profilePic = new ImageView(getView().getContext());
-                            Picasso.with(getView().getContext()).load(friendsPictures.get(i)).transform(new RoundedPicasso()).into(profilePic);
-                            profilePic.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    if (radio.isChecked())
-                                        radio.setChecked(false);
-                                    else
-                                        radio.setChecked(true);
-                                }
-                            });
-
-                            TextView name = new TextView(getView().getContext());
-                            name.setText(friendsNames.get(i));
-                            name.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    if (radio.isChecked())
-                                        radio.setChecked(false);
-                                    else
-                                        radio.setChecked(false);
-                                }
-                            });
-
-                            layout.addView(radio, lp);
-                            layout.addView(profilePic, lp2);
-                            layout.addView(name, lp);
-
-
-                            friendSelectLayout.addView(layout, lp);
-                        }
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {
-
-                }
-            });
-        }
-    }
 }

@@ -12,7 +12,7 @@
         android:layout_weight="1.18"
         android:background="#ffffff">
 
-        <TextView
+        <com.mti.meetme.fonts.CoquetteTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
