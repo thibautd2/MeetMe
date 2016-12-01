@@ -1,8 +1,12 @@
 package com.mti.meetme.Tools.Network;
 
+import android.app.Activity;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.firebase.client.Firebase;
+import com.firebase.client.core.Context;
 import com.mti.meetme.Model.Event;
 import com.mti.meetme.controller.MyGame;
 
@@ -50,5 +54,15 @@ public class Network {
         Event mygame = MyGame.getInstance().getGame();
         Log.e("Network", "find_ParticipantsToMyGame: " + mygame.receiveEventId());
         return new Firebase(connexion_to_event + "/" + mygame.receiveEventId() + "/participants");
+    }
+
+    public static boolean isConnectedToInternet(Activity context)
+    {
+        ConnectivityManager cm =
+                (ConnectivityManager)context.getSystemService(context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting(); //maybe just isConnected instead of isConnectedorConnecting
     }
 }

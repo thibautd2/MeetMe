@@ -26,6 +26,7 @@ import com.mti.meetme.MapsActivity;
 import com.mti.meetme.Model.Event;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.R;
+import com.mti.meetme.Tools.Network.DialogNotConnected;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
@@ -54,6 +55,8 @@ public class EventFicheActivity extends AppCompatActivity implements BroadcastLi
     private LinearLayout imageParticipants;
     private Button participateBtn;
     private MenuItem liveButton;
+    private DialogNotConnected dialogNotConnected;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +72,23 @@ public class EventFicheActivity extends AppCompatActivity implements BroadcastLi
         if (event.getStreamUrl() != null && event.getStreamUrl().compareTo("has started") != 0 && !event.getStreamUrl().isEmpty())
             Kickflip.startMediaPlayerActivity(EventFicheActivity.this,
                     event.getStreamUrl(), false);
+
+        dialogNotConnected = new DialogNotConnected(this);
+        dialogNotConnected.interuptNoConection();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        dialogNotConnected.retartInteruptNoConection();
+        Firebase.setAndroidContext(this);
+    }
+
+    @Override
+    protected void onPause() {
+        dialogNotConnected.stopInteruptNoConection();
+        super.onPause();
     }
 
 
@@ -182,12 +202,6 @@ public class EventFicheActivity extends AppCompatActivity implements BroadcastLi
                 });
             }
 
-    }
-
-    @Override
-    public void onResume()
-    {
-        super.onResume();
     }
 
     public void getParticipants() {

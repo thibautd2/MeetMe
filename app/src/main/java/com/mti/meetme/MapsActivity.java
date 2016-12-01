@@ -1,7 +1,10 @@
 package com.mti.meetme;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -55,6 +58,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.mti.meetme.Event.EventCreation.Tools.Tools;
 import com.mti.meetme.Event.EventFicheActivity;
 import com.mti.meetme.Event.EventUserFragmentActivity;
 import com.mti.meetme.Event.EventCreation.CreateEventManager;
@@ -69,6 +73,7 @@ import com.mti.meetme.Tools.FacebookHandler;
 import com.mti.meetme.Tools.Map.CalculateDistance;
 import com.mti.meetme.Tools.Map.FollowMeLocationSource;
 import com.mti.meetme.Tools.MenuSlideItem;
+import com.mti.meetme.Tools.Network.DialogNotConnected;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
@@ -113,6 +118,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private FloatingActionButton gameButton;
     private FloatingActionButton newFriendRequest;
 
+    private DialogNotConnected dialogNotConnected;
+
     private enum Gender {
         MEN,
         WOMEN,
@@ -152,6 +159,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         bindViews();
         populateViews();
         setMenuBtnSize();
+
+
+        dialogNotConnected = new DialogNotConnected(this);
+        dialogNotConnected.interuptNoConection();
+    }
+
+
+    @Override
+    protected void onPause() {
+        dialogNotConnected.stopInteruptNoConection();
+        super.onPause();
     }
 
     private void bindViews()
@@ -336,40 +354,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         dialog.dismiss();
     }
 
-
     @Override
     public void onResume() {
+        dialogNotConnected.retartInteruptNoConection();
+
         super.onResume();
 
-        populateViews();
-       /*eventButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), CreateEventManager.class);
-                startActivity(intent);
-            }
-        });
-        listButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), EventUserFragmentActivity.class);
-                startActivity(intent);
-            }
-        });
 
-        //todo button participate
-        if (MyGame.getInstance().getGame() != null) {
-            gameButton.setVisibility(View.VISIBLE);
-            gameButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(getApplicationContext(), GameParticipantsListActivity.class);
-                    startActivity(intent);
-                }
-            });
-        }
-        else
-            gameButton.setVisibility(View.INVISIBLE);*/
+        populateViews();
 
         Firebase.setAndroidContext(getApplicationContext());
         backtwice = 0;

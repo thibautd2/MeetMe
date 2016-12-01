@@ -39,6 +39,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.ibm.watson.developer_cloud.personality_insights.v2.PersonalityInsights;
 import com.ibm.watson.developer_cloud.personality_insights.v2.model.Profile;
 import com.mti.meetme.Model.User;
+import com.mti.meetme.Tools.Network.DialogNotConnected;
 import com.mti.meetme.Tools.PersonalityInsightsAccess;
 import com.mti.meetme.Tools.Profil.CarousselPager;
 import com.mti.meetme.Tools.FacebookHandler;
@@ -74,6 +75,7 @@ public class ProfileActivity extends AppCompatActivity{
 
     private int idLikesCount = 0;
     private int idFriendsCount = 0;
+    private DialogNotConnected dialogNotConnected;
 
     public Pubnub pubnub;
 
@@ -93,12 +95,23 @@ public class ProfileActivity extends AppCompatActivity{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        dialogNotConnected = new DialogNotConnected(this);
+        dialogNotConnected.interuptNoConection();
     }
 
     @Override
     public void onResume() {
+        dialogNotConnected.retartInteruptNoConection();
+
         super.onResume();
         Firebase.setAndroidContext(this);
+    }
+
+    @Override
+    protected void onPause() {
+        dialogNotConnected.stopInteruptNoConection();
+        super.onPause();
     }
 
     @Override

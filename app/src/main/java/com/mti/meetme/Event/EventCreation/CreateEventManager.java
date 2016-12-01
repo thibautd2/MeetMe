@@ -14,6 +14,7 @@ import com.firebase.client.Firebase;
 import com.mti.meetme.MapsActivity;
 import com.mti.meetme.R;
 import com.mti.meetme.Tools.MyPagerAdapter;
+import com.mti.meetme.Tools.Network.DialogNotConnected;
 
 import java.util.List;
 import java.util.Vector;
@@ -24,6 +25,7 @@ import java.util.Vector;
 
 public class CreateEventManager extends AppCompatActivity {
     private PagerAdapter mPagerAdapter;
+    private DialogNotConnected dialogNotConnected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +53,21 @@ public class CreateEventManager extends AppCompatActivity {
         ViewPager pager = (ViewPager) super.findViewById(R.id.event_viewpager);
         // Affectation de l'adapter au ViewPager
         pager.setAdapter(this.mPagerAdapter);
+
+        dialogNotConnected = new DialogNotConnected(this);
+        dialogNotConnected.interuptNoConection();
+    }
+
+    @Override
+    protected void onPause() {
+        dialogNotConnected.stopInteruptNoConection();
+        super.onPause();
     }
 
     @Override
     public void onResume(){
         super.onResume();
+        dialogNotConnected.retartInteruptNoConection();
 
         Firebase.setAndroidContext(this);
         FacebookSdk.sdkInitialize(this);
