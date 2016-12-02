@@ -2,7 +2,10 @@ package com.mti.meetme.Tools.Network;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
+import android.view.KeyEvent;
+import android.view.View;
 
 import com.google.common.util.concurrent.ExecutionError;
 import com.ibm.watson.developer_cloud.dialog.v1.model.DialogContent;
@@ -35,6 +38,23 @@ public class DialogNotConnected {
                         interuptNoConection();
                     }
                 });
+
+
+
+        _alertDialog.setOnKeyListener(new AlertDialog.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode,
+                                 KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    dialog.cancel();
+                    _daemonThread.interrupt();
+                    interuptNoConection();
+                }
+                return true;
+            }
+        });
+
+
     }
 
     public void interuptNoConection()
