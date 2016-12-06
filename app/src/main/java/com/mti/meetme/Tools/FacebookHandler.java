@@ -195,16 +195,16 @@ public class FacebookHandler
                                 String owner =  FacebookUser.getInstance().getUid();
                                 String participants  = obj.optString("attending_count");
                                 String id = obj.optString("id");
+
                                 Event event = new Event(description,description, place, owner, owner_name,visibility, "Soirée", start_time, participants, "party", 2.5, 2.6, "", end_time, cover, id);
                                 GooglePlacesAutocompleteAdapter.getLocationFromEvent(event);
 
-                                if (isEventNameValid(name + owner))
-                                {
-                                    Firebase ref = Network.create_event("Event :" + name + owner);
-                                    ref.setValue(event);
-                                    GeoFire geoFire = new GeoFire(Network.geofire);
-                                    geoFire.setLocation("Event :" + name + owner, new GeoLocation(event.getLatitude(), event.getLongitude()));
-                                }
+                                String eventName = validateEventName(name + owner);
+                                Firebase ref = Network.create_event("Event :" + eventName);
+                                ref.setValue(event);
+                                GeoFire geoFire = new GeoFire(Network.geofire);
+                                geoFire.setLocation("Event :" + eventName, new GeoLocation(event.getLatitude(), event.getLongitude()));
+
                             }
                         }
                         catch(JSONException e) {
@@ -218,9 +218,17 @@ public class FacebookHandler
         request.executeAsync();
     }
 
-    private boolean isEventNameValid(String name)
+    private String validateEventName(String name)
     {
-        return !(name.contains(".") || name.contains("#") || name.contains("$") || name.contains("[") || name.contains("]"));
+        String regx = "#$[]./";
+
+
+        char[] ca = regx.toCharArray();
+        for (char c : ca) {
+            name = name.replace("" + c, "");
+        }
+
+        return name;
     }
 
     private void getUserLikes(String next)
