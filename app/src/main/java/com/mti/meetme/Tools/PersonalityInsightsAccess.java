@@ -32,7 +32,8 @@ public class PersonalityInsightsAccess {
 
     private PersonalityInsightsAccess() {
         service = new PersonalityInsights();
-        service.setUsernameAndPassword("625ed887-b912-4fe8-aa13-d201184652a5", "B8hzkU5NDHdA");
+        service.setUsernameAndPassword("c854c82a-8278-41de-a6da-3bdb08c3555d", "Mk8Cq2xh2hi6");
+      //  service.setUsernameAndPassword("625ed887-b912-4fe8-aa13-d201184652a5", "B8hzkU5NDHdA");
      //   service.setEndPoint("https://gateway.watsonplatform.net/personality-insights/api");
     }
 
@@ -135,7 +136,7 @@ public class PersonalityInsightsAccess {
     //call this function with the text of the user messages to update his profile on firebase
     public void updatePersonality(final String text)
     {
-        if (text == null || text.equals("") || !text.contains(" ") || text.split(" ").length < 25)
+        if (text == null || text.equals("") || !text.contains(" ") || text.split(" ").length < 100)
             return;
 
         Thread thread = new Thread(new Runnable(){

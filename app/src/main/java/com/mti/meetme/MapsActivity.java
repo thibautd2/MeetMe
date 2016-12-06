@@ -241,10 +241,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        if (FacebookUser.getInstance().getFriendRequestReceived() != null && FacebookUser.getInstance().getFriendRequestReceived() != "")
-            newFriendRequest.setVisibility(View.VISIBLE);
-        else
-            newFriendRequest.setVisibility(View.GONE);
+        try {
+            if (FacebookUser.getInstance().getFriendRequestReceived() != null && FacebookUser.getInstance().getFriendRequestReceived() != "")
+                newFriendRequest.setVisibility(View.VISIBLE);
+            else
+                newFriendRequest.setVisibility(View.GONE);
+        }
+        catch (Exception e) {}
 
 
         profileButton.setOnClickListener(new View.OnClickListener() {

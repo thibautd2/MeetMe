@@ -194,7 +194,7 @@ public class ProfileActivity extends AppCompatActivity{
 
         final EditText input = new EditText(this);
 
-        int maxLength = 250;
+        int maxLength = 5000;
         input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
 
 

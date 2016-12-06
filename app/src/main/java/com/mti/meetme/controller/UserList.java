@@ -35,6 +35,25 @@ public class UserList {
         });
     }
 
+    public void sortListUserPersonality(ArrayList<User> users)
+    {
+        Collections.sort(users, new Comparator<User>() {
+            @Override
+            public int compare(User o1, User o2) {
+                try {
+                    if (o1.getInterest().equals(o2.getInterest()))
+                        return 1;
+                    else
+                        return 0;
+                }
+                catch (Exception e)
+                {
+                    return 0;
+                }
+            }
+        });
+    }
+
     public void sortListEvent(ArrayList<Event> events) {
         Collections.sort(events, new Comparator<Event>() {
             @Override
