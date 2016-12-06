@@ -230,22 +230,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             gameButton.setVisibility(View.GONE);
         }
 
-        newFriendRequest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-             //   FriendsListActivity
-                Intent intent = new Intent(MapsActivity.this, EventUserFragmentActivity.class);
-                intent.putExtra("tab", 2); //select the new friend tab fragment
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-            }
-        });
-
         try {
-            if (FacebookUser.getInstance().getFriendRequestReceived() != null && FacebookUser.getInstance().getFriendRequestReceived() != "")
+            if (FacebookUser.getInstance().getFriendRequestReceived() != null && FacebookUser.getInstance().getFriendRequestReceived() != "") {
                 newFriendRequest.setVisibility(View.VISIBLE);
-            else
+                newFriendRequest.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //   FriendsListActivity
+                        Intent intent = new Intent(MapsActivity.this, EventUserFragmentActivity.class);
+                        intent.putExtra("tab", 2); //select the new friend tab fragment
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
+                });
+            }
+                else {
+                newFriendRequest.setOnClickListener(null);
                 newFriendRequest.setVisibility(View.GONE);
+            }
         }
         catch (Exception e) {}
 

@@ -73,7 +73,7 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
 
                 holder.user_dist.setText(String.format("%.1f",dist )+ " km");
 
-                if (u.getInterest() == null || u.getInterest().compareTo(FacebookUser.getInstance().getInterest())!=0) {
+                if (u.getInterest() == null || u.getInterest().equals("") || u.getInterest().compareTo(FacebookUser.getInstance().getInterest())!=0) {
                     holder.user_image.getLayoutParams().height = originalImageHeight -70;
                     holder.relativeLayout.getLayoutParams().height = originalLayoutHeight -70;
                     ((ImageView)holder.user_interest).setVisibility(View.GONE);
