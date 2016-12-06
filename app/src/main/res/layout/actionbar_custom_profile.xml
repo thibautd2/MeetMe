@@ -35,8 +35,31 @@
         android:visibility="visible"
         android:layout_centerVertical="true"
         android:layout_toStartOf="@+id/profileMapsButton"
-        android:layout_width="35dp"
-        android:layout_height="35dp" />
+        android:layout_width="30dp"
+        android:layout_height="30dp" />
+
+    <ImageButton
+        android:id="@+id/profileEditButton"
+        android:background="@drawable/ic_desc"
+        android:visibility="visible"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:layout_alignTop="@+id/profileChatButton"
+        android:layout_toStartOf="@+id/profileChatButton"
+         />
+
+    <ImageButton
+        android:id="@+id/profileDecoButton"
+        android:background="@drawable/ic_action_settings"
+        android:visibility="visible"
+        android:layout_marginRight="10dp"
+        android:layout_toStartOf="@+id/profileEditButton"
+        android:layout_height="35dp"
+        android:layout_alignTop="@+id/profileEditButton"
+        android:layout_alignBottom="@+id/profileEditButton"
+        android:layout_width="30dp" />
 
 </RelativeLayout>
 

@@ -58,7 +58,9 @@ public class ProfileActivity extends AppCompatActivity{
     private TextView  friendsTextView;
     private TextView  descriptionTextView;
     private TextView interest;
-
+    private ImageButton chat;
+    private ImageButton desc;
+    private ImageButton deco;
     private User user;
     private User currentUser;
 
@@ -75,6 +77,7 @@ public class ProfileActivity extends AppCompatActivity{
         setContentView(R.layout.activity_profile);
         Firebase.setAndroidContext(this);
         user = (User) getIntent().getSerializableExtra("User");
+
         pubnub = new Pubnub(getResources().getString(R.string.PublishKey), getResources().getString(R.string.PublishKey));
 
         try {
@@ -85,26 +88,7 @@ public class ProfileActivity extends AppCompatActivity{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        ImageButton chat = (ImageButton) findViewById(R.id.profileChatButton);
-        TextView username = (TextView) findViewById(R.id.profil_name);
-        username.setText(user.getName());
-        chat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-                Bundle b = new Bundle();
-                b.putParcelable("User", user);
-                intent.putExtras(b);
-                startActivity(intent);
-            }
-        });
-        ImageButton map = (ImageButton) findViewById(R.id.profileMapsButton);
-        map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getBaseContext(), MapsActivity.class));
-            }
-        });
+
         dialogNotConnected = new DialogNotConnected(this);
         dialogNotConnected.interuptNoConection();
     }
@@ -228,16 +212,55 @@ public class ProfileActivity extends AppCompatActivity{
         pager = (ViewPager) findViewById(R.id.user_img_list);
         descriptionTextView = (TextView) findViewById(R.id.description_text);
         interest = (TextView) findViewById(R.id.interest_textview);
+        chat = (ImageButton) findViewById(R.id.profileChatButton);
+        desc = (ImageButton) findViewById(R.id.profileEditButton);
+        deco = (ImageButton) findViewById(R.id.profileDecoButton);
+
+
+        deco.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+        desc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                displayEditDescription();
+            }
+        });
+        chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+                Bundle b = new Bundle();
+                b.putParcelable("User", user);
+                intent.putExtras(b);
+                startActivity(intent);
+            }
+        });
+        ImageButton map = (ImageButton) findViewById(R.id.profileMapsButton);
+        map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getBaseContext(), MapsActivity.class));
+            }
+        });
     }
 
     private void populateViews() throws JSONException, InterruptedException {
-        if (user == null)
+        if (user == null) {
             currentUser = FacebookUser.getInstance();
+            chat.setVisibility(View.GONE);
+        }
         else {
             FacebookHandler handler = new FacebookHandler(user);
             currentUser = handler.loadUserCommonData();
+            desc.setVisibility(View.GONE);
+            deco.setVisibility(View.GONE);
         }
-
+        TextView username = (TextView) findViewById(R.id.profil_name);
+        username.setText(currentUser.getName());
         CarousselPager adapter = new CarousselPager(getSupportFragmentManager());
         adapter.setUser(currentUser);
         pager.setAdapter(adapter);
