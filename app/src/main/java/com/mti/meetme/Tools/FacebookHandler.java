@@ -180,10 +180,16 @@ public class FacebookHandler
                               JSONObject obj  = (JSONObject) array.get(i);
                                String name =  obj.optString("name");
                                 String description =  obj.optString("description");
-                                String cover = obj.getJSONObject("cover").optString("source");
-                                String place =  obj.getJSONObject("place").optString("name");
+                                String cover ="";
+                                if (obj.getJSONObject("cover") != null)
+                                    cover = obj.getJSONObject("cover").optString("source");
+                                String place = "";
+                                if (!obj.isNull("place"))
+                                    place = obj.getJSONObject("place").optString("name");
                                 String start_time = obj.optString("start_time");
-                                String owner_name = obj.getJSONObject("owner").optString("name");
+                                String owner_name ="";
+                                if(obj.getJSONObject("owner") != null)
+                                    owner_name = obj.getJSONObject("owner").optString("name");
                                 String end_time = obj.optString("end_time");
                                 String visibility =  "all"; // "all
                                 String owner =  FacebookUser.getInstance().getUid();

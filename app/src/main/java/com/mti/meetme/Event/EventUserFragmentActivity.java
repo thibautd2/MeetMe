@@ -10,10 +10,13 @@ import android.widget.CheckBox;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.facebook.FacebookSdk;
+import com.firebase.client.Firebase;
 import com.mti.meetme.FriendsListActivity;
 import com.mti.meetme.Interface.ContextDrawerAdapter;
 import com.mti.meetme.MapsActivity;
 import com.mti.meetme.R;
+import com.mti.meetme.Tools.Network.DialogNotConnected;
 import com.mti.meetme.UserListActivity;
 
 
@@ -23,6 +26,8 @@ import com.mti.meetme.UserListActivity;
 
 public class EventUserFragmentActivity extends AppCompatActivity implements ContextDrawerAdapter {
     private FragmentTabHost tabHost;
+    private DialogNotConnected dialogNotConnected;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +46,9 @@ public class EventUserFragmentActivity extends AppCompatActivity implements Cont
 
         if (getIntent().getSerializableExtra("tab") != null)
             tabHost.setCurrentTab((int)getIntent().getSerializableExtra("tab"));
+
+        dialogNotConnected = new DialogNotConnected(this);
+        dialogNotConnected.interuptNoConection();
     }
 
     @Override
@@ -76,5 +84,17 @@ public class EventUserFragmentActivity extends AppCompatActivity implements Cont
     public void menuDrawerMultyChoiceListener(CheckBox checkBox, String btnName, boolean ischecked) {
         ContextDrawerAdapter page = (ContextDrawerAdapter) getSupportFragmentManager().findFragmentByTag("Second Tab");
         page.menuDrawerMultyChoiceListener(checkBox, btnName, ischecked);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dialogNotConnected.stopInteruptNoConection();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        dialogNotConnected.retartInteruptNoConection();
     }
 }

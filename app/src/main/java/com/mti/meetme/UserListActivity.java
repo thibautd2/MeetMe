@@ -157,6 +157,7 @@ public class UserListActivity extends Fragment implements ContextDrawerAdapter {
               }
 
               UserList.getInstance().sortListUser(users);
+            //  UserList.getInstance().sortListUserPersonality(users);
               adapter.notifyDataSetChanged();
           }
           @Override

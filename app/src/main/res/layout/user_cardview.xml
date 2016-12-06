@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
@@ -79,6 +80,17 @@
             android:textSize="12dp"
             android:autoText="false"
             android:background="@drawable/rounded_background" />
+
+        <ImageView
+            android:layout_width="30dp"
+            app:srcCompat="@drawable/ic_star"
+            android:layout_below="@+id/card_distance"
+            android:layout_alignEnd="@+id/user_img_list"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="3dp"
+            android:id="@+id/imageViewStar"
+            android:layout_height="30dp"
+            android:visibility="gone"/>
 
     </RelativeLayout>
     </android.support.v7.widget.CardView>

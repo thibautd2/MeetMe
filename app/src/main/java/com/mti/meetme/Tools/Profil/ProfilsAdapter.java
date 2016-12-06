@@ -55,6 +55,7 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
         vh.user_name = (TextView) v.findViewById(R.id.user_name_list);
         vh.user_dist = (TextView) v.findViewById(R.id.card_distance);
         vh.relativeLayout = (RelativeLayout) v.findViewById(R.id.list_user_relative);
+        vh.user_interest = (ImageView) v.findViewById(R.id.imageViewStar);
         originalLayoutHeight = vh.relativeLayout.getLayoutParams().height;
         originalImageHeight = vh.user_image.getLayoutParams().height;
         return vh;
@@ -71,9 +72,17 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
                 double dist =  CalculateDistance.getDistance(new LatLng(FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude()), new LatLng(u.getLatitude(), u.getLongitude()));
 
                 holder.user_dist.setText(String.format("%.1f",dist )+ " km");
-                if (!(u.getName().compareTo("Alexandre")==0)) {
+
+                if (u.getInterest() == null || u.getInterest().compareTo(FacebookUser.getInstance().getInterest())!=0) {
                     holder.user_image.getLayoutParams().height = originalImageHeight -70;
                     holder.relativeLayout.getLayoutParams().height = originalLayoutHeight -70;
+                    ((ImageView)holder.user_interest).setVisibility(View.GONE);
+                }
+                else
+                {
+                    holder.user_image.getLayoutParams().height = originalImageHeight;
+                    holder.relativeLayout.getLayoutParams().height = originalLayoutHeight;
+                    ((ImageView)holder.user_interest).setVisibility(View.VISIBLE);
                 }
                 Picasso.with(acti).load(u.getPic1()).fit().centerCrop().into(holder.user_image);
                 holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
@@ -103,6 +112,7 @@ public class ProfilsAdapter extends RecyclerView.Adapter<ProfilsAdapter.ViewHold
         public TextView user_age;
         public TextView user_dist;
         public TextView user_envie;
+        public ImageView user_interest;
         public RelativeLayout relativeLayout;
         public ViewHolder(View itemView) {
             super(itemView);

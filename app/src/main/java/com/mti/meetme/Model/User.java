@@ -123,7 +123,7 @@ public class User implements Serializable, Parcelable {
         ParticipateTo = "";
         Envie = desire.toString();
         FcmID = fcmID;
-        Interest = null;
+        Interest = "";
     }
 
     public User() {}

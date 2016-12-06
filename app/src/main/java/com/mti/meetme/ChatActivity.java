@@ -34,6 +34,7 @@ import android.widget.Toast;
 import com.firebase.client.Firebase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.mti.meetme.Model.User;
+import com.mti.meetme.Tools.Network.DialogNotConnected;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.notifications.NotificationSender;
@@ -66,6 +67,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private Pubnub pubnub;
     private String chatName;
 
+    private DialogNotConnected dialogNotConnected;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,12 +83,23 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         bindViews();
         populateViews();
         initPubNub();
+
+        dialogNotConnected = new DialogNotConnected(this);
+        dialogNotConnected.interuptNoConection();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        dialogNotConnected.retartInteruptNoConection();
         Firebase.setAndroidContext(this);
+    }
+
+    @Override
+    protected void onPause() {
+        dialogNotConnected.stopInteruptNoConection();
+        super.onPause();
     }
 
     private void setupActionBar() {
