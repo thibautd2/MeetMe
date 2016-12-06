@@ -17,7 +17,7 @@ import com.ibm.watson.developer_cloud.dialog.v1.model.DialogContent;
 public class DialogNotConnected {
     private AlertDialog _alertDialog;
     private Activity _acti;
-    private  Thread _daemonThread;
+    private Thread _daemonThread;
 
     public DialogNotConnected(final Activity acti) {
         _acti = acti;
@@ -67,7 +67,10 @@ public class DialogNotConnected {
             public void run() {
                 try {
                     while (Network.isConnectedToInternet(_acti))
+                    {
+                        Thread.sleep(1000);
                         continue;
+                    }
 
                    // init();
                     _acti.runOnUiThread(new Runnable() {
@@ -98,7 +101,5 @@ public class DialogNotConnected {
     {
         _alertDialog.cancel();
         interuptNoConection();
-     //   if (_daemonThread.isInterrupted())
-        //    init();
     }
 }

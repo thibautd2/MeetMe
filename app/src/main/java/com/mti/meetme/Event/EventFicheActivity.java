@@ -105,7 +105,11 @@ public class EventFicheActivity extends AppCompatActivity implements BroadcastLi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_live:
-                Kickflip.startBroadcastActivity(this, this);
+                if (event.getStreamUrl() != null && event.getStreamUrl().compareTo("has started") != 0 && !event.getStreamUrl().isEmpty())
+                    Kickflip.startMediaPlayerActivity(EventFicheActivity.this,
+                            event.getStreamUrl(), false);
+                else
+                    Kickflip.startBroadcastActivity(this, this);
                 return true;
         }
 
