@@ -46,7 +46,8 @@ public class Network {
         return new Firebase(connexion_to_event+"/"+event);
     }
 
-    public static Firebase find_user_properties(String Uid, String properties) {
+    public static Firebase find_user_properties(String Uid, String properties)
+    {
         return new Firebase(connexion_to_user+"/"+Uid + "/" + properties);
     }
 
