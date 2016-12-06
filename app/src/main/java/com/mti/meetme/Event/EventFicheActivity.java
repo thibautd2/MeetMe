@@ -96,8 +96,6 @@ public class EventFicheActivity extends AppCompatActivity implements BroadcastLi
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_event, menu);
-
-
         return true;
     }
 

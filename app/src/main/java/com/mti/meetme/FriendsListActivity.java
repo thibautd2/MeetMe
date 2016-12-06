@@ -160,8 +160,6 @@ public class FriendsListActivity extends Fragment {
                             newfriends.add(dataSnapshot.getValue(User.class));
                             adapterNFriend.notifyDataSetChanged();
 
-
-
                             if (friends.size() != 0) {
                                 ((TextView) getView().findViewById(R.id.friendsTxt)).setVisibility(View.VISIBLE);
                                 ((TextView) getView().findViewById(R.id.demande)).setVisibility(View.VISIBLE);

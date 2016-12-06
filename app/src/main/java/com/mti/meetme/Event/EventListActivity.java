@@ -107,7 +107,6 @@ public class EventListActivity extends Fragment {
                 for (DataSnapshot postSnapshot : snapshot.getChildren())
                 {
                     Event event = postSnapshot.getValue(Event.class);
-
                     if(checkEventVisibility(event)) {
                         events.add(event);}
                 }
@@ -121,7 +120,7 @@ public class EventListActivity extends Fragment {
         });
     }
 
-    //todo fucking doublon on MapsActivity -> put it on a eventTools or something
+    //todo  doublon on MapsActivity -> put it on a eventTools or something
     private boolean checkEventVisibility(Event event) {
         if (event == null || event.visibility == null)
             return false;

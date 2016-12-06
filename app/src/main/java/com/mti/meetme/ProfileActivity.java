@@ -3,28 +3,21 @@ package com.mti.meetme;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
-import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
@@ -35,9 +28,6 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.ibm.watson.developer_cloud.personality_insights.v2.PersonalityInsights;
-import com.ibm.watson.developer_cloud.personality_insights.v2.model.Profile;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.Network.DialogNotConnected;
 import com.mti.meetme.Tools.PersonalityInsightsAccess;
@@ -46,13 +36,12 @@ import com.mti.meetme.Tools.FacebookHandler;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.RoundedPicasso;
 import com.mti.meetme.controller.FacebookUser;
-import com.mti.meetme.controller.UserController;
 import com.mti.meetme.notifications.NotificationSender;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
+import org.w3c.dom.Text;
 
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -82,7 +71,7 @@ public class ProfileActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // setupActionBar();
+        setupActionBar();
         setContentView(R.layout.activity_profile);
         Firebase.setAndroidContext(this);
         user = (User) getIntent().getSerializableExtra("User");
@@ -96,7 +85,26 @@ public class ProfileActivity extends AppCompatActivity{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
+        ImageButton chat = (ImageButton) findViewById(R.id.profileChatButton);
+        TextView username = (TextView) findViewById(R.id.profil_name);
+        username.setText(user.getName());
+        chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+                Bundle b = new Bundle();
+                b.putParcelable("User", user);
+                intent.putExtras(b);
+                startActivity(intent);
+            }
+        });
+        ImageButton map = (ImageButton) findViewById(R.id.profileMapsButton);
+        map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getBaseContext(), MapsActivity.class));
+            }
+        });
         dialogNotConnected = new DialogNotConnected(this);
         dialogNotConnected.interuptNoConection();
     }
@@ -115,7 +123,7 @@ public class ProfileActivity extends AppCompatActivity{
         dialogNotConnected.stopInteruptNoConection();
         super.onPause();
     }
-
+/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_profile, menu);
@@ -128,7 +136,7 @@ public class ProfileActivity extends AppCompatActivity{
             menu.findItem(R.id.menu_message).setVisible(true);
         }
         return true;
-    }
+    }*/
 
     private void unauthFacebook(){
         //todo problem here, cant connect with another account after that

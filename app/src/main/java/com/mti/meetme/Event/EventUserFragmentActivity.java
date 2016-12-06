@@ -3,15 +3,16 @@ package com.mti.meetme.Event;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTabHost;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.facebook.FacebookSdk;
-import com.firebase.client.Firebase;
 import com.mti.meetme.FriendsListActivity;
 import com.mti.meetme.Interface.ContextDrawerAdapter;
 import com.mti.meetme.MapsActivity;
@@ -49,15 +50,32 @@ public class EventUserFragmentActivity extends AppCompatActivity implements Cont
 
         dialogNotConnected = new DialogNotConnected(this);
         dialogNotConnected.interuptNoConection();
+        setupActionBar();
+        ImageButton map = (ImageButton) findViewById(R.id.profileMapsButton);
+        map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_profile, menu);
-        super.onCreateOptionsMenu(menu);
-        return true;
-    }
 
+    private void setupActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(false);
+
+        ActionBar.LayoutParams lp1 = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
+        View customNav = LayoutInflater.from(this).inflate(R.layout.actionbar_list_elements, null); // layout which contains your button.
+
+        actionBar.setCustomView(customNav, lp1);
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

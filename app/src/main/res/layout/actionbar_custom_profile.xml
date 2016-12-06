@@ -1,43 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:layout_gravity="fill_horizontal"
-    android:orientation="horizontal"
-    android:background="@color/colorDrawerItem">
+    android:orientation="horizontal">
 
     <ImageButton
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:id="@+id/mapsProfileButton"
+
+        android:id="@+id/profileMapsButton"
         android:gravity="end"
-        android:maxHeight="40dp"
-        android:maxWidth="4dp"
+
         android:background="@drawable/ic_map_icon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:foregroundGravity="center"/>
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="5dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp" />
 
     <TextView
-        android:text="TextView"
+        android:text="Recherche"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:id="@+id/profile_name"
-        android:layout_alignBottom="@+id/mapsProfileButton"
-        android:gravity="center"
-        android:layout_marginStart="10dp"
-        android:layout_alignParentTop="true" />
+        android:layout_height="wrap_content"
+        android:id="@+id/profil_name"
+        android:textSize="20sp"
+        android:textColor="@color/cardview_light_background"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true" />
 
     <ImageButton
-        android:id="@+id/chatProfileButton"
+        android:id="@+id/profileChatButton"
         android:background="@drawable/ic_message"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:foregroundGravity="center"
-        android:layout_centerVertical="true"
-        android:layout_toStartOf="@+id/mapsProfileButton"
+
         android:layout_marginRight="10dp"
-        android:visibility="invisible" />
+        android:visibility="visible"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/profileMapsButton"
+        android:layout_width="35dp"
+        android:layout_height="35dp" />
+
 </RelativeLayout>
+
