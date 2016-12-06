@@ -81,7 +81,8 @@ public class GooglePlacesAutocompleteAdapter extends ArrayAdapter implements Fil
         };
         return filter;
     }
-    public static boolean getLocationFromAddress(Event ev){
+
+    public static boolean getLocationFromEvent(Event ev){
         Geocoder coder = new Geocoder(getApplicationContext());
         List<Address> address;
         try {
@@ -97,6 +98,20 @@ public class GooglePlacesAutocompleteAdapter extends ArrayAdapter implements Fil
             e.printStackTrace();
         }
         return true;
+    }
+
+    public static Address getLocationFromAddress(String addressTest){
+        Geocoder coder = new Geocoder(getApplicationContext());
+        List<Address> address = null;
+        try {
+            address = coder.getFromLocationName(addressTest,5);
+            if (address==null || address.size() == 0 ) {
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return address.get(0);
     }
 
     public static ArrayList autocomplete(String input) {

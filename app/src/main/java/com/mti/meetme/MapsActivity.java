@@ -8,10 +8,12 @@ import android.graphics.Color;
 import android.hardware.camera2.params.Face;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,6 +21,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -28,7 +31,6 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -174,10 +176,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-
-
-
-
         gameButton.setOnClickListener(null);
         if (MyGame.getInstance().getGame() != null) {
             gameButton.setVisibility(View.VISIBLE);
@@ -211,7 +209,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 });
         }
         else {
-            gameButton.setVisibility(View.INVISIBLE);
+            gameButton.setVisibility(View.GONE);
         }
 
         newFriendRequest.setOnClickListener(new View.OnClickListener() {
@@ -228,7 +226,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (FacebookUser.getInstance().getFriendRequestReceived() != null && FacebookUser.getInstance().getFriendRequestReceived() != "")
             newFriendRequest.setVisibility(View.VISIBLE);
         else
-            newFriendRequest.setVisibility(View.INVISIBLE);
+            newFriendRequest.setVisibility(View.GONE);
 
 
         profileButton.setOnClickListener(new View.OnClickListener() {
@@ -717,46 +715,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         if (id < all_event.size()) {
                             final Event e = all_event.get(id);
-                            final Dialog dialog = new Dialog(MapsActivity.this);
-                            dialog.setContentView(R.layout.event_pop_up);
-                            dialog.setTitle("Live vidéo !!");
-                            TextView accept = (TextView) dialog.findViewById(R.id.interessé);
-                            TextView cancel = (TextView) dialog.findViewById(R.id.pasinteressé);
-                            try {
-                                VideoView video = (VideoView) dialog.findViewById(R.id.videoView);
-                                String vidAddress = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
-                                Uri vidUri = Uri.parse(vidAddress);
-                                video.setVideoURI(vidUri);
-                                video.requestFocus();
-                                video.start();
-                            }
-                             catch (Exception f) {
-                                // TODO: handle exception
-                                Toast.makeText(getApplicationContext(), "Error connecting", Toast.LENGTH_SHORT).show();
-                            }
-                            accept.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    dialog.dismiss();
-
-                                    Intent intent = new Intent(MapsActivity.this, EventFicheActivity.class);
-                                    Bundle b = new Bundle();
-                                    b.putSerializable("Event", e);
-                                    intent.putExtras(b);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    startActivity(intent);
-                                }
-                            });
-
-                            cancel.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    dialog.dismiss();
-                                }
-                            });
-                            dialog.show();
-
-
+                            Intent intent = new Intent(MapsActivity.this, EventFicheActivity.class);
+                            Bundle b = new Bundle();
+                            b.putSerializable("Event", e);
+                            intent.putExtras(b);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
                         }
                     }
                 }
@@ -805,8 +769,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         img.setBackgroundResource(R.drawable.paryt_marker);
                         name.setText(e.getName());
                         String date = e.date;
-                        if(date.length()>8)
-                        date = date.substring(0,8);
+                        if(date.length()>10)
+                        date = date.substring(0,10);
                         age.setText(date);
                     }
                 }

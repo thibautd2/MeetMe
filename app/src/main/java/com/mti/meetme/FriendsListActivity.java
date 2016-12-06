@@ -1,42 +1,29 @@
 package com.mti.meetme;
 
-import android.content.Intent;
-import android.graphics.LinearGradient;
-import android.hardware.camera2.params.Face;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.mti.meetme.Model.User;
-import com.mti.meetme.Tools.FacebookHandler;
 import com.mti.meetme.Tools.FriendsListAdapter;
 import com.mti.meetme.Tools.Network.Network;
 import com.mti.meetme.Tools.NewFriendsListAdapter;
-import com.mti.meetme.Tools.Profil.ProfilsAdapter;
 import com.mti.meetme.controller.FacebookUser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by thiba_000 on 12/04/2016.
@@ -59,9 +46,9 @@ public class FriendsListActivity extends Fragment {
         //todo list with sending invitation
         //todo title of user lists
         getfriends();
-        getNewfriends();
         bindViews();
         populate();
+        getNewfriends();
     }
 
     @Nullable
@@ -174,9 +161,11 @@ public class FriendsListActivity extends Fragment {
                             adapterNFriend.notifyDataSetChanged();
 
 
-                            ((TextView) getView().findViewById(R.id.demande)).setVisibility(View.VISIBLE);
-                            if (friends.size() != 0)
+
+                            if (friends.size() != 0) {
                                 ((TextView) getView().findViewById(R.id.friendsTxt)).setVisibility(View.VISIBLE);
+                                ((TextView) getView().findViewById(R.id.demande)).setVisibility(View.VISIBLE);
+                            }
                         }
 
                         @Override

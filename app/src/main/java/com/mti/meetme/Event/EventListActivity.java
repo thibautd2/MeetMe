@@ -98,6 +98,7 @@ public class EventListActivity extends Fragment {
 
     public void getall_event()
     {
+        Firebase.setAndroidContext(this.getContext());
         Firebase ref = Network.connexion_to_event;
         ref.addValueEventListener(new ValueEventListener() {
             @Override

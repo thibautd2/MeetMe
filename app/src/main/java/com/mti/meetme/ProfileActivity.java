@@ -10,6 +10,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -78,6 +80,7 @@ public class ProfileActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setupActionBar();
         setContentView(R.layout.activity_profile);
         Firebase.setAndroidContext(this);
         user = (User) getIntent().getSerializableExtra("User");
@@ -99,51 +102,7 @@ public class ProfileActivity extends AppCompatActivity{
         Firebase.setAndroidContext(this);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_profile, menu);
-        super.onCreateOptionsMenu(menu);
 
-        if (user == null) {
-            menu.findItem(R.id.menu_edit).setVisible(true);
-            menu.findItem(R.id.menu_deco).setVisible(true);
-        }
-        else
-        {
-            menu.findItem(R.id.menu_message).setVisible(true);
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.menu_maps:
-                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                return true;
-            case R.id.menu_edit:
-                displayEditDescription();
-                return true;
-            case R.id.menu_message:
-                Intent chatIntent = new Intent(getApplicationContext(), ChatActivity.class);
-
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("User", user);
-                chatIntent.putExtras(bundle);
-
-                startActivity(chatIntent);
-                return true;
-            case R.id.menu_deco:
-                unauthFacebook();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
     private void unauthFacebook(){
         //todo problem here, cant connect with another account after that
@@ -178,6 +137,11 @@ public class ProfileActivity extends AppCompatActivity{
         alert.setTitle(getResources().getString(R.string.description_popup_title));
 
         final EditText input = new EditText(this);
+
+        int maxLength = 250;
+        input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
+
+
         alert.setView(input);
 
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -204,7 +168,7 @@ public class ProfileActivity extends AppCompatActivity{
         alert.show();
     }
 
-  /*  private void setupActionBar() {
+    private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
 
         actionBar.setDisplayShowTitleEnabled(false);
@@ -214,11 +178,11 @@ public class ProfileActivity extends AppCompatActivity{
         actionBar.setDisplayShowHomeEnabled(false);
 
         ActionBar.LayoutParams lp1 = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
-       // View customNav = LayoutInflater.from(this).inflate(R.layout.actionbar_custom_profile, null); // layout which contains your button.
+        View customNav = LayoutInflater.from(this).inflate(R.layout.actionbar_custom_profile, null); // layout which contains your button.
 
-       // actionBar.setCustomView(customNav, lp1);
+       actionBar.setCustomView(customNav, lp1);
     }
-*/
+
     private void bindViews()
     {
         nameTextView = (TextView) findViewById(R.id.name_textview);

@@ -190,7 +190,7 @@ public class FacebookHandler
                                 String participants  = obj.optString("attending_count");
                                 String id = obj.optString("id");
                                 Event event = new Event(description,description, place, owner, owner_name,visibility, "Soirée", start_time, participants, "party", 2.5, 2.6, "", end_time, cover, id);
-                                GooglePlacesAutocompleteAdapter.getLocationFromAddress(event);
+                                GooglePlacesAutocompleteAdapter.getLocationFromEvent(event);
                                 Firebase ref = Network.create_event("Event :" + name + owner);
                                 ref.setValue(event);
                                 GeoFire geoFire = new GeoFire(Network.geofire);

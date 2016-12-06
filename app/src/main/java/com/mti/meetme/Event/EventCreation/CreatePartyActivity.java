@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -46,6 +47,7 @@ import com.mti.meetme.notifications.NotificationSender;
 import com.squareup.picasso.Picasso;
 
 import org.joda.time.LocalDate;
+import org.joda.time.Months;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -74,18 +76,15 @@ import static com.mti.meetme.Tools.GooglePlacesAutocompleteAdapter.getLocationFr
 
 public class CreatePartyActivity extends Fragment implements AdapterView.OnItemClickListener {
 
-
-    private static double lon;
-    private static double lat;
-    public static boolean valCoord;
+    public User user;
+    public String typeEvent;
     public static GooglePlacesAutocompleteAdapter adapter;
-    public boolean adressevalid = true;
     DatePickerDialog dial;
     private int year;
     private int month;
     private int day;
-    private EditText date;
 
+    private String currentDesire;
     private LinearLayout friendSelectLayout;
 
     private ArrayList<String> friendsPictures;
@@ -94,16 +93,119 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
 
     private HashMap<String, RadioButton> radioIds;
 
+    private EditText date;
+    private EditText name;
+    private EditText desc;
+    private EditText adresse;
+    private RadioButton friend;
+    private RadioButton all;
+    private RadioButton selection;
+    private Button Create;
+    private TextView type;
+    private AutoCompleteTextView autoCompView;
+    private  ImageView img;
+
+
+    private void initCreatAction()
+    {
+        Create.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(name.getText().toString().length() == 0 || desc.getText().toString().length() == 0 || adresse.getText().toString().length() == 0 ||
+                        date.getText().toString().length() == 0)
+                {
+                    Toast.makeText(getApplicationContext(), "Tu dois remplir toutes les informations", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                else {
+                    String visibility = "friends";
+
+                    if (all.isChecked())
+                        visibility = "all";
+                    else if (selection.isChecked())
+                        visibility = "friend_selection";
+
+                    SimpleDateFormat dateFormat = MyGame.getInstance().getDateFormat();
+                    Date dateNow = new Date();
+                    long oneHour = 3600 * 1000;
+                    Date endDate = new Date(dateNow.getTime() + 12 * oneHour);
+                    Date beginDate = null;
+                    try {
+                        String thedate = date.getText().toString();
+                        if (thedate.length() > MyGame.getInstance().getDateFormat().toPattern().length())
+                            throw new Exception ();
+
+                        beginDate = MyGame.getInstance().getDateFormat().parse(thedate);
+                    }
+                    catch (Exception e) {
+                        Toast.makeText(getApplicationContext(), "Le format de la date est incorrect", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    Address address = getLocationFromAddress(adresse.getText().toString());
+
+                    if(address == null)
+                    {
+                        Toast.makeText(getApplicationContext(), "Merci de sélectionner une adresse proposée", Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        Event event = new Event(name.getText().toString(), desc.getText().toString(), adresse.getText().toString(),
+                                user.getUid(), visibility, typeEvent, dateFormat.format(beginDate).toString(), dateFormat.format(endDate).toString(), FacebookUser.getInstance().getLatitude(),
+                                FacebookUser.getInstance().getLongitude(), FacebookUser.getInstance().getName(), typeEvent);
+
+                        event.setLatitude(address.getLatitude());
+                        event.setLongitude(address.getLongitude());
+                        if (visibility.compareTo("friends") == 0)
+                            event.setInvited(user.getMeetMeFriends());
+                        else if (visibility.compareTo("friend_selection") == 0)
+                        {
+                            String invited = "";
+
+                            for(Map.Entry<String, RadioButton> e : radioIds.entrySet()) {
+                                String uid = e.getKey();
+                                RadioButton radio = e.getValue();
+
+                                if (radio.isChecked())
+                                    invited += uid + ";";
+                            }
+
+                            event.setInvited(invited);
+                        }
+
+                        sendNotificationsToGuests(event.getInvited(), FacebookUser.getInstance().getName(), event.getName());
+
+                        Firebase ref = Network.create_event("Event :" + name.getText().toString() + user.getUid());
+                        ref.setValue(event);
+                        GeoFire geoFire = new GeoFire(Network.geofire);
+                        geoFire.setLocation("Event :" + name.getText().toString() + user.getUid(), new GeoLocation(event.getLatitude(), event.getLongitude()));
+                        Toast.makeText(getApplicationContext(), "Evènement créé !", Toast.LENGTH_LONG).show();
+                        //todo uncomment this
+                        Intent intent = new Intent(getContext(), MapsActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            }
+        });
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ImageView img = (ImageView)  getView().findViewById(R.id.event_header);
+        bindViews();
+        typeEvent = this.getArguments().getString("type");
 
-        final User u  = FacebookUser.getInstance();
-        String currentDesire = "Let's go to party !";
+        if (typeEvent.equals("party")) {
+            currentDesire = "Let's go to party !";
+            img.setBackgroundResource(R.drawable.soiree2fine);        }
+        else {
+            currentDesire = "Let's practice !";
+            img.setBackgroundResource(R.drawable.finesport);
+        }
 
-        img.setBackgroundResource(R.drawable.soiree2fine);
+        type.setText(currentDesire.toString());
+
+        user = FacebookUser.getInstance();
 
         adapter = new GooglePlacesAutocompleteAdapter(getApplicationContext(), R.layout.adresse_list_item);
 
@@ -112,30 +214,52 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
         month = c.get(Calendar.MONTH);
         day = c.get(Calendar.DAY_OF_MONTH);
 
-        Button Create = (Button) getView().findViewById(R.id.event_create);
-        TextView type = (TextView) getView().findViewById(R.id.event_type);
-        type.setText(currentDesire.toString());
-
-        final EditText name = (EditText) getView().findViewById(R.id.event_name);
-        final EditText desc = (EditText) getView().findViewById(R.id.event_description);
-        final EditText adresse = (EditText) getView().findViewById(R.id.event_adresse);
-        date = (EditText) getView().findViewById(R.id.event_date);
-        final RadioButton friend = (RadioButton) getView().findViewById(R.id.event_friends);
-        final RadioButton all = (RadioButton) getView().findViewById(R.id.event_all);
-        final RadioButton selection = (RadioButton) getView().findViewById(R.id.event_friends_selection);
-        friendSelectLayout = (LinearLayout) getView().findViewById(R.id.friendsSelectionLayout);
-        AutoCompleteTextView autoCompView = (AutoCompleteTextView) getView().findViewById(R.id.event_adresse);
         adapter = new GooglePlacesAutocompleteAdapter(getContext(), R.layout.adresse_list_item);
         autoCompView.setAdapter(adapter);
         autoCompView.setOnItemClickListener(this);
-        dial =  new DatePickerDialog(getContext(), datePickerListener, year, month,day);
-        date.setOnClickListener(new View.OnClickListener() {
+        dial = new DatePickerDialog(getContext(), datePickerListener, year, month,day);
+
+        date.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onTouch(View v, MotionEvent event) {
                 dial.show();
+                return true;
             }
         });
 
+        checkboxSelection();
+
+        //Selection d'amis
+        friendsNames = new ArrayList<>();
+        friendsPictures = new ArrayList<>();
+        friendsUids = new ArrayList<>();
+
+        radioIds = new HashMap<>();
+
+        if (!FacebookUser.getInstance().getMeetMeFriends().isEmpty())
+            fill(FacebookUser.getInstance().getMeetMeFriends().split(";"));
+
+        initCreatAction();
+    }
+
+    private void bindViews()
+    {
+        name = (EditText) getView().findViewById(R.id.event_name);
+        desc = (EditText) getView().findViewById(R.id.event_description);
+        adresse = (EditText) getView().findViewById(R.id.event_adresse);
+        date = (EditText) getView().findViewById(R.id.event_date);
+        friend = (RadioButton) getView().findViewById(R.id.event_friends);
+        all = (RadioButton) getView().findViewById(R.id.event_all);
+        selection = (RadioButton) getView().findViewById(R.id.event_friends_selection);
+        Create = (Button) getView().findViewById(R.id.event_create);
+        type = (TextView) getView().findViewById(R.id.event_type);
+        friendSelectLayout = (LinearLayout) getView().findViewById(R.id.friendsSelectionLayout);
+        autoCompView = (AutoCompleteTextView) getView().findViewById(R.id.event_adresse);
+        img = (ImageView) getView().findViewById(R.id.event_header);
+    }
+
+    private void checkboxSelection()
+    {
         CompoundButton.OnCheckedChangeListener change = new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -164,84 +288,8 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
         friend.setOnCheckedChangeListener(change);
         all.setOnCheckedChangeListener(change);
         selection.setOnCheckedChangeListener(change);
-
-        Create.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if(name.getText().toString().length() == 0 || desc.getText().toString().length() == 0 || adresse.getText().toString().length() == 0 ||
-                        date.getText().toString().length() == 0)
-                {
-                    Toast.makeText(getApplicationContext(), "Tu dois remplir toutes les informations", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                else {
-                    String visibility = "friends";
-
-                    if (all.isChecked())
-                        visibility = "all";
-                    else if (selection.isChecked())
-                        visibility = "friend_selection";
-
-                    SimpleDateFormat dateFormat = MyGame.getInstance().getDateFormat();
-                    Date date = new Date();
-                    long oneHour = 3600 * 1000;
-                    Date endDate = new Date(date.getTime() + 12 * oneHour);
-
-                    Event event = new Event(name.getText().toString(), desc.getText().toString(), adresse.getText().toString(),
-                            u.getUid(), visibility, TodayDesire.Desire.party.toString(), dateFormat.format(date).toString(), dateFormat.format(endDate).toString(), FacebookUser.getInstance().getLatitude(), FacebookUser.getInstance().getLongitude(), FacebookUser.getInstance().getName(), "party");
-
-                    adressevalid = true;
-                    adressevalid = getLocationFromAddress(event);
-
-                    if(!adressevalid)
-                    {
-                        Toast.makeText(getApplicationContext(), "Merci de sélectionner une adresse proposée", Toast.LENGTH_LONG).show();
-                    }
-                    else {
-                        if (visibility.compareTo("friends") == 0)
-                            event.setInvited(u.getMeetMeFriends());
-                        else if (visibility.compareTo("friend_selection") == 0)
-                        {
-                            String invited = "";
-
-                            for(Map.Entry<String, RadioButton> e : radioIds.entrySet()) {
-                                String uid = e.getKey();
-                                RadioButton radio = e.getValue();
-
-                                if (radio.isChecked())
-                                    invited += uid + ";";
-                            }
-
-                            event.setInvited(invited);
-                        }
-
-                        sendNotificationsToGuests(event.getInvited(), FacebookUser.getInstance().getName(), event.getName());
-
-                        Firebase ref = Network.create_event("Event :" + name.getText().toString() + u.getUid());
-                        ref.setValue(event);
-                        GeoFire geoFire = new GeoFire(Network.geofire);
-                        geoFire.setLocation("Event :" + name.getText().toString() + u.getUid(), new GeoLocation(event.getLatitude(), event.getLongitude()));
-                        Toast.makeText(getApplicationContext(), "Evènement créé !", Toast.LENGTH_LONG).show();
-                        //todo uncomment this
-                         Intent intent = new Intent(getContext(), MapsActivity.class);
-                        startActivity(intent);
-                    }
-                }
-            }
-        });
-
-        //Selection d'amis
-        friendsNames = new ArrayList<>();
-        friendsPictures = new ArrayList<>();
-        friendsUids = new ArrayList<>();
-
-        radioIds = new HashMap<>();
-
-        if (!FacebookUser.getInstance().getMeetMeFriends().isEmpty())
-            fill(FacebookUser.getInstance().getMeetMeFriends().split(";"));
-
     }
+
 
     @Nullable
     @Override
@@ -260,16 +308,11 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
         Firebase.setAndroidContext(getApplicationContext());
     }
 
-
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String str = (String) parent.getItemAtPosition(position);
         Toast.makeText(getContext(), str, Toast.LENGTH_SHORT).show();
     }
-
-
-
 
     private DatePickerDialog.OnDateSetListener datePickerListener
             = new DatePickerDialog.OnDateSetListener() {
@@ -283,9 +326,9 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
             if(eventDate.isBefore(now))
                 Toast.makeText(getApplicationContext(), "Merci de choisir une date valide", Toast.LENGTH_LONG).show();
             else
-            date.setText(new StringBuilder().append(month + 1)
-                        .append("/").append(day).append("/").append(year)
-                        .append(""));
+                date.setText(new StringBuilder().append(day)
+                        .append("/").append(month).append("/").append(year)
+                        .append(" 00:00:00"));
             }
     };
 

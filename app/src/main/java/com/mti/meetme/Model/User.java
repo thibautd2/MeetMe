@@ -179,8 +179,11 @@ public class User implements Serializable, Parcelable {
         dest.writeString(FriendRequestReceived);
         dest.writeString(FriendRequestSend);
         dest.writeString(FcmID);
-        dest.writeDouble(Longitude);
-        dest.writeDouble(Latitude);
+        if (Longitude != null)
+            dest.writeDouble(Longitude);
+        if (Latitude != null)
+            dest.writeDouble(Latitude);
+
         dest.writeString(ParticipateTo);
         dest.writeString(Interest);
     }
