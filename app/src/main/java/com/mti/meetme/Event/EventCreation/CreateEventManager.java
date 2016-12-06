@@ -5,9 +5,13 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.facebook.FacebookSdk;
 import com.firebase.client.Firebase;
@@ -30,6 +34,7 @@ public class CreateEventManager extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setupActionBar();
         super.setContentView(R.layout.create_event_manager);
 
         // Création de la liste de Fragments que fera défiler le PagerAdapter
@@ -56,6 +61,9 @@ public class CreateEventManager extends AppCompatActivity {
 
         dialogNotConnected = new DialogNotConnected(this);
         dialogNotConnected.interuptNoConection();
+        TextView txt  = (TextView) findViewById(R.id.Title);
+        txt.setText("Evènement");
+
     }
 
     @Override
@@ -73,12 +81,19 @@ public class CreateEventManager extends AppCompatActivity {
         FacebookSdk.sdkInitialize(this);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_profile, menu);
-        super.onCreateOptionsMenu(menu);
+    private void setupActionBar() {
+        ActionBar actionBar = getSupportActionBar();
 
-        return true;
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(false);
+
+        ActionBar.LayoutParams lp1 = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
+        View customNav = LayoutInflater.from(this).inflate(R.layout.actionbar_list_elements, null); // layout which contains your button.
+
+        actionBar.setCustomView(customNav, lp1);
     }
 
     @Override

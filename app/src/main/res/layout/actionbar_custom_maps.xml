@@ -20,6 +20,7 @@
         android:layout_height="match_parent"
         android:id="@+id/chatUserLayout"
         android:layout_centerHorizontal="true">
+
     <com.mti.meetme.fonts.CoquetteTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

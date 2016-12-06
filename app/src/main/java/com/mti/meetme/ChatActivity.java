@@ -1,26 +1,12 @@
 package com.mti.meetme;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.NinePatch;
 import android.graphics.Point;
-import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,10 +15,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.client.Firebase;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.mti.meetme.Model.User;
 import com.mti.meetme.Tools.Network.DialogNotConnected;
 import com.mti.meetme.Tools.RoundedPicasso;
@@ -40,7 +24,6 @@ import com.mti.meetme.controller.FacebookUser;
 import com.mti.meetme.notifications.NotificationSender;
 import com.pubnub.api.Callback;
 import com.pubnub.api.Pubnub;
-import com.pubnub.api.PubnubError;
 import com.pubnub.api.PubnubException;
 import com.squareup.picasso.Picasso;
 
@@ -129,7 +112,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         userImage = (ImageView) findViewById(R.id.chatUserPic);
         userName = (TextView) findViewById(R.id.chatUserName);
 
-        mapsButton = (ImageButton) findViewById(R.id.chatMapsButton);
+        mapsButton = (ImageButton) findViewById(R.id.profileMapsButton);
         chatUserLayout = (LinearLayout) findViewById(R.id.chatUserLayout);
         mapsButton.setOnClickListener(this);
         chatUserLayout.setOnClickListener(this);
