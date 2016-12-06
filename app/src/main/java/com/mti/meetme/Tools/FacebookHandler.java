@@ -197,11 +197,14 @@ public class FacebookHandler
                                 String id = obj.optString("id");
                                 Event event = new Event(description,description, place, owner, owner_name,visibility, "Soirée", start_time, participants, "party", 2.5, 2.6, "", end_time, cover, id);
                                 GooglePlacesAutocompleteAdapter.getLocationFromEvent(event);
-                                Firebase ref = Network.create_event("Event :" + name + owner);
-                                ref.setValue(event);
-                                GeoFire geoFire = new GeoFire(Network.geofire);
-                                geoFire.setLocation("Event :" + name + owner, new GeoLocation(event.getLatitude(), event.getLongitude()));
-                               // getEventLive(id);
+
+                                if (isEventNameValid(name + owner))
+                                {
+                                    Firebase ref = Network.create_event("Event :" + name + owner);
+                                    ref.setValue(event);
+                                    GeoFire geoFire = new GeoFire(Network.geofire);
+                                    geoFire.setLocation("Event :" + name + owner, new GeoLocation(event.getLatitude(), event.getLongitude()));
+                                }
                             }
                         }
                         catch(JSONException e) {
@@ -213,6 +216,11 @@ public class FacebookHandler
         parameters.putString("fields", "cover,category,name,description, place, attending_count,start_time,end_time, ticket_uri, videos, live_videos, owner");
         request.setParameters(parameters);
         request.executeAsync();
+    }
+
+    private boolean isEventNameValid(String name)
+    {
+        return !(name.contains(".") || name.contains("#") || name.contains("$") || name.contains("[") || name.contains("]"));
     }
 
     private void getUserLikes(String next)
