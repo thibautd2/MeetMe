@@ -242,9 +242,10 @@ public class EventFicheActivity extends AppCompatActivity implements BroadcastLi
     @Override
     public void onBroadcastStart()
     {
-        Firebase ref = Network.find_event(event.receiveEventId());
-
         Log.w("Firebase Event ID Start", event.receiveEventId());
+        Log.w("Firebase Event ID Name", event.getName());
+
+        Firebase ref = Network.find_event(event.receiveEventId());
 
         Map<String, Object> streamUrl = new HashMap<>();
         streamUrl.put("streamUrl", "has started");
@@ -254,8 +255,6 @@ public class EventFicheActivity extends AppCompatActivity implements BroadcastLi
     @Override
     public void onBroadcastLive(Stream stream)
     {
-        Log.w("Firebase Event ID Live", event.receiveEventId());
-
         Firebase ref = Network.find_event(event.receiveEventId());
         Map<String, Object> streamUrl = new HashMap<>();
         streamUrl.put("streamUrl", stream.getStreamUrl());

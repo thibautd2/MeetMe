@@ -151,7 +151,7 @@ public class MyGame {
             Date now = new Date();
             Date eventFinish = null;
             if(e.endDate != null && e.endDate.compareTo("")!=0)
-            eventFinish = MyGame.getInstance().getDateFormat().parse(e.getEndDate().replace("T", " ").substring(0, 19));
+            eventFinish = MyGame.getInstance().getDateFormat().parse(e.getEndDate());
             if (eventFinish == null || eventFinish.before(now))
                 return false;
         } catch (ParseException e1) {

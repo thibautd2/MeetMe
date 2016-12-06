@@ -196,7 +196,7 @@ public class FacebookHandler
                                 String participants  = obj.optString("attending_count");
                                 String id = obj.optString("id");
 
-                                Event event = new Event(description,description, place, owner, owner_name,visibility, "Soirée", start_time, participants, "party", 2.5, 2.6, "", end_time, cover, id);
+                                Event event = new Event(validateEventName(name), description, place, owner, owner_name,visibility, "Soirée", start_time, participants, "party", 2.5, 2.6, "", end_time, cover, id);
                                 GooglePlacesAutocompleteAdapter.getLocationFromEvent(event);
 
                                 String eventName = validateEventName(name + owner);

@@ -22,6 +22,7 @@ public class Network {
     public static Firebase bdd_connexion = new Firebase(URL);
     public static Firebase getAlluser = connexion_to_user;
     public static Firebase connexion_to_event = new Firebase(URL+"events");
+    public static Firebase connexion_to_live = new Firebase(URL+"live");
 
     public static  Firebase find_user(String Uid)
     {
@@ -44,6 +45,11 @@ public class Network {
     public static  Firebase find_event(String event)
     {
         return new Firebase(connexion_to_event+"/"+event);
+    }
+
+    public static  Firebase find_live(String eventId)
+    {
+        return new Firebase(connexion_to_event+"/"+eventId);
     }
 
     public static Firebase find_user_properties(String Uid, String properties)
