@@ -49,8 +49,9 @@ public class CreateEventManager extends AppCompatActivity {
         bundSport.putString("type", "sport");
 
         // Ajout des Fragments dans la liste
-        fragments.add(Fragment.instantiate(this,CreatePartyActivity.class.getName(), bundSport));
         fragments.add(Fragment.instantiate(this,CreatePartyActivity.class.getName(), bundparty));
+        fragments.add(Fragment.instantiate(this,CreatePartyActivity.class.getName(), bundSport));
+
         fragments.add(Fragment.instantiate(this,CreateGameActivity.class.getName()));
 
         // Création de l'adapter qui s'occupera de l'affichage de la liste de
