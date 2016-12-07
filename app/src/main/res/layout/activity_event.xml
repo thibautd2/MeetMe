@@ -80,7 +80,8 @@
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="10dp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="@color/cardview_light_background" />
 
                 <EditText
                     android:layout_width="wrap_content"
@@ -169,14 +170,16 @@
                         android:id="@+id/event_friends"
                         android:layout_weight="1"
                         android:textColor="#2d2d2d"
-                        android:layout_marginStart="10dp" />
+                        android:layout_marginStart="10dp"
+                        android:textColorHighlight="@color/cardview_light_background" />
                     <RadioButton
                         android:text="@string/all"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/event_all"
                         android:layout_weight="1"
-                        android:textColor="#2d2d2d" />
+                        android:textColor="#2d2d2d"
+                        android:textColorHighlight="@color/cardview_light_background" />
 
                     <RadioButton
                         android:text="@string/select_amis"

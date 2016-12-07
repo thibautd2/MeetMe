@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.facebook.FacebookSdk;
@@ -21,6 +22,7 @@ import com.mti.meetme.Tools.MyPagerAdapter;
 import com.mti.meetme.Tools.Network.DialogNotConnected;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -47,8 +49,9 @@ public class CreateEventManager extends AppCompatActivity {
         bundSport.putString("type", "sport");
 
         // Ajout des Fragments dans la liste
-        fragments.add(Fragment.instantiate(this,CreatePartyActivity.class.getName(), bundSport));
         fragments.add(Fragment.instantiate(this,CreatePartyActivity.class.getName(), bundparty));
+        fragments.add(Fragment.instantiate(this,CreatePartyActivity.class.getName(), bundSport));
+
         fragments.add(Fragment.instantiate(this,CreateGameActivity.class.getName()));
 
         // Création de l'adapter qui s'occupera de l'affichage de la liste de
@@ -63,6 +66,13 @@ public class CreateEventManager extends AppCompatActivity {
         dialogNotConnected.interuptNoConection();
         TextView txt  = (TextView) findViewById(R.id.Title);
         txt.setText("Evènement");
+        ImageButton map = (ImageButton) findViewById(R.id.profileMapsButton);
+        map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+            }
+        });
 
     }
 
