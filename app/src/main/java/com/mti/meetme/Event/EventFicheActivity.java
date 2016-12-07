@@ -274,6 +274,9 @@ public class EventFicheActivity extends AppCompatActivity implements BroadcastLi
     @Override
     public void onBroadcastError(KickflipException error)
     {
-
+        Firebase ref = Network.find_event(event.receiveEventId());
+        Map<String, Object> streamUrl = new HashMap<>();
+        streamUrl.put("streamUrl", "");
+        ref.updateChildren(streamUrl, null);
     }
 }
