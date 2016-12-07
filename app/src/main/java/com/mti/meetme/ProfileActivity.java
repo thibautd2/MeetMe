@@ -295,6 +295,7 @@ public class ProfileActivity extends AppCompatActivity{
 
         updateMyInformation();
         setFriendBtn();
+        setFriendBtn();
     }
 
     //todo update all information from the user of this profil

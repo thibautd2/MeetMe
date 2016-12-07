@@ -24,7 +24,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Created by W_Corentin on 28/03/2016.
@@ -196,7 +200,11 @@ public class FacebookHandler
                                 String participants  = obj.optString("attending_count");
                                 String id = obj.optString("id");
 
-                                Event event = new Event(validateEventName(name), description, place, owner, owner_name,visibility, "Soirée", start_time, participants, "party", 2.5, 2.6, "", end_time, cover, id);
+                                TimeZone tz = TimeZone.getTimeZone("UTC");
+                                DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
+                                df.setTimeZone(tz);
+
+                                Event event = new Event(validateEventName(name), description, place, owner, owner_name,visibility, "Soirée",  df.format(start_time), participants, "party", 2.5, 2.6, "", df.format(end_time), cover, id);
                                 GooglePlacesAutocompleteAdapter.getLocationFromEvent(event);
 
                                 String eventName = validateEventName(name + owner);
