@@ -29,7 +29,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.TimeZone;
 
 /**
@@ -211,7 +210,6 @@ public class FacebookHandler
 
                                     Event event = new Event(validateEventName(name), description, place, owner, owner_name, visibility, "Soirée", ourDateFormat.format(df.parse(start_time)), participants, "party", 2.5, 2.6, "", ourDateFormat.format(df.parse(end_time)), cover, id);
                                     GooglePlacesAutocompleteAdapter.getLocationFromEvent(event);
-
 
                                     String eventName = validateEventName(name + owner);
                                     Firebase ref = Network.create_event("Event :" + eventName);
