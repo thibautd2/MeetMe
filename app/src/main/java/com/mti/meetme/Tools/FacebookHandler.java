@@ -19,12 +19,14 @@ import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.mti.meetme.controller.MyGame;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -200,25 +202,33 @@ public class FacebookHandler
                                 String participants  = obj.optString("attending_count");
                                 String id = obj.optString("id");
 
-                                TimeZone tz = TimeZone.getTimeZone("UTC");
-                                DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
-                                df.setTimeZone(tz);
+                                try {
+                                    TimeZone tz = TimeZone.getTimeZone("UTC");
+                                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"); // Quoted "Z" to indicate UTC, no timezone offset but should be X from the doc for the ISO8601
+                                    df.setTimeZone(tz);
 
-                                Event event = new Event(validateEventName(name), description, place, owner, owner_name,visibility, "Soirée",  df.format(start_time), participants, "party", 2.5, 2.6, "", df.format(end_time), cover, id);
-                                GooglePlacesAutocompleteAdapter.getLocationFromEvent(event);
+                                    DateFormat ourDateFormat = MyGame.getInstance().getDateFormat();
 
-                                String eventName = validateEventName(name + owner);
-                                Firebase ref = Network.create_event("Event :" + eventName);
-                                ref.setValue(event);
-                                GeoFire geoFire = new GeoFire(Network.geofire);
-                                geoFire.setLocation("Event :" + eventName, new GeoLocation(event.getLatitude(), event.getLongitude()));
+                                    Event event = new Event(validateEventName(name), description, place, owner, owner_name, visibility, "Soirée", ourDateFormat.format(df.parse(start_time)), participants, "party", 2.5, 2.6, "", ourDateFormat.format(df.parse(end_time)), cover, id);
+                                    GooglePlacesAutocompleteAdapter.getLocationFromEvent(event);
 
+
+                                    String eventName = validateEventName(name + owner);
+                                    Firebase ref = Network.create_event("Event :" + eventName);
+                                    ref.setValue(event);
+                                    GeoFire geoFire = new GeoFire(Network.geofire);
+                                    geoFire.setLocation("Event :" + eventName, new GeoLocation(event.getLatitude(), event.getLongitude()));
+
+                                }
+                                catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                         catch(JSONException e) {
                             e.printStackTrace();
-
                         }
+
                     }});
         Bundle parameters = new Bundle();
         parameters.putString("fields", "cover,category,name,description, place, attending_count,start_time,end_time, ticket_uri, videos, live_videos, owner");
