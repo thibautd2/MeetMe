@@ -29,6 +29,9 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 /**
@@ -208,7 +211,10 @@ public class FacebookHandler
 
                                     DateFormat ourDateFormat = MyGame.getInstance().getDateFormat();
 
-                                    Event event = new Event(validateEventName(name), description, place, owner, owner_name, visibility, "Soirée", ourDateFormat.format(df.parse(start_time)), participants, "party", 2.5, 2.6, "", ourDateFormat.format(df.parse(end_time)), cover, id);
+                                    //todo this make enddate in 2017 to see all event from fb
+                                    String endDate = ourDateFormat.format(new GregorianCalendar(2017, Calendar.DECEMBER, 23).getTime());
+
+                                    Event event = new Event(validateEventName(name), description, place, owner, owner_name, visibility, "Soirée", ourDateFormat.format(df.parse(start_time)), participants, "party", 2.5, 2.6, "", endDate /*ourDateFormat.format(df.parse(end_time))*/, cover, id);
                                     GooglePlacesAutocompleteAdapter.getLocationFromEvent(event);
 
                                     String eventName = validateEventName(name + owner);
