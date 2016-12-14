@@ -220,7 +220,7 @@ public class ProfileActivity extends AppCompatActivity{
         deco.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                unauthFacebook();
             }
         });
         desc.setOnClickListener(new View.OnClickListener() {

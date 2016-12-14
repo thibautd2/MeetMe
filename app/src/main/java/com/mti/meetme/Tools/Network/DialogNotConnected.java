@@ -59,6 +59,9 @@ public class DialogNotConnected {
 
     public void interuptNoConection()
     {
+        //todo uncomment this lines to use alert dialog when you"r loosing conection
+        return;
+/*
         if (_alertDialog == null || _acti == null)
             return; //error should init before
 
@@ -87,19 +90,25 @@ public class DialogNotConnected {
             }
         }, "Demon");
 
+
         _daemonThread.setDaemon(true);
-        _daemonThread.start();
+        _daemonThread.start();*/
     }
 
     public void stopInteruptNoConection() {
-        _alertDialog.cancel();
+        //todo uncomment this lines to use alert dialog when you"r loosing conection
+        return;
+
+     /*   _alertDialog.cancel();
         _alertDialog.dismiss();
-        _daemonThread.interrupt();
+        _daemonThread.interrupt();*/
     }
 
     public void retartInteruptNoConection()
     {
-        _alertDialog.cancel();
-        interuptNoConection();
+        //todo uncomment this lines to use alert dialog when you"r loosing conection
+        return;
+     /*   _alertDialog.cancel();
+        interuptNoConection();*/
     }
 }
