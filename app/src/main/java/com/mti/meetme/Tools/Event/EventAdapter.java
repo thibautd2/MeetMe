@@ -77,13 +77,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>
             holder.event_dist.setText(String.format("%.1f",dist )+ " km");
             holder.event_username.setText(e.getUsername());
 
-                if (e.getCategorie().compareTo(TodayDesire.Desire.Sport.toString()) == 0)
+                if (e.getCategorie().compareTo("sport") == 0)
                     Picasso.with(acti).load(R.drawable.finesport).fit().centerCrop().into(holder.event_image);
-                if (e.getCategorie().compareTo(TodayDesire.Desire.party.toString()) == 0)
+                if (e.getCategorie().compareTo("party") == 0)
                     Picasso.with(acti).load(R.drawable.soiree2fine).fit().centerCrop().into(holder.event_image);
                 if (e.getCategorie().compareTo(TodayDesire.Desire.Drink.toString()) == 0)
                     Picasso.with(acti).load(R.drawable.drinkfine).fit().centerCrop().into(holder.event_image);
-                if (e.getCategorie().compareTo(TodayDesire.Desire.play.toString()) == 0)
+                if (e.getCategorie().compareTo("Jouer") == 0)
                     Picasso.with(acti).load(R.drawable.finegames).fit().centerCrop().into(holder.event_image);
 
                 if(e.baniere!=null && e.baniere.compareTo("")!=0)

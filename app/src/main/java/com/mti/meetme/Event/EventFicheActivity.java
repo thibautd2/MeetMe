@@ -140,13 +140,13 @@ public class EventFicheActivity extends AppCompatActivity implements BroadcastLi
             participants.setText("("+event.participants+") participants");
         image.setBackgroundResource(R.drawable.allfine);
         if(event!=null && event.getType()!=null) {
-            if (event.getCategorie().compareTo(TodayDesire.Desire.Sport.toString()) == 0)
+            if (event.getCategorie().compareTo("sport") == 0)
                 image.setBackgroundResource(R.drawable.finesport);
-            if (event.getCategorie().compareTo(TodayDesire.Desire.party.toString()) == 0)
+            if (event.getCategorie().compareTo("party") == 0)
                 image.setBackgroundResource(R.drawable.soiree2fine);
             if (event.getCategorie().compareTo(TodayDesire.Desire.Drink.toString()) == 0)
                 image.setBackgroundResource(R.drawable.drinkfine);
-            if (event.getCategorie().compareTo(TodayDesire.Desire.play.toString()) == 0)
+            if (event.getCategorie().compareTo("Jouer") == 0)
                 image.setBackgroundResource(R.drawable.finegames);
         }
         if(event.baniere != null && event.baniere.compareTo("")!=0)

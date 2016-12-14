@@ -193,10 +193,10 @@ public class CreatePartyActivity extends Fragment implements AdapterView.OnItemC
         typeEvent = this.getArguments().getString("type");
 
         if (typeEvent.equals("party")) {
-            currentDesire = "Let's go to party !";
+            currentDesire = "Soirée";
             img.setBackgroundResource(R.drawable.soiree2fine);        }
         else {
-            currentDesire = "Let's practice !";
+            currentDesire = "Entrainement!";
             img.setBackgroundResource(R.drawable.finesport);
         }
 
